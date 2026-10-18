@@ -1,327 +1,400 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#080d1b">
-<title>Ativa Gaming | Painel de Jogadores</title>
-
-<style>
-:root {
-  --bg:#080d1b;
-  --panel:#111a2d;
-  --panel2:#192642;
-  --border:#2a3958;
-  --text:#f4f7ff;
-  --muted:#a7b4ce;
-  --blue:#6687ff;
-  --green:#45e0aa;
-  --gold:#ffd166;
-  --purple:#a58aff;
-}
-* { box-sizing:border-box; }
-body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,Helvetica,sans-serif;
-}
-.container { max-width:1200px; margin:auto; padding:20px; }
-header {
-  display:flex; justify-content:space-between; align-items:center;
-  flex-wrap:wrap; gap:15px; padding:12px 0 25px;
-}
-.brand { font-size:27px; font-weight:900; }
-.brand span { color:var(--blue); }
-.label {
-  display:inline-block; padding:6px 10px; border-radius:20px;
-  background:#17352f; color:var(--green); font-size:11px;
-  font-weight:bold; margin-top:7px;
-}
-.hero {
-  padding:27px; border-radius:20px; border:1px solid var(--border);
-  background:radial-gradient(ellipse at top right,#38316e,transparent 60%),
-             linear-gradient(135deg,#14213e,#101629);
-}
-.hero h1 { font-size:clamp(30px,6vw,46px); margin:0 0 12px; }
-p { line-height:1.6; }
-.muted { color:var(--muted); }
-.button {
-  border:0; border-radius:10px; padding:12px 16px;
-  background:var(--blue); color:white; font-weight:bold;
-  cursor:pointer; margin-top:8px;
-}
-.section-title { margin:30px 0 15px; font-size:21px; }
-.stats {
-  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:12px; margin-top:18px;
-}
-.stat,.card {
-  min-width:0; background:var(--panel);
-  border:1px solid var(--border); border-radius:15px; padding:17px;
-}
-.stat small { color:var(--muted); display:block; }
-.stat strong { display:block; font-size:26px; margin-top:9px; overflow-wrap:anywhere; }
-.green { color:var(--green); }
-.gold { color:var(--gold); }
-.purple { color:var(--purple); }
-.toolbar { display:flex; gap:10px; flex-wrap:wrap; margin:15px 0; }
-input,select {
-  min-width:0; padding:12px; border:1px solid var(--border);
-  border-radius:10px; background:var(--panel); color:var(--text);
-}
-.toolbar input { flex:1; min-width:190px; }
-.table-wrap {
-  overflow-x:auto; border:1px solid var(--border);
-  border-radius:13px; background:var(--panel);
-}
-table { width:100%; min-width:670px; border-collapse:collapse; text-align:left; }
-th,td { padding:14px 12px; border-bottom:1px solid var(--border); font-size:13px; }
-th { background:var(--panel2); color:var(--muted); font-size:11px; text-transform:uppercase; }
-tbody tr:last-child td { border-bottom:0; }
-.rank { color:var(--gold); font-weight:bold; }
-.game-grid {
-  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:13px;
-}
-.game-icon { font-size:32px; margin-bottom:10px; }
-.card h3 { margin:0 0 8px; }
-.card p { color:var(--muted); font-size:13px; }
-.pill {
-  display:inline-block; border-radius:20px; padding:6px 9px;
-  background:#202e49; font-size:11px;
-}
-.mission {
-  margin-top:15px; padding:15px; border:1px solid #484078;
-  border-radius:13px; background:#191b36;
-}
-.mission strong { color:var(--gold); }
-.notice {
-  margin-top:22px; border:1px solid var(--border);
-  border-radius:12px; padding:15px; color:var(--muted);
-  font-size:12px; line-height:1.7;
-}
-footer { padding:25px 0; text-align:center; color:var(--muted); font-size:12px; }
-
-@media(max-width:760px) {
-  .container { padding:14px; }
-  .stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
-  .game-grid { grid-template-columns:1fr; }
-  .hero { padding:20px; }
-  .stat strong { font-size:22px; }
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090b16">
+  <meta name="description" content="Ativa Gaming — seu espaço de jogos e comunidade.">
+  <title>Ativa Gaming</title>
+  <link rel="stylesheet" href="/static/styles.css">
 </head>
-
 <body>
-<div class="container">
+  <header class="topbar">
+    <a class="brand" href="#inicio" aria-label="Ativa Gaming início">
+      <span class="brand-icon">A</span>
+      <span>ATIVA<span class="brand-accent"> GAMING</span></span>
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">☰</button>
+    <nav id="mainNav">
+      <a href="#inicio">Início</a>
+      <a href="#jogos">Jogos</a>
+      <a href="#ranking">Ranking</a>
+      <a href="#parcerias">Parcerias</a>
+    </nav>
+    <div class="account-actions" id="accountActions">
+      <button class="button button-quiet" id="openLogin">Entrar</button>
+      <button class="button button-primary" id="openRegister">Criar conta</button>
+    </div>
+  </header>
 
-<header>
-  <div>
-    <div class="brand">ATIVA <span>GAMING</span></div>
-    <div class="label">PAINEL DEMONSTRATIVO</div>
-  </div>
-  <div>🎮 Central do jogador</div>
-</header>
+  <main class="container">
+    <section class="hero" id="inicio">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="live-dot"></span> SUA PRÓXIMA EXPERIÊNCIA COMEÇA AQUI</span>
+        <h1>Entre no jogo.<br><span class="gradient-text">Faça parte da arena.</span></h1>
+        <p>Descubra jogos, acompanhe suas pontuações e construa sua jornada na comunidade Ativa Gaming.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#jogos">Explorar catálogo ↗</a>
+          <button class="button button-quiet" id="heroRegister">Criar meu perfil</button>
+        </div>
+        <p class="microcopy">Catálogo demonstrativo. Jogos comerciais ainda não estão integrados.</p>
+      </div>
+      <div class="hero-art" aria-label="Arte abstrata de jogos">
+        <div class="orbit orbit-one"></div>
+        <div class="orbit orbit-two"></div>
+        <div class="hero-core"><span>AG</span><small>LEVEL UP</small></div>
+        <span class="float-tag tag-one">PLAYER ONE</span>
+        <span class="float-tag tag-two">NEXT LEVEL</span>
+      </div>
+    </section>
 
-<section class="hero">
-  <h1>Jogue mais.<br><span class="green">Conquiste recompensas.</span></h1>
-  <p class="muted">
-    Acompanhe os jogos em destaque, veja o ranking dos jogadores
-    e descubra a proposta de bônus por missões concluídas.
-  </p>
-  <button class="button" onclick="irPara('jogos')">Explorar jogos ↓</button>
-</section>
+    <section class="stats-grid" aria-label="Resumo da plataforma">
+      <article class="stat-card"><span class="stat-icon">◈</span><span class="stat-label">Catálogo</span><strong id="gameCount">—</strong><small>Experiências listadas</small></article>
+      <article class="stat-card"><span class="stat-icon">♙</span><span class="stat-label">Seu perfil</span><strong id="profileStat">Visitante</strong><small id="profileSub">Entre para salvar seus resultados</small></article>
+      <article class="stat-card"><span class="stat-icon">↗</span><span class="stat-label">Pontuações</span><strong id="scoreCount">—</strong><small>Seus registros salvos</small></article>
+      <article class="stat-card"><span class="stat-icon">✦</span><span class="stat-label">Comunidade</span><strong>Em evolução</strong><small>Novas funções planejadas</small></article>
+    </section>
 
-<h2 class="section-title">📊 Resumo da plataforma</h2>
-<section class="stats">
-  <div class="stat">
-    <small>Jogos em destaque</small>
-    <strong id="totalJogos">6</strong>
-    <small class="green">Catálogo demonstrativo</small>
-  </div>
-  <div class="stat">
-    <small>Horas jogadas no ranking</small>
-    <strong id="totalHoras">0 h</strong>
-    <small class="muted">Dados de exemplo</small>
-  </div>
-  <div class="stat">
-    <small>Minutos bônus no ranking</small>
-    <strong id="totalBonus" class="green">0 min</strong>
-    <small class="muted">Saldo ilustrativo</small>
-  </div>
-  <div class="stat">
-    <small>Jogadores no ranking</small>
-    <strong id="totalJogadores">0</strong>
-    <small class="muted">Perfis fictícios</small>
-  </div>
-</section>
+    <section class="section" id="jogos">
+      <div class="section-heading">
+        <div><span class="eyebrow">DESCUBRA SUA PRÓXIMA AVENTURA</span><h2>Catálogo de jogos</h2><p>Explore as categorias disponíveis na plataforma.</p></div>
+      </div>
+      <div class="catalog-controls">
+        <label class="search-box"><span>⌕</span><input id="gameSearch" type="search" placeholder="Buscar jogos..." aria-label="Buscar jogos"></label>
+        <select id="categoryFilter" aria-label="Filtrar categoria">
+          <option value="all">Todas as categorias</option>
+          <option>Aventura</option><option>Corrida</option><option>Estratégia</option>
+          <option>Ação</option><option>Esportes</option><option>Casual</option>
+        </select>
+      </div>
+      <div class="games-grid" id="gamesGrid">
+        <div class="empty-state">Carregando catálogo...</div>
+      </div>
+      <p class="microcopy">Os títulos desta versão são demonstrativos. A listagem não significa que os jogos estejam hospedados ou disponíveis para execução.</p>
+    </section>
 
-<h2 class="section-title">🏆 Ranking dos melhores jogadores</h2>
-<p class="muted">
-  Classificação demonstrativa por horas jogadas. Os nomes e números
-  não representam usuários reais.
-</p>
+    <section class="section two-column" id="ranking">
+      <div class="panel">
+        <div class="section-heading compact"><div><span class="eyebrow">COMPETIÇÃO</span><h2>Ranking da comunidade</h2><p>Pontuações registradas nesta versão.</p></div></div>
+        <div id="leaderboard" class="leaderboard"><div class="empty-state">Carregando ranking...</div></div>
+      </div>
+      <div class="panel profile-panel">
+        <span class="eyebrow">SUA JORNADA</span>
+        <h2 id="welcomeTitle">Seu próximo nível começa aqui.</h2>
+        <p id="welcomeText">Crie seu perfil para guardar pontuações e acompanhar seus registros.</p>
+        <div class="profile-actions" id="profileActions">
+          <button class="button button-primary" id="profileRegister">Criar perfil grátis</button>
+          <button class="button button-quiet" id="profileLogin">Já tenho conta</button>
+        </div>
+        <div id="myScores" class="my-scores"></div>
+      </div>
+    </section>
 
-<div class="toolbar">
-  <input id="buscarJogador" type="search" placeholder="Buscar jogador...">
-</div>
+    <section class="section partner-section" id="parcerias">
+      <div class="partner-copy">
+        <span class="eyebrow">CRESCENDO JUNTOS</span>
+        <h2>O futuro do gaming é feito em parceria.</h2>
+        <p>Estamos preparando a estrutura para iniciativas com marcas, criadores de conteúdo e empresas de tecnologia.</p>
+      </div>
+      <div class="partner-cards">
+        <article class="partner-card"><span>01 / MARCAS</span><h3>Publicidade</h3><p>Espaços planejados para futuras campanhas e divulgação identificada.</p></article>
+        <article class="partner-card"><span>02 / EMPRESAS</span><h3>Parcerias</h3><p>Uma porta de entrada para conversar sobre oportunidades comerciais.</p></article>
+        <article class="partner-card"><span>03 / PLANOS</span><h3>Ativa Plus</h3><p>Estrutura demonstrativa para futuros benefícios, ainda sem cobrança.</p></article>
+      </div>
+      <p class="microcopy">Nenhum plano, pagamento, anúncio ou parceria está ativo apenas por aparecer nesta página.</p>
+    </section>
 
-<div class="table-wrap">
-<table>
-<thead>
-<tr>
-  <th>Posição</th>
-  <th>Jogador</th>
-  <th>Jogo favorito</th>
-  <th>Horas jogadas</th>
-  <th>Bônus disponível</th>
-  <th>Missões concluídas</th>
-</tr>
-</thead>
-<tbody id="tabelaJogadores"></tbody>
-</table>
-</div>
+    <section class="section status-section">
+      <div><span class="eyebrow">TRANSPARÊNCIA</span><h2>Estado da plataforma</h2></div>
+      <div class="status-line"><span class="live-dot"></span><span id="systemStatus">Verificando servidor...</span></div>
+    </section>
+  </main>
 
-<h2 class="section-title" id="jogos">🔥 Jogos mais procurados</h2>
-<p class="muted">
-  Ordem de procura ilustrativa. A popularidade real será calculada
-  quando a plataforma tiver dados reais de pesquisa e acesso.
-</p>
+  <footer class="footer">
+    <a class="brand" href="#inicio"><span class="brand-icon">A</span><span>ATIVA<span class="brand-accent"> GAMING</span></span></a>
+    <p>Entretenimento, comunidade e tecnologia em evolução.</p>
+    <small>© <span id="year"></span> Ativa Gaming. Projeto em desenvolvimento.</small>
+  </footer>
 
-<div class="toolbar">
-  <input id="buscarJogo" type="search" placeholder="Buscar jogo...">
-</div>
+  <dialog id="authDialog" class="auth-dialog">
+    <form id="authForm" class="auth-form">
+      <button type="button" class="dialog-close" id="closeDialog" aria-label="Fechar">×</button>
+      <span class="brand-icon">A</span>
+      <span class="eyebrow" id="authEyebrow">BEM-VINDO À ARENA</span>
+      <h2 id="authTitle">Criar seu perfil</h2>
+      <p id="authDescription">Escolha seu nome de jogador e uma senha segura.</p>
+      <label>Nome de jogador<input id="username" name="username" minlength="3" maxlength="24" pattern="[A-Za-z0-9_]+" autocomplete="username" required></label>
+      <label>Senha<input id="password" name="password" type="password" minlength="10" maxlength="128" autocomplete="new-password" required></label>
+      <p class="microcopy">Use pelo menos 10 caracteres. Não reutilize a senha de outros serviços.</p>
+      <button class="button button-primary full-width" id="authSubmit" type="submit">Criar conta</button>
+      <button class="text-button" type="button" id="switchAuth">Já tem conta? Entrar</button>
+      <p class="form-message" id="authMessage" role="status"></p>
+    </form>
+  </dialog>
 
-<div class="game-grid" id="listaJogos"></div>
+  <dialog id="gameDialog" class="game-dialog">
+    <div class="game-dialog-content">
+      <button class="dialog-close" id="closeGameDialog" aria-label="Fechar">×</button>
+      <span class="eyebrow" id="gameCategory">CATEGORIA</span>
+      <h2 id="gameTitle">Detalhes do jogo</h2>
+      <p id="gameDescription"></p>
+      <div class="notice">Este item faz parte do catálogo demonstrativo. O jogo real ainda não está integrado à plataforma.</div>
+      <button class="button button-primary full-width" id="demoScoreButton">Registrar pontuação de teste</button>
+      <p class="microcopy">A pontuação de teste não representa resultado de um jogo real e não oferece prêmios.</p>
+      <p class="form-message" id="gameMessage" role="status"></p>
+    </div>
+  </dialog>
 
-<h2 class="section-title">🎁 Promoção de missões</h2>
-<section class="mission">
-  <h3>Complete antes do prazo e ganhe tempo extra</h3>
-  <p class="muted">
-    Exemplo da campanha proposta: uma missão com prazo de 20 minutos,
-    concluída antes do limite e validada pelo sistema, pode render
-    <strong>30 minutos extras</strong> de acesso.
-  </p>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-  <label for="prazo">Prazo da missão (minutos)</label><br>
-  <input id="prazo" type="number" min="1" value="20">
+  <script>
+    const $ = (selector) => document.querySelector(selector);
+    const state = { games: [], player: null, authMode: "register", selectedGame: null };
 
-  <br><br>
-  <label for="usado">Tempo utilizado (minutos)</label><br>
-  <input id="usado" type="number" min="1" value="15">
+    async function api(path, options = {}) {
+      const response = await fetch(path, {
+        credentials: "same-origin",
+        ...options,
+        headers: {
+          ...(options.body ? { "Content-Type": "application/json" } : {}),
+          ...(options.headers || {})
+        }
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.detail || "Não foi possível concluir a operação.");
+      return data;
+    }
 
-  <br>
-  <button class="button" onclick="calcularBonus()">Calcular bônus de exemplo</button>
-  <p id="resultado" class="green" aria-live="polite">
-    Exemplo: possível bônus de 30 minutos, sujeito à validação.
-  </p>
-</section>
+    function toast(message) {
+      $("#toast").textContent = message;
+      $("#toast").classList.add("show");
+      setTimeout(() => $("#toast").classList.remove("show"), 3000);
+    }
 
-<div class="notice">
-  <strong>Informação importante:</strong> esta página é um protótipo visual.
-  Os jogadores, horas, missões, procura e saldos são fictícios.
-  Não há cadastro real, gravação de dados, pagamento, execução de jogos
-  ou concessão automática de minutos. Para ativar o ranking e recompensas
-  reais, será necessário um backend com banco de dados, autenticação,
-  validação de missões e integração com parceiros autorizados.
-  O acesso a jogos comerciais por streaming depende de licenças,
-  permissões comerciais e infraestrutura compatível.
-</div>
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, char => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      }[char]));
+    }
 
-<footer>© Ativa Gaming · Protótipo · Projeto separado da Ativa Digital</footer>
-</div>
+    function openAuth(mode) {
+      state.authMode = mode;
+      const register = mode === "register";
+      $("#authEyebrow").textContent = register ? "BEM-VINDO À ARENA" : "BOM TER VOCÊ DE VOLTA";
+      $("#authTitle").textContent = register ? "Criar seu perfil" : "Entrar na Ativa";
+      $("#authDescription").textContent = register
+        ? "Escolha seu nome de jogador e uma senha segura."
+        : "Entre para acessar seu perfil e suas pontuações.";
+      $("#authSubmit").textContent = register ? "Criar conta" : "Entrar";
+      $("#password").value = "";
+      $("#password").autocomplete = register ? "new-password" : "current-password";
+      $("#switchAuth").textContent = register ? "Já tem conta? Entrar" : "Ainda não tem conta? Criar perfil";
+      $("#authMessage").textContent = "";
+      $("#authDialog").showModal();
+    }
 
-<script>
-const jogadores = [
-  {nome:"Player Alpha", jogo:"GTA V", horas:126, bonus:90, missoes:18},
-  {nome:"Ninja BR", jogo:"Call of Duty", horas:104, bonus:60, missoes:15},
-  {nome:"Lenda FC", jogo:"EA SPORTS FC", horas:89, bonus:120, missoes:21},
-  {nome:"Ghost Pro", jogo:"Ghost Recon", horas:73, bonus:30, missoes:9},
-  {nome:"Battle Master", jogo:"Battlefield", horas:61, bonus:45, missoes:11}
-];
+    function renderGames() {
+      const query = $("#gameSearch").value.trim().toLowerCase();
+      const category = $("#categoryFilter").value;
+      const games = state.games.filter(game =>
+        (category === "all" || game.category === category) &&
+        (game.name.toLowerCase().includes(query) ||
+         game.description.toLowerCase().includes(query) ||
+         game.category.toLowerCase().includes(query))
+      );
 
-const jogos = [
-  {nome:"Grand Theft Auto V", icone:"🚘", tipo:"Ação e mundo aberto", buscas:980, aviso:"⚠️ Execução local exige PC gamer ou notebook compatível. Confira os requisitos oficiais.", bonus:"Missões elegíveis podem render minutos extras após validação."},
-  {nome:"EA SPORTS FC", icone:"⚽", tipo:"Esportes", buscas:870, aviso:"ℹ️ Requisitos variam conforme a versão. Verifique a compatibilidade oficial.", bonus:"Campanhas de desafios esportivos poderão oferecer minutos extras."},
-  {nome:"Call of Duty", icone:"🎯", tipo:"Tiro e combate", buscas:790, aviso:"⚠️ Algumas versões exigem bastante armazenamento e hardware. Confira os requisitos oficiais.", bonus:"Desafios de campanha poderão oferecer recompensas em tempo."},
-  {nome:"Battlefield", icone:"💥", tipo:"Tiro e combate", buscas:640, aviso:"ℹ️ Confira os requisitos da versão. Tamanho do download não determina sozinho o hardware necessário.", bonus:"Objetivos elegíveis poderão render bônus de tempo."},
-  {nome:"Ghost Recon", icone:"🪖", tipo:"Tático", buscas:510, aviso:"ℹ️ Requisitos dependem da versão e da modalidade de acesso.", bonus:"Missões táticas elegíveis poderão oferecer minutos extras."},
-  {nome:"Grand Theft Auto VI", icone:"🌆", tipo:"Ação e mundo aberto", buscas:490, aviso:"⚠️ Confirme a versão para PC, a disponibilidade e os requisitos oficiais antes de anunciar acesso.", bonus:"Campanhas futuras dependem de disponibilidade e suporte autorizado."}
-];
+      $("#gameCount").textContent = state.games.length;
+      $("#gamesGrid").innerHTML = games.length ? games.map((game, index) => `
+        <article class="game-card">
+          <div class="game-art art-${index % 6}">
+            <span class="game-number">${String(index + 1).padStart(2, "0")}</span>
+            <span class="game-symbol">${["✧","➤","◈","✦","◎","◇"][index % 6]}</span>
+            <span class="game-label">ATIVA / GAME</span>
+          </div>
+          <div class="game-info">
+            <span class="category-label">${escapeHTML(game.category)}</span>
+            <h3>${escapeHTML(game.name)}</h3>
+            <p>${escapeHTML(game.description)}</p>
+            <button class="button button-quiet game-open" data-game="${escapeHTML(game.id)}">Ver detalhes ↗</button>
+          </div>
+        </article>`).join("") : '<div class="empty-state">Nenhum jogo encontrado. Tente outra busca.</div>';
 
-function renderJogadores(filtro="") {
-  const tbody = document.getElementById("tabelaJogadores");
-  const lista = jogadores
-    .filter(j => (j.nome + " " + j.jogo).toLowerCase().includes(filtro.toLowerCase()))
-    .sort((a,b) => b.horas-a.horas);
+      document.querySelectorAll("[data-game]").forEach(button => {
+        button.addEventListener("click", () => showGame(button.dataset.game));
+      });
+    }
 
-  tbody.innerHTML = lista.map((j,i) => `
-    <tr>
-      <td class="rank">${i===0?"🥇":i===1?"🥈":i===2?"🥉":i+1}</td>
-      <td>${j.nome}</td>
-      <td>${j.jogo}</td>
-      <td>${j.horas} h</td>
-      <td class="bonus">${j.bonus} min</td>
-      <td>${j.missoes}</td>
-    </tr>
-  `).join("");
+    async function showGame(id) {
+      const game = state.games.find(item => item.id === id);
+      if (!game) return;
+      state.selectedGame = game;
+      $("#gameCategory").textContent = game.category.toUpperCase();
+      $("#gameTitle").textContent = game.name;
+      $("#gameDescription").textContent = game.description;
+      $("#gameMessage").textContent = "";
+      $("#gameDialog").showModal();
+    }
 
-  document.getElementById("totalJogadores").textContent = jogadores.length;
-  document.getElementById("totalHoras").textContent =
-    jogadores.reduce((s,j)=>s+j.horas,0) + " h";
-  document.getElementById("totalBonus").textContent =
-    jogadores.reduce((s,j)=>s+j.bonus,0) + " min";
-}
+    async function refreshPlayer() {
+      const data = await api("/api/me");
+      state.player = data.authenticated ? data.player : null;
+      renderPlayer();
+      await refreshMyScores();
+    }
 
-function renderJogos(filtro="") {
-  const lista = jogos
-    .filter(j => (j.nome+" "+j.tipo).toLowerCase().includes(filtro.toLowerCase()))
-    .sort((a,b)=>b.buscas-a.buscas);
+    function renderPlayer() {
+      if (state.player) {
+        $("#accountActions").innerHTML = `
+          <span class="player-chip">♙ ${escapeHTML(state.player.username)}</span>
+          <button class="button button-quiet" id="logoutButton">Sair</button>`;
+        $("#logoutButton").addEventListener("click", logout);
+        $("#profileStat").textContent = state.player.username;
+        $("#profileSub").textContent = "Perfil conectado";
+        $("#welcomeTitle").textContent = `Bem-vindo, ${state.player.username}!`;
+        $("#welcomeText").textContent = "Suas pontuações salvas aparecem aqui.";
+        $("#profileActions").innerHTML = '<button class="button button-quiet" id="logoutProfile">Sair da conta</button>';
+        $("#logoutProfile").addEventListener("click", logout);
+      } else {
+        $("#accountActions").innerHTML = '<button class="button button-quiet" id="openLogin">Entrar</button><button class="button button-primary" id="openRegister">Criar conta</button>';
+        $("#openLogin").addEventListener("click", () => openAuth("login"));
+        $("#openRegister").addEventListener("click", () => openAuth("register"));
+        $("#profileStat").textContent = "Visitante";
+        $("#profileSub").textContent = "Entre para salvar resultados";
+        $("#welcomeTitle").textContent = "Seu próximo nível começa aqui.";
+        $("#welcomeText").textContent = "Crie seu perfil para guardar pontuações e acompanhar seus registros.";
+        $("#profileActions").innerHTML = '<button class="button button-primary" id="profileRegister">Criar perfil grátis</button><button class="button button-quiet" id="profileLogin">Já tenho conta</button>';
+        $("#profileRegister").addEventListener("click", () => openAuth("register"));
+        $("#profileLogin").addEventListener("click", () => openAuth("login"));
+      }
+    }
 
-  document.getElementById("listaJogos").innerHTML = lista.map(j => `
-    <article class="card">
-      <div class="game-icon">${j.icone}</div>
-      <span class="pill">${j.tipo}</span>
-      <h3>${j.nome}</h3>
-      <p>Índice de procura demonstrativo: ${j.buscas}</p>
-      <p class="green">🎁 ${j.bonus}</p>
-      <p>${j.aviso}</p>
-    </article>
-  `).join("");
-}
+    async function refreshMyScores() {
+      if (!state.player) {
+        $("#scoreCount").textContent = "0";
+        $("#myScores").innerHTML = "";
+        return;
+      }
+      try {
+        const data = await api("/api/scores/me");
+        $("#scoreCount").textContent = data.items.length;
+        $("#myScores").innerHTML = data.items.length
+          ? `<h3>Seus últimos registros</h3>${data.items.slice(0, 5).map(score =>
+              `<div class="score-row"><span>${escapeHTML(score.game_id)}</span><strong>${score.points} pts</strong></div>`
+            ).join("")}`
+          : '<p class="microcopy">Você ainda não tem pontuações registradas.</p>';
+      } catch {
+        $("#myScores").textContent = "Entre novamente para consultar suas pontuações.";
+      }
+    }
 
-function calcularBonus() {
-  const prazo = Number(document.getElementById("prazo").value);
-  const usado = Number(document.getElementById("usado").value);
-  const resultado = document.getElementById("resultado");
+    async function refreshLeaderboard() {
+      const data = await api("/api/leaderboard");
+      $("#leaderboard").innerHTML = data.items.length ? data.items.map((player, index) => `
+        <div class="leader-row">
+          <span class="leader-rank">${String(index + 1).padStart(2, "0")}</span>
+          <span class="leader-name">${escapeHTML(player.username)}</span>
+          <strong>${Number(player.points).toLocaleString("pt-BR")} pts</strong>
+        </div>`).join("") : '<div class="empty-state">O ranking ainda está vazio. Os primeiros resultados aparecerão aqui.</div>';
+    }
 
-  if (!Number.isFinite(prazo) || !Number.isFinite(usado) ||
-      prazo < 1 || usado < 1 || usado > prazo) {
-    resultado.textContent = "Informe tempos válidos e um tempo utilizado menor ou igual ao prazo.";
-    return;
-  }
+    async function refreshStatus() {
+      try {
+        const data = await api("/api/status");
+        $("#systemStatus").textContent = `Servidor ${data.status} · Contas ${data.accounts} · Pagamentos não configurados`;
+      } catch {
+        $("#systemStatus").textContent = "Não foi possível consultar o servidor.";
+      }
+    }
 
-  resultado.textContent = usado < prazo
-    ? `Exemplo: conclusão ${prazo-usado} minuto(s) antes do prazo. Bônus proposto: 30 minutos extras, sujeito às regras e validação.`
-    : "Exemplo: missão concluída no limite. Esta proposta não concede bônus por conclusão antecipada.";
-}
+    async function logout() {
+      try {
+        await api("/api/logout", { method: "POST" });
+        state.player = null;
+        renderPlayer();
+        await refreshMyScores();
+        toast("Você saiu da sua conta.");
+      } catch (error) {
+        toast(error.message);
+      }
+    }
 
-function irPara(id) {
-  document.getElementById(id).scrollIntoView({behavior:"smooth"});
-}
+    $("#authForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      const button = $("#authSubmit");
+      button.disabled = true;
+      $("#authMessage").textContent = "Aguarde...";
+      try {
+        const path = state.authMode === "register" ? "/api/register" : "/api/login";
+        await api(path, {
+          method: "POST",
+          body: JSON.stringify({
+            username: $("#username").value.trim(),
+            password: $("#password").value
+          })
+        });
+        $("#authDialog").close();
+        await refreshPlayer();
+        await refreshLeaderboard();
+        toast(state.authMode === "register" ? "Perfil criado com sucesso!" : "Login realizado!");
+      } catch (error) {
+        $("#authMessage").textContent = error.message;
+      } finally {
+        button.disabled = false;
+      }
+    });
 
-document.getElementById("buscarJogador").addEventListener("input", e => {
-  renderJogadores(e.target.value);
-});
-document.getElementById("buscarJogo").addEventListener("input", e => {
-  renderJogos(e.target.value);
-});
+    $("#switchAuth").addEventListener("click", () => {
+      openAuth(state.authMode === "register" ? "login" : "register");
+    });
+    $("#closeDialog").addEventListener("click", () => $("#authDialog").close());
+    $("#closeGameDialog").addEventListener("click", () => $("#gameDialog").close());
+    $("#openLogin").addEventListener("click", () => openAuth("login"));
+    $("#openRegister").addEventListener("click", () => openAuth("register"));
+    $("#heroRegister").addEventListener("click", () => openAuth("register"));
+    $("#gameSearch").addEventListener("input", renderGames);
+    $("#categoryFilter").addEventListener("change", renderGames);
+    $("#menuToggle").addEventListener("click", () => $("#mainNav").classList.toggle("nav-open"));
+    document.querySelectorAll("#mainNav a").forEach(link => link.addEventListener("click", () => $("#mainNav").classList.remove("nav-open")));
 
-document.getElementById("totalJogos").textContent = jogos.length;
-renderJogadores();
-renderJogos();
-</script>
+    $("#demoScoreButton").addEventListener("click", async () => {
+      $("#gameMessage").textContent = "";
+      if (!state.player) {
+        $("#gameDialog").close();
+        openAuth("login");
+        $("#authMessage").textContent = "Entre para registrar uma pontuação de teste.";
+        return;
+      }
+      try {
+        const points = Math.floor(Math.random() * 900) + 100;
+        await api("/api/scores", {
+          method: "POST",
+          body: JSON.stringify({ game_id: state.selectedGame.id, points })
+        });
+        $("#gameMessage").textContent = `Pontuação demonstrativa de ${points} pontos salva.`;
+        await refreshMyScores();
+        await refreshLeaderboard();
+      } catch (error) {
+        $("#gameMessage").textContent = error.message;
+      }
+    });
+
+    async function start() {
+      $("#year").textContent = new Date().getFullYear();
+      try {
+        const data = await api("/api/games");
+        state.games = data.items;
+        renderGames();
+        await refreshPlayer();
+        await refreshLeaderboard();
+        await refreshStatus();
+      } catch {
+        $("#gamesGrid").innerHTML = '<div class="empty-state">Não foi possível carregar os dados. Atualize a página em instantes.</div>';
+        $("#systemStatus").textContent = "Servidor indisponível.";
+      }
+    }
+
+    start();
+  </script>
 </body>
 </html>
-
