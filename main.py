@@ -2,6 +2,7 @@
 import hashlib
 import hmac
 import os
+import re
 import secrets
 import sqlite3
 from pathlib import Path
@@ -14,15 +15,26 @@ from fastapi import FastAPI, HTTPException, Request, Response
 from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from itsdangerous import URLSafeTimedSerializer, BadSignature
+from authlib.integrations.starlette_client import OAuth
+from starlette.middleware.sessions import SessionMiddleware
 from pydantic import BaseModel, Field
+
 
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
 SQLITE_PATH = Path(
     os.environ.get("DATABASE_PATH", str(BASE_DIR / "ativa_gaming.db"))
 )
+
 DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
 SESSION_SECRET = os.environ.get("SESSION_SECRET", "").strip()
+
+GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "").strip()
+GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "").strip()
+GOOGLE_REDIRECT_URI = os.environ.get(
+    "GOOGLE_REDIRECT_URI",
+    "https://ativa-gaming.onrender.com/auth/google/callback",
+).strip()
 
 if not SESSION_SECRET:
     raise RuntimeError(
@@ -34,40 +46,87 @@ if DATABASE_URL.startswith("postgres://"):
 
 COOKIE_NAME = "ativa_session"
 COOKIE_SECURE = os.environ.get("COOKIE_SECURE", "true").lower() == "true"
+
 serializer = URLSafeTimedSerializer(
-    SESSION_SECRET, salt="ativa-gaming-session"
+    SESSION_SECRET,
+    salt="ativa-gaming-session",
 )
 
 app = FastAPI(
     title="Ativa Gaming",
     description="Plataforma de jogos e estatísticas.",
-    version="1.1.0",
+    version="1.2.0",
 )
-app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+app.add_middleware(
+    SessionMiddleware,
+    secret_key=SESSION_SECRET,
+    same_site="lax",
+    https_only=COOKIE_SECURE,
+)
+
+oauth = OAuth()
+
+if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET:
+    oauth.register(
+        name="google",
+        client_id=GOOGLE_CLIENT_ID,
+        client_secret=GOOGLE_CLIENT_SECRET,
+        server_metadata_url=(
+            "https://accounts.google.com/.well-known/openid-configuration"
+        ),
+        client_kwargs={"scope": "openid email profile"},
+    )
+
+app.mount(
+    "/static",
+    StaticFiles(directory=str(STATIC_DIR)),
+    name="static",
+)
 
 GAMES = [
-    {"id": "aventura", "name": "Mundos de Aventura",
-     "category": "Aventura",
-     "description": "Explore mundos e descubra novas histórias.",
-     "status": "catalog"},
-    {"id": "corrida", "name": "Velocidade Extrema",
-     "category": "Corrida",
-     "description": "Conheça experiências de corrida.",
-     "status": "catalog"},
-    {"id": "estrategia", "name": "Mestres da Estratégia",
-     "category": "Estratégia",
-     "description": "Planeje movimentos e teste suas habilidades.",
-     "status": "catalog"},
-    {"id": "acao", "name": "Zona de Ação", "category": "Ação",
-     "description": "Explore jogos cheios de desafios.",
-     "status": "catalog"},
-    {"id": "esportes", "name": "Arena Esportiva",
-     "category": "Esportes",
-     "description": "Descubra experiências esportivas.",
-     "status": "catalog"},
-    {"id": "casual", "name": "Diversão Casual", "category": "Casual",
-     "description": "Jogos rápidos para momentos de lazer.",
-     "status": "catalog"},
+    {
+        "id": "aventura",
+        "name": "Mundos de Aventura",
+        "category": "Aventura",
+        "description": "Explore mundos e descubra novas histórias.",
+        "status": "catalog",
+    },
+    {
+        "id": "corrida",
+        "name": "Velocidade Extrema",
+        "category": "Corrida",
+        "description": "Conheça experiências de corrida.",
+        "status": "catalog",
+    },
+    {
+        "id": "estrategia",
+        "name": "Mestres da Estratégia",
+        "category": "Estratégia",
+        "description": "Planeje movimentos e teste suas habilidades.",
+        "status": "catalog",
+    },
+    {
+        "id": "acao",
+        "name": "Zona de Ação",
+        "category": "Ação",
+        "description": "Explore jogos cheios de desafios.",
+        "status": "catalog",
+    },
+    {
+        "id": "esportes",
+        "name": "Arena Esportiva",
+        "category": "Esportes",
+        "description": "Descubra experiências esportivas.",
+        "status": "catalog",
+    },
+    {
+        "id": "casual",
+        "name": "Diversão Casual",
+        "category": "Casual",
+        "description": "Jogos rápidos para momentos de lazer.",
+        "status": "catalog",
+    },
 ]
 
 
@@ -79,7 +138,10 @@ def db():
             "DATABASE_URL não configurada no ambiente do serviço."
         )
 
-    connection = psycopg.connect(DATABASE_URL, row_factory=dict_row)
+    connection = psycopg.connect(
+        DATABASE_URL,
+        row_factory=dict_row,
+    )
     try:
         yield connection
         connection.commit()
@@ -91,6 +153,7 @@ def db():
 
 
 def init_db():
+    """Cria as tabelas e atualiza o esquema sem apagar os jogadores."""
     with db() as connection:
         connection.execute("""
             CREATE TABLE IF NOT EXISTS players (
@@ -100,10 +163,34 @@ def init_db():
                 created_at TEXT NOT NULL
             )
         """)
+
+        connection.execute("""
+            ALTER TABLE players
+            ADD COLUMN IF NOT EXISTS google_sub TEXT
+        """)
+
+        connection.execute("""
+            ALTER TABLE players
+            ADD COLUMN IF NOT EXISTS email TEXT
+        """)
+
         connection.execute("""
             CREATE UNIQUE INDEX IF NOT EXISTS players_username_lower_idx
             ON players (LOWER(username))
         """)
+
+        connection.execute("""
+            CREATE UNIQUE INDEX IF NOT EXISTS players_google_sub_idx
+            ON players (google_sub)
+            WHERE google_sub IS NOT NULL
+        """)
+
+        connection.execute("""
+            CREATE UNIQUE INDEX IF NOT EXISTS players_email_lower_idx
+            ON players (LOWER(email))
+            WHERE email IS NOT NULL
+        """)
+
         connection.execute("""
             CREATE TABLE IF NOT EXISTS scores (
                 id BIGINT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
@@ -118,7 +205,7 @@ def init_db():
 def migrate_sqlite_if_present():
     """
     Copia jogadores e pontuações do SQLite local, se ele existir.
-    A cópia é idempotente para IDs já existentes no PostgreSQL.
+    Não substitui registros já existentes no PostgreSQL.
     """
     if not SQLITE_PATH.exists():
         print("Migração SQLite: arquivo antigo não encontrado; ignorada.")
@@ -126,9 +213,12 @@ def migrate_sqlite_if_present():
 
     try:
         source = sqlite3.connect(
-            f"file:{SQLITE_PATH.resolve()}?mode=ro", uri=True, timeout=10
+            f"file:{SQLITE_PATH.resolve()}?mode=ro",
+            uri=True,
+            timeout=10,
         )
         source.row_factory = sqlite3.Row
+
         try:
             tables = {
                 row["name"]
@@ -136,6 +226,7 @@ def migrate_sqlite_if_present():
                     "SELECT name FROM sqlite_master WHERE type='table'"
                 ).fetchall()
             }
+
             if not {"players", "scores"}.issubset(tables):
                 print("Migração SQLite: tabelas antigas não encontradas.")
                 return
@@ -143,6 +234,7 @@ def migrate_sqlite_if_present():
             players = source.execute(
                 "SELECT id, username, password_hash, created_at FROM players"
             ).fetchall()
+
             scores = source.execute(
                 "SELECT id, player_id, game_id, points, created_at FROM scores"
             ).fetchall()
@@ -152,49 +244,39 @@ def migrate_sqlite_if_present():
         with db() as connection:
             for player in players:
                 connection.execute("""
-                    INSERT INTO players (id, username, password_hash, created_at)
+                    INSERT INTO players
+                        (id, username, password_hash, created_at)
                     VALUES (%s, %s, %s, %s)
                     ON CONFLICT DO NOTHING
                 """, (
-                    player["id"], player["username"],
-                    player["password_hash"], player["created_at"]
+                    player["id"],
+                    player["username"],
+                    player["password_hash"],
+                    player["created_at"],
                 ))
 
             for score in scores:
                 connection.execute("""
-                    INSERT INTO scores (id, player_id, game_id, points, created_at)
+                    INSERT INTO scores
+                        (id, player_id, game_id, points, created_at)
                     VALUES (%s, %s, %s, %s, %s)
                     ON CONFLICT DO NOTHING
                 """, (
-                    score["id"], score["player_id"], score["game_id"],
-                    score["points"], score["created_at"]
+                    score["id"],
+                    score["player_id"],
+                    score["game_id"],
+                    score["points"],
+                    score["created_at"],
                 ))
 
-            # Ajusta os próximos IDs para evitar colisões após a migração.
-            for table in ("players", "scores"):
-                connection.execute("""
-                    SELECT setval(
-                        pg_get_serial_sequence(%s, 'id'),
-                        GREATEST(COALESCE((SELECT MAX(id) FROM
-                            (SELECT id FROM players WHERE %s = 'players'
-                             UNION ALL
-                             SELECT id FROM scores WHERE %s = 'scores') AS ids
-                        ), 1), 1),
-                        CASE WHEN EXISTS (
-                            SELECT 1 FROM players WHERE %s = 'players'
-                            UNION ALL
-                            SELECT 1 FROM scores WHERE %s = 'scores'
-                        ) THEN TRUE ELSE FALSE END
-                    )
-                """, (table, table, table, table, table))
-
         print(
-            f"Migração SQLite concluída: "
-            f"{len(players)} jogadores e {len(scores)} pontuações lidos."
+            f"Migração SQLite concluída: {len(players)} jogadores e "
+            f"{len(scores)} pontuações lidos."
         )
     except Exception as exc:
-        # Falha visível no log: não fingir que os dados foram migrados.
-        print(f"ERRO na migração SQLite: {type(exc).__name__}: {exc}")
+        print(
+            f"ERRO na migração SQLite: {type(exc).__name__}: {exc}"
+        )
         raise
 
 
@@ -209,7 +291,10 @@ def now_utc():
 def hash_password(password: str, salt: bytes | None = None) -> str:
     salt = salt or secrets.token_bytes(16)
     derived = hashlib.pbkdf2_hmac(
-        "sha256", password.encode("utf-8"), salt, 600_000
+        "sha256",
+        password.encode("utf-8"),
+        salt,
+        600_000,
     )
     return f"{salt.hex()}:{derived.hex()}"
 
@@ -218,9 +303,25 @@ def verify_password(password: str, stored: str) -> bool:
     try:
         salt_hex, hash_hex = stored.split(":", 1)
         candidate = hash_password(password, bytes.fromhex(salt_hex))
-        return hmac.compare_digest(candidate.split(":", 1)[1], hash_hex)
-    except (ValueError, TypeError):
+        return hmac.compare_digest(
+            candidate.split(":", 1)[1],
+            hash_hex,
+        )
+    except (ValueError, TypeError, AttributeError):
         return False
+
+
+def set_player_cookie(response: Response, player_id: int):
+    token = serializer.dumps({"player_id": player_id})
+    response.set_cookie(
+        COOKIE_NAME,
+        token,
+        httponly=True,
+        secure=COOKIE_SECURE,
+        samesite="lax",
+        max_age=60 * 60 * 24 * 7,
+        path="/",
+    )
 
 
 def current_player(request: Request):
@@ -236,7 +337,11 @@ def current_player(request: Request):
 
     with db() as connection:
         row = connection.execute(
-            "SELECT id, username, created_at FROM players WHERE id = %s",
+            """
+            SELECT id, username, created_at
+            FROM players
+            WHERE id = %s
+            """,
             (player_id,),
         ).fetchone()
 
@@ -247,14 +352,123 @@ def require_player(request: Request):
     player = current_player(request)
     if not player:
         raise HTTPException(
-            status_code=401, detail="Faça login para continuar."
+            status_code=401,
+            detail="Faça login para continuar.",
         )
     return player
 
 
+def unique_google_username(email: str) -> str:
+    local_part = email.split("@", 1)[0].lower()
+    base = re.sub(r"[^a-z0-9_]", "_", local_part).strip("_")
+    base = (base or "google_user")[:14]
+
+    with db() as connection:
+        for _ in range(10):
+            candidate = f"{base}_{secrets.token_hex(4)}"[:24]
+            exists = connection.execute(
+                """
+                SELECT 1 FROM players
+                WHERE LOWER(username) = LOWER(%s)
+                """,
+                (candidate,),
+            ).fetchone()
+
+            if not exists:
+                return candidate
+
+    raise HTTPException(
+        status_code=500,
+        detail="Não foi possível criar o nome de usuário.",
+    )
+
+
+def get_or_create_google_player(sub: str, email: str) -> int:
+    email = email.strip().lower()
+
+    with db() as connection:
+        player = connection.execute(
+            """
+            SELECT id, google_sub
+            FROM players
+            WHERE google_sub = %s
+            """,
+            (sub,),
+        ).fetchone()
+
+        if player:
+            return player["id"]
+
+        existing_email = connection.execute(
+            """
+            SELECT id, google_sub
+            FROM players
+            WHERE LOWER(email) = LOWER(%s)
+            """,
+            (email,),
+        ).fetchone()
+
+        if existing_email:
+            if existing_email["google_sub"] is not None:
+                raise HTTPException(
+                    status_code=409,
+                    detail=(
+                        "Este e-mail já está vinculado a outra conta Google."
+                    ),
+                )
+
+            connection.execute(
+                """
+                UPDATE players
+                SET google_sub = %s
+                WHERE id = %s
+                """,
+                (sub, existing_email["id"]),
+            )
+            return existing_email["id"]
+
+    username = unique_google_username(email)
+    random_password = secrets.token_urlsafe(48)
+
+    try:
+        with db() as connection:
+            row = connection.execute(
+                """
+                INSERT INTO players
+                    (username, password_hash, created_at, google_sub, email)
+                VALUES (%s, %s, %s, %s, %s)
+                RETURNING id
+                """,
+                (
+                    username,
+                    hash_password(random_password),
+                    now_utc(),
+                    sub,
+                    email,
+                ),
+            ).fetchone()
+
+            return row["id"]
+
+    except psycopg.errors.UniqueViolation:
+        # Pode ocorrer se duas tentativas criarem a mesma identidade
+        # quase simultaneamente. Verifica novamente o identificador Google.
+        with db() as connection:
+            player = connection.execute(
+                "SELECT id FROM players WHERE google_sub = %s",
+                (sub,),
+            ).fetchone()
+
+        if player:
+            return player["id"]
+        raise
+
+
 class RegisterInput(BaseModel):
     username: str = Field(
-        min_length=3, max_length=24, pattern=r"^[a-zA-Z0-9_]+$"
+        min_length=3,
+        max_length=24,
+        pattern=r"^[a-zA-Z0-9_]+$",
     )
     password: str = Field(min_length=10, max_length=128)
 
@@ -286,10 +500,67 @@ def status():
         "status": "online",
         "accounts": "enabled",
         "database": "postgresql",
+        "google_login": (
+            "configured"
+            if GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET
+            else "not_configured"
+        ),
         "catalog": "demo_catalog",
         "payments": "not_configured",
         "real_rewards": False,
     }
+
+
+@app.get("/login/google", include_in_schema=False)
+async def login_google(request: Request):
+    if not GOOGLE_CLIENT_ID or not GOOGLE_CLIENT_SECRET:
+        raise HTTPException(
+            status_code=503,
+            detail="O login Google ainda não está configurado.",
+        )
+
+    return await oauth.google.authorize_redirect(
+        request,
+        GOOGLE_REDIRECT_URI,
+    )
+
+
+@app.get("/auth/google/callback", include_in_schema=False)
+async def google_callback(request: Request):
+    try:
+        token = await oauth.google.authorize_access_token(request)
+        user = token.get("userinfo")
+
+        if not user:
+            user = await oauth.google.userinfo(token=token)
+
+        sub = user.get("sub")
+        email = user.get("email")
+        email_verified = user.get("email_verified", False)
+
+        if not sub or not email or email_verified is not True:
+            raise HTTPException(
+                status_code=400,
+                detail="O Google não confirmou uma identidade válida.",
+            )
+
+        player_id = get_or_create_google_player(sub, email)
+
+        response = RedirectResponse("/", status_code=303)
+        set_player_cookie(response, player_id)
+        return response
+
+    except HTTPException:
+        raise
+    except Exception:
+        # Não expõe tokens, credenciais ou detalhes internos no navegador.
+        raise HTTPException(
+            status_code=400,
+            detail=(
+                "Não foi possível concluir o login Google. "
+                "Confira a configuração OAuth e tente novamente."
+            ),
+        )
 
 
 @app.get("/api/games")
@@ -303,32 +574,39 @@ def register(data: RegisterInput, response: Response):
 
     if len(username) < 3:
         raise HTTPException(
-            status_code=400, detail="Nome de usuário muito curto."
+            status_code=400,
+            detail="Nome de usuário muito curto.",
         )
 
     try:
         with db() as connection:
             row = connection.execute(
                 """
-                INSERT INTO players (username, password_hash, created_at)
+                INSERT INTO players
+                    (username, password_hash, created_at)
                 VALUES (%s, %s, %s)
                 RETURNING id
                 """,
                 (username, hash_password(data.password), now_utc()),
             ).fetchone()
+
             player_id = row["id"]
+
     except psycopg.errors.UniqueViolation:
         raise HTTPException(
             status_code=409,
             detail="Esse nome de usuário já está sendo usado.",
         )
 
-    token = serializer.dumps({"player_id": player_id})
-    response.set_cookie(
-        COOKIE_NAME, token, httponly=True, secure=COOKIE_SECURE,
-        samesite="lax", max_age=60 * 60 * 24 * 7, path="/"
-    )
-    return {"ok": True, "player": {"id": player_id, "username": username}}
+    set_player_cookie(response, player_id)
+
+    return {
+        "ok": True,
+        "player": {
+            "id": player_id,
+            "username": username,
+        },
+    }
 
 
 @app.post("/api/login")
@@ -336,35 +614,41 @@ def login(data: LoginInput, response: Response):
     with db() as connection:
         player = connection.execute(
             """
-            SELECT id, username, password_hash FROM players
+            SELECT id, username, password_hash
+            FROM players
             WHERE LOWER(username) = LOWER(%s)
             """,
             (data.username.strip(),),
         ).fetchone()
 
     if not player or not verify_password(
-        data.password, player["password_hash"]
+        data.password,
+        player["password_hash"],
     ):
         raise HTTPException(
-            status_code=401, detail="Usuário ou senha incorretos."
+            status_code=401,
+            detail="Usuário ou senha incorretos.",
         )
 
-    token = serializer.dumps({"player_id": player["id"]})
-    response.set_cookie(
-        COOKIE_NAME, token, httponly=True, secure=COOKIE_SECURE,
-        samesite="lax", max_age=60 * 60 * 24 * 7, path="/"
-    )
+    set_player_cookie(response, player["id"])
+
     return {
         "ok": True,
-        "player": {"id": player["id"], "username": player["username"]}
+        "player": {
+            "id": player["id"],
+            "username": player["username"],
+        },
     }
 
 
 @app.post("/api/logout")
 def logout(response: Response):
     response.delete_cookie(
-        COOKIE_NAME, path="/", secure=COOKIE_SECURE,
-        httponly=True, samesite="lax"
+        COOKIE_NAME,
+        path="/",
+        secure=COOKIE_SECURE,
+        httponly=True,
+        samesite="lax",
     )
     return {"ok": True}
 
@@ -374,7 +658,11 @@ def me(request: Request):
     player = current_player(request)
     if not player:
         return {"authenticated": False}
-    return {"authenticated": True, "player": player}
+
+    return {
+        "authenticated": True,
+        "player": player,
+    }
 
 
 @app.post("/api/scores")
@@ -382,32 +670,48 @@ def save_score(data: ScoreInput, request: Request):
     player = require_player(request)
 
     if not any(game["id"] == data.game_id for game in GAMES):
-        raise HTTPException(status_code=400, detail="Jogo não encontrado.")
+        raise HTTPException(
+            status_code=400,
+            detail="Jogo não encontrado.",
+        )
 
-    # Pontuações enviadas pelo navegador ainda não têm proteção antifraude.
+    # Pontuações do navegador ainda não têm proteção antifraude.
     with db() as connection:
         connection.execute(
             """
-            INSERT INTO scores (player_id, game_id, points, created_at)
+            INSERT INTO scores
+                (player_id, game_id, points, created_at)
             VALUES (%s, %s, %s, %s)
             """,
-            (player["id"], data.game_id, data.points, now_utc()),
+            (
+                player["id"],
+                data.game_id,
+                data.points,
+                now_utc(),
+            ),
         )
 
-    return {"ok": True, "message": "Pontuação registrada."}
+    return {
+        "ok": True,
+        "message": "Pontuação registrada.",
+    }
 
 
 @app.get("/api/scores/me")
 def my_scores(request: Request):
     player = require_player(request)
+
     with db() as connection:
-        rows = connection.execute("""
+        rows = connection.execute(
+            """
             SELECT game_id, points, created_at
             FROM scores
             WHERE player_id = %s
             ORDER BY created_at DESC
             LIMIT 50
-        """, (player["id"],)).fetchall()
+            """,
+            (player["id"],),
+        ).fetchall()
 
     return {"items": [dict(row) for row in rows]}
 
@@ -434,10 +738,13 @@ def partnerships():
         "plans": [
             {"id": "free", "name": "Explorador", "price": None},
             {"id": "plus", "name": "Ativa Plus", "price": None},
-            {"id": "business", "name": "Parceiro Empresarial", "price": None},
+            {
+                "id": "business",
+                "name": "Parceiro Empresarial",
+                "price": None,
+            },
         ],
         "payments": "not_configured",
         "advertising": "not_configured",
         "note": "Planos demonstrativos; não há cobrança ativa.",
     }
-
