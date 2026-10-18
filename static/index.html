@@ -1,1 +1,327 @@
 
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080d1b">
+<title>Ativa Gaming | Painel de Jogadores</title>
+
+<style>
+:root {
+  --bg:#080d1b;
+  --panel:#111a2d;
+  --panel2:#192642;
+  --border:#2a3958;
+  --text:#f4f7ff;
+  --muted:#a7b4ce;
+  --blue:#6687ff;
+  --green:#45e0aa;
+  --gold:#ffd166;
+  --purple:#a58aff;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,Helvetica,sans-serif;
+}
+.container { max-width:1200px; margin:auto; padding:20px; }
+header {
+  display:flex; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; gap:15px; padding:12px 0 25px;
+}
+.brand { font-size:27px; font-weight:900; }
+.brand span { color:var(--blue); }
+.label {
+  display:inline-block; padding:6px 10px; border-radius:20px;
+  background:#17352f; color:var(--green); font-size:11px;
+  font-weight:bold; margin-top:7px;
+}
+.hero {
+  padding:27px; border-radius:20px; border:1px solid var(--border);
+  background:radial-gradient(ellipse at top right,#38316e,transparent 60%),
+             linear-gradient(135deg,#14213e,#101629);
+}
+.hero h1 { font-size:clamp(30px,6vw,46px); margin:0 0 12px; }
+p { line-height:1.6; }
+.muted { color:var(--muted); }
+.button {
+  border:0; border-radius:10px; padding:12px 16px;
+  background:var(--blue); color:white; font-weight:bold;
+  cursor:pointer; margin-top:8px;
+}
+.section-title { margin:30px 0 15px; font-size:21px; }
+.stats {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px; margin-top:18px;
+}
+.stat,.card {
+  min-width:0; background:var(--panel);
+  border:1px solid var(--border); border-radius:15px; padding:17px;
+}
+.stat small { color:var(--muted); display:block; }
+.stat strong { display:block; font-size:26px; margin-top:9px; overflow-wrap:anywhere; }
+.green { color:var(--green); }
+.gold { color:var(--gold); }
+.purple { color:var(--purple); }
+.toolbar { display:flex; gap:10px; flex-wrap:wrap; margin:15px 0; }
+input,select {
+  min-width:0; padding:12px; border:1px solid var(--border);
+  border-radius:10px; background:var(--panel); color:var(--text);
+}
+.toolbar input { flex:1; min-width:190px; }
+.table-wrap {
+  overflow-x:auto; border:1px solid var(--border);
+  border-radius:13px; background:var(--panel);
+}
+table { width:100%; min-width:670px; border-collapse:collapse; text-align:left; }
+th,td { padding:14px 12px; border-bottom:1px solid var(--border); font-size:13px; }
+th { background:var(--panel2); color:var(--muted); font-size:11px; text-transform:uppercase; }
+tbody tr:last-child td { border-bottom:0; }
+.rank { color:var(--gold); font-weight:bold; }
+.game-grid {
+  display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:13px;
+}
+.game-icon { font-size:32px; margin-bottom:10px; }
+.card h3 { margin:0 0 8px; }
+.card p { color:var(--muted); font-size:13px; }
+.pill {
+  display:inline-block; border-radius:20px; padding:6px 9px;
+  background:#202e49; font-size:11px;
+}
+.mission {
+  margin-top:15px; padding:15px; border:1px solid #484078;
+  border-radius:13px; background:#191b36;
+}
+.mission strong { color:var(--gold); }
+.notice {
+  margin-top:22px; border:1px solid var(--border);
+  border-radius:12px; padding:15px; color:var(--muted);
+  font-size:12px; line-height:1.7;
+}
+footer { padding:25px 0; text-align:center; color:var(--muted); font-size:12px; }
+
+@media(max-width:760px) {
+  .container { padding:14px; }
+  .stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .game-grid { grid-template-columns:1fr; }
+  .hero { padding:20px; }
+  .stat strong { font-size:22px; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<header>
+  <div>
+    <div class="brand">ATIVA <span>GAMING</span></div>
+    <div class="label">PAINEL DEMONSTRATIVO</div>
+  </div>
+  <div>🎮 Central do jogador</div>
+</header>
+
+<section class="hero">
+  <h1>Jogue mais.<br><span class="green">Conquiste recompensas.</span></h1>
+  <p class="muted">
+    Acompanhe os jogos em destaque, veja o ranking dos jogadores
+    e descubra a proposta de bônus por missões concluídas.
+  </p>
+  <button class="button" onclick="irPara('jogos')">Explorar jogos ↓</button>
+</section>
+
+<h2 class="section-title">📊 Resumo da plataforma</h2>
+<section class="stats">
+  <div class="stat">
+    <small>Jogos em destaque</small>
+    <strong id="totalJogos">6</strong>
+    <small class="green">Catálogo demonstrativo</small>
+  </div>
+  <div class="stat">
+    <small>Horas jogadas no ranking</small>
+    <strong id="totalHoras">0 h</strong>
+    <small class="muted">Dados de exemplo</small>
+  </div>
+  <div class="stat">
+    <small>Minutos bônus no ranking</small>
+    <strong id="totalBonus" class="green">0 min</strong>
+    <small class="muted">Saldo ilustrativo</small>
+  </div>
+  <div class="stat">
+    <small>Jogadores no ranking</small>
+    <strong id="totalJogadores">0</strong>
+    <small class="muted">Perfis fictícios</small>
+  </div>
+</section>
+
+<h2 class="section-title">🏆 Ranking dos melhores jogadores</h2>
+<p class="muted">
+  Classificação demonstrativa por horas jogadas. Os nomes e números
+  não representam usuários reais.
+</p>
+
+<div class="toolbar">
+  <input id="buscarJogador" type="search" placeholder="Buscar jogador...">
+</div>
+
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+  <th>Posição</th>
+  <th>Jogador</th>
+  <th>Jogo favorito</th>
+  <th>Horas jogadas</th>
+  <th>Bônus disponível</th>
+  <th>Missões concluídas</th>
+</tr>
+</thead>
+<tbody id="tabelaJogadores"></tbody>
+</table>
+</div>
+
+<h2 class="section-title" id="jogos">🔥 Jogos mais procurados</h2>
+<p class="muted">
+  Ordem de procura ilustrativa. A popularidade real será calculada
+  quando a plataforma tiver dados reais de pesquisa e acesso.
+</p>
+
+<div class="toolbar">
+  <input id="buscarJogo" type="search" placeholder="Buscar jogo...">
+</div>
+
+<div class="game-grid" id="listaJogos"></div>
+
+<h2 class="section-title">🎁 Promoção de missões</h2>
+<section class="mission">
+  <h3>Complete antes do prazo e ganhe tempo extra</h3>
+  <p class="muted">
+    Exemplo da campanha proposta: uma missão com prazo de 20 minutos,
+    concluída antes do limite e validada pelo sistema, pode render
+    <strong>30 minutos extras</strong> de acesso.
+  </p>
+
+  <label for="prazo">Prazo da missão (minutos)</label><br>
+  <input id="prazo" type="number" min="1" value="20">
+
+  <br><br>
+  <label for="usado">Tempo utilizado (minutos)</label><br>
+  <input id="usado" type="number" min="1" value="15">
+
+  <br>
+  <button class="button" onclick="calcularBonus()">Calcular bônus de exemplo</button>
+  <p id="resultado" class="green" aria-live="polite">
+    Exemplo: possível bônus de 30 minutos, sujeito à validação.
+  </p>
+</section>
+
+<div class="notice">
+  <strong>Informação importante:</strong> esta página é um protótipo visual.
+  Os jogadores, horas, missões, procura e saldos são fictícios.
+  Não há cadastro real, gravação de dados, pagamento, execução de jogos
+  ou concessão automática de minutos. Para ativar o ranking e recompensas
+  reais, será necessário um backend com banco de dados, autenticação,
+  validação de missões e integração com parceiros autorizados.
+  O acesso a jogos comerciais por streaming depende de licenças,
+  permissões comerciais e infraestrutura compatível.
+</div>
+
+<footer>© Ativa Gaming · Protótipo · Projeto separado da Ativa Digital</footer>
+</div>
+
+<script>
+const jogadores = [
+  {nome:"Player Alpha", jogo:"GTA V", horas:126, bonus:90, missoes:18},
+  {nome:"Ninja BR", jogo:"Call of Duty", horas:104, bonus:60, missoes:15},
+  {nome:"Lenda FC", jogo:"EA SPORTS FC", horas:89, bonus:120, missoes:21},
+  {nome:"Ghost Pro", jogo:"Ghost Recon", horas:73, bonus:30, missoes:9},
+  {nome:"Battle Master", jogo:"Battlefield", horas:61, bonus:45, missoes:11}
+];
+
+const jogos = [
+  {nome:"Grand Theft Auto V", icone:"🚘", tipo:"Ação e mundo aberto", buscas:980, aviso:"⚠️ Execução local exige PC gamer ou notebook compatível. Confira os requisitos oficiais.", bonus:"Missões elegíveis podem render minutos extras após validação."},
+  {nome:"EA SPORTS FC", icone:"⚽", tipo:"Esportes", buscas:870, aviso:"ℹ️ Requisitos variam conforme a versão. Verifique a compatibilidade oficial.", bonus:"Campanhas de desafios esportivos poderão oferecer minutos extras."},
+  {nome:"Call of Duty", icone:"🎯", tipo:"Tiro e combate", buscas:790, aviso:"⚠️ Algumas versões exigem bastante armazenamento e hardware. Confira os requisitos oficiais.", bonus:"Desafios de campanha poderão oferecer recompensas em tempo."},
+  {nome:"Battlefield", icone:"💥", tipo:"Tiro e combate", buscas:640, aviso:"ℹ️ Confira os requisitos da versão. Tamanho do download não determina sozinho o hardware necessário.", bonus:"Objetivos elegíveis poderão render bônus de tempo."},
+  {nome:"Ghost Recon", icone:"🪖", tipo:"Tático", buscas:510, aviso:"ℹ️ Requisitos dependem da versão e da modalidade de acesso.", bonus:"Missões táticas elegíveis poderão oferecer minutos extras."},
+  {nome:"Grand Theft Auto VI", icone:"🌆", tipo:"Ação e mundo aberto", buscas:490, aviso:"⚠️ Confirme a versão para PC, a disponibilidade e os requisitos oficiais antes de anunciar acesso.", bonus:"Campanhas futuras dependem de disponibilidade e suporte autorizado."}
+];
+
+function renderJogadores(filtro="") {
+  const tbody = document.getElementById("tabelaJogadores");
+  const lista = jogadores
+    .filter(j => (j.nome + " " + j.jogo).toLowerCase().includes(filtro.toLowerCase()))
+    .sort((a,b) => b.horas-a.horas);
+
+  tbody.innerHTML = lista.map((j,i) => `
+    <tr>
+      <td class="rank">${i===0?"🥇":i===1?"🥈":i===2?"🥉":i+1}</td>
+      <td>${j.nome}</td>
+      <td>${j.jogo}</td>
+      <td>${j.horas} h</td>
+      <td class="bonus">${j.bonus} min</td>
+      <td>${j.missoes}</td>
+    </tr>
+  `).join("");
+
+  document.getElementById("totalJogadores").textContent = jogadores.length;
+  document.getElementById("totalHoras").textContent =
+    jogadores.reduce((s,j)=>s+j.horas,0) + " h";
+  document.getElementById("totalBonus").textContent =
+    jogadores.reduce((s,j)=>s+j.bonus,0) + " min";
+}
+
+function renderJogos(filtro="") {
+  const lista = jogos
+    .filter(j => (j.nome+" "+j.tipo).toLowerCase().includes(filtro.toLowerCase()))
+    .sort((a,b)=>b.buscas-a.buscas);
+
+  document.getElementById("listaJogos").innerHTML = lista.map(j => `
+    <article class="card">
+      <div class="game-icon">${j.icone}</div>
+      <span class="pill">${j.tipo}</span>
+      <h3>${j.nome}</h3>
+      <p>Índice de procura demonstrativo: ${j.buscas}</p>
+      <p class="green">🎁 ${j.bonus}</p>
+      <p>${j.aviso}</p>
+    </article>
+  `).join("");
+}
+
+function calcularBonus() {
+  const prazo = Number(document.getElementById("prazo").value);
+  const usado = Number(document.getElementById("usado").value);
+  const resultado = document.getElementById("resultado");
+
+  if (!Number.isFinite(prazo) || !Number.isFinite(usado) ||
+      prazo < 1 || usado < 1 || usado > prazo) {
+    resultado.textContent = "Informe tempos válidos e um tempo utilizado menor ou igual ao prazo.";
+    return;
+  }
+
+  resultado.textContent = usado < prazo
+    ? `Exemplo: conclusão ${prazo-usado} minuto(s) antes do prazo. Bônus proposto: 30 minutos extras, sujeito às regras e validação.`
+    : "Exemplo: missão concluída no limite. Esta proposta não concede bônus por conclusão antecipada.";
+}
+
+function irPara(id) {
+  document.getElementById(id).scrollIntoView({behavior:"smooth"});
+}
+
+document.getElementById("buscarJogador").addEventListener("input", e => {
+  renderJogadores(e.target.value);
+});
+document.getElementById("buscarJogo").addEventListener("input", e => {
+  renderJogos(e.target.value);
+});
+
+document.getElementById("totalJogos").textContent = jogos.length;
+renderJogadores();
+renderJogos();
+</script>
+</body>
+</html>
+
