@@ -1,0 +1,323 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#080b16">
+<title>Ativa Strike | Gaming</title>
+<style>
+:root {
+  color-scheme: dark;
+  --cyan:#00f5ff;
+  --red:#ff3155;
+  --bg:#080b16;
+}
+* { box-sizing:border-box; }
+body {
+  margin:0;
+  padding:16px;
+  background:radial-gradient(ellipse at top,#18244a,#080b16 65%);
+  color:#f5f7ff;
+  font-family:system-ui,-apple-system,sans-serif;
+  min-height:100vh;
+}
+.app { max-width:650px; margin:auto; }
+header {
+  display:flex; justify-content:space-between;
+  align-items:center; margin-bottom:18px;
+}
+.logo { font-size:22px; font-weight:900; letter-spacing:1px; }
+.logo span { color:var(--cyan); }
+.pill {
+  border:1px solid #00f5ff55; color:var(--cyan);
+  border-radius:30px; padding:7px 11px; font-size:11px;
+}
+h1 { font-size:27px; margin:12px 0 4px; }
+.sub { color:#9ba8c8; font-size:13px; margin:0 0 18px; }
+.stats {
+  display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:8px; margin-bottom:12px;
+}
+.stat {
+  background:#11182b; border:1px solid #ffffff12;
+  border-radius:13px; padding:12px 5px; text-align:center;
+}
+.stat small { display:block; color:#9ba8c8; font-size:10px; }
+.stat strong { display:block; font-size:20px; margin-top:4px; }
+.arena {
+  position:relative; width:100%; height:clamp(320px,58vh,490px);
+  overflow:hidden; border:1px solid #00f5ff66;
+  border-radius:18px;
+  background:
+    linear-gradient(#00e5ff0b 1px,transparent 1px),
+    linear-gradient(90deg,#00e5ff0b 1px,transparent 1px),
+    radial-gradient(ellipse at center,#172b49,#080c1b 80%);
+  background-size:28px 28px,28px 28px,auto;
+  touch-action:manipulation; user-select:none;
+  box-shadow:0 0 28px #00d9ff13,inset 0 0 30px #00d9ff0b;
+}
+.arena:after {
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(transparent 50%,#00000012 50%);
+  background-size:100% 4px;
+}
+.hud {
+  position:absolute; z-index:2; top:12px; left:12px; right:12px;
+  display:flex; justify-content:space-between; font-size:10px;
+  color:#b4c9ec; pointer-events:none;
+}
+.target {
+  position:absolute; z-index:1; width:48px; height:48px;
+  border:3px solid var(--red); border-radius:50%;
+  background:radial-gradient(circle,#ff9ba9 0 9%,#ff3155 12% 24%,#5c102c 28% 55%,#ff315533 60%);
+  box-shadow:0 0 12px #ff3155, inset 0 0 8px #ff3155;
+  transform:translate(-50%,-50%);
+  animation:appear .12s ease-out;
+  cursor:crosshair;
+}
+.target:before,.target:after {
+  content:""; position:absolute; background:#ff6b80;
+}
+.target:before { width:2px; height:66px; left:50%; top:50%; transform:translate(-50%,-50%); opacity:.65; }
+.target:after { height:2px; width:66px; left:50%; top:50%; transform:translate(-50%,-50%); opacity:.65; }
+.target.hit { animation:pop .13s ease-out forwards; pointer-events:none; }
+@keyframes appear { from{scale:.3;opacity:.3} to{scale:1;opacity:1} }
+@keyframes pop { to{scale:1.8;opacity:0} }
+.overlay {
+  position:absolute; inset:0; z-index:4;
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column; text-align:center; padding:22px;
+  background:#070b16d9; backdrop-filter:blur(5px);
+}
+.overlay h2 { font-size:25px; margin:0 0 8px; }
+.overlay p { font-size:13px; color:#b4c0dc; line-height:1.6; }
+.primary,.secondary {
+  border:0; border-radius:12px; padding:15px 18px;
+  font-size:14px; font-weight:900; cursor:pointer;
+  touch-action:manipulation;
+}
+.primary { color:#031018; background:var(--cyan); box-shadow:0 0 20px #00f5ff35; }
+.secondary { color:#f5f7ff; background:#202b43; border:1px solid #ffffff19; }
+.controls {
+  display:grid; grid-template-columns:1fr 1.3fr; gap:10px; margin-top:12px;
+}
+.controls button { min-height:54px; }
+.ammo { margin-top:13px; }
+.ammo-label { display:flex; justify-content:space-between; color:#aebbd6; font-size:11px; }
+.bar { height:6px; border-radius:9px; background:#273047; margin-top:7px; overflow:hidden; }
+.bar div { height:100%; width:100%; background:var(--cyan); transition:width .12s; }
+.message { text-align:center; font-size:12px; color:#aab7d2; min-height:22px; margin:12px 0 0; }
+footer { text-align:center; font-size:10px; color:#687796; margin:18px 0 5px; }
+@media(max-width:370px) {
+  body { padding:10px; }
+  .stat strong { font-size:17px; }
+  .target { width:43px; height:43px; }
+}
+</style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <div class="logo">ATIVA <span>GAMING</span></div>
+    <div class="pill">● STRIKE ARENA</div>
+  </header>
+
+  <h1>Ativa Strike</h1>
+  <p class="sub">Mire rápido. Acerte os alvos. Domine a arena.</p>
+
+  <section class="stats">
+    <div class="stat"><small>PONTOS</small><strong id="score">0</strong></div>
+    <div class="stat"><small>TEMPO</small><strong id="time">30</strong></div>
+    <div class="stat"><small>MUNIÇÃO</small><strong id="ammo">12/12</strong></div>
+    <div class="stat"><small>ACERTOS</small><strong id="hits">0</strong></div>
+  </section>
+
+  <section class="arena" id="arena" aria-label="Arena de tiro">
+    <div class="hud">
+      <span>MISSÃO: ELIMINAR ALVOS</span>
+      <span id="combo">COMBO x0</span>
+    </div>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">PRONTO PARA O COMBATE?</h2>
+      <p id="overlayText">Você tem 30 segundos. Acerte os alvos vermelhos e faça a maior pontuação!</p>
+      <button class="primary" id="start">▶ INICIAR PARTIDA</button>
+    </div>
+  </section>
+
+  <div class="controls">
+    <button class="secondary" id="reload">↻ RECARREGAR</button>
+    <button class="primary" id="shoot">◎ ATIRAR</button>
+  </div>
+
+  <div class="ammo">
+    <div class="ammo-label"><span>CARREGADOR</span><span id="ammoText">12 de 12</span></div>
+    <div class="bar"><div id="ammoBar"></div></div>
+  </div>
+  <p class="message" id="message">Toque em iniciar para entrar na arena.</p>
+  <footer>ATIVA GAMING · TREINE SUA PRECISÃO</footer>
+</main>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const arena = $('arena');
+  const overlay = $('overlay');
+
+  let running = false;
+  let score = 0, hits = 0, ammo = 12, time = 30, combo = 0;
+  let lastHit = 0, nextShot = 0, reloadUntil = 0;
+  let target = null, targetTimer = null, clockTimer = null;
+  let lastSpawn = 0, spawnDelay = 480;
+  let endTime = 0;
+
+  function update() {
+    $('score').textContent = score.toLocaleString('pt-BR');
+    $('time').textContent = time;
+    $('ammo').textContent = `${ammo}/12`;
+    $('hits').textContent = hits;
+    $('combo').textContent = `COMBO x${combo}`;
+    $('ammoText').textContent = `${ammo} de 12`;
+    $('ammoBar').style.width = `${ammo / 12 * 100}%`;
+    $('ammoBar').style.background = ammo <= 3 ? '#ff3155' : '#00f5ff';
+  }
+
+  function clearTarget() {
+    if (targetTimer) clearTimeout(targetTimer);
+    targetTimer = null;
+    if (target) target.remove();
+    target = null;
+  }
+
+  function spawnTarget() {
+    if (!running || target) return;
+    const rect = arena.getBoundingClientRect();
+    const size = Math.max(42, Math.min(50, rect.width * .13));
+    const t = document.createElement('button');
+    t.className = 'target';
+    t.setAttribute('aria-label', 'Alvo vermelho');
+    t.style.width = size + 'px';
+    t.style.height = size + 'px';
+    t.style.left = (size/2 + Math.random() * (rect.width-size)) + 'px';
+    t.style.top = (55 + Math.random() * (rect.height-size-65)) + 'px';
+
+    t.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      e.stopPropagation();
+      hitTarget(t);
+    }, {passive:false});
+
+    arena.appendChild(t);
+    target = t;
+
+    targetTimer = setTimeout(() => {
+      if (target === t) {
+        clearTarget();
+        if (running) setTimeout(spawnTarget, 70);
+      }
+    }, Math.max(550, 1250 - hits * 12));
+  }
+
+  function hitTarget(t) {
+    if (!running || target !== t) return;
+    const now = performance.now();
+    combo = now - lastHit < 1300 ? combo + 1 : 1;
+    lastHit = now;
+    hits++;
+    score += 100 + Math.min(combo - 1, 10) * 20;
+    t.classList.add('hit');
+    target = null;
+    if (targetTimer) clearTimeout(targetTimer);
+    targetTimer = null;
+    update();
+    $('message').textContent = combo >= 3 ? `🔥 COMBO x${combo}! Excelente precisão!` : '+100 PONTOS — BOM TIRO!';
+    setTimeout(() => {
+      if (running && !target) spawnTarget();
+    }, 65);
+  }
+
+  function shoot() {
+    if (!running) return;
+    const now = performance.now();
+    if (now < reloadUntil || now - nextShot < 100) return;
+    nextShot = now;
+    if (ammo <= 0) {
+      $('message').textContent = 'Sem munição! Toque em RECARREGAR.';
+      return;
+    }
+    ammo--;
+    // O disparo manual mira no alvo mais próximo do centro da arena.
+    if (target) hitTarget(target);
+    else {
+      combo = 0;
+      $('message').textContent = 'ERROU! Mire diretamente no alvo vermelho.';
+    }
+    update();
+  }
+
+  function reload() {
+    if (!running || ammo === 12 || performance.now() < reloadUntil) return;
+    reloadUntil = performance.now() + 350;
+    $('reload').textContent = '⏳ RECARREGANDO';
+    setTimeout(() => {
+      if (!running) return;
+      ammo = 12;
+      reloadUntil = 0;
+      $('reload').textContent = '↻ RECARREGAR';
+      $('message').textContent = 'Carregador pronto!';
+      update();
+    }, 350);
+  }
+
+  function start() {
+    clearInterval(clockTimer);
+    clearTarget();
+    score = 0; hits = 0; ammo = 12; time = 30; combo = 0;
+    lastHit = 0; nextShot = 0; reloadUntil = 0;
+    spawnDelay = 480;
+    running = true;
+    endTime = Date.now() + 30000;
+    overlay.style.display = 'none';
+    $('message').textContent = 'Partida iniciada. Boa sorte!';
+    $('reload').textContent = '↻ RECARREGAR';
+    update();
+    spawnTarget();
+
+    clockTimer = setInterval(() => {
+      time = Math.max(0, Math.ceil((endTime - Date.now()) / 1000));
+      update();
+      if (time <= 0) finish();
+    }, 100);
+  }
+
+  function finish() {
+    if (!running) return;
+    running = false;
+    clearInterval(clockTimer);
+    clearTarget();
+    $('overlayTitle').textContent = '🏆 FIM DE JOGO!';
+    $('overlayText').textContent =
+      `Pontuação: ${score.toLocaleString('pt-BR')} pontos · ${hits} alvos atingidos. Esta partida foi encerrada.`;
+    $('start').textContent = '▶ JOGAR NOVAMENTE';
+    overlay.style.display = 'flex';
+    $('message').textContent = 'Partida concluída!';
+  }
+
+  $('start').addEventListener('click', start);
+  $('shoot').addEventListener('pointerdown', e => {
+    e.preventDefault();
+    shoot();
+  });
+  $('reload').addEventListener('click', reload);
+
+  // Toque na arena também dispara, exceto quando o jogador toca no alvo.
+  arena.addEventListener('pointerdown', e => {
+    if (!running || e.target.closest('.target') || e.target.closest('.hud')) return;
+    shoot();
+  });
+
+  update();
+})();
+</script>
+</body>
+</html>
