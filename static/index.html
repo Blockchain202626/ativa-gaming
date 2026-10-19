@@ -5,9 +5,63 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#090b16">
-  <meta name="description" content="Ativa Gaming — seu espaço de jogos e comunidade.">
+  <meta name="description" content="Ativa Gaming — jogos, comunidade e competição.">
   <title>Ativa Gaming</title>
   <link rel="stylesheet" href="/static/styles.css">
+
+  <style>
+    /* Ativa Strike: estilos exclusivos do jogo */
+    .strike-area { display:none; margin-top:18px; }
+    .strike-area.active { display:block; }
+    .strike-hud {
+      display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:7px; margin-bottom:10px;
+    }
+    .strike-stat {
+      background:#11182b; border:1px solid #293652;
+      border-radius:10px; padding:9px 5px; text-align:center;
+      min-width:0;
+    }
+    .strike-stat span {
+      display:block; color:#aebbd5; font-size:11px;
+      text-transform:uppercase; letter-spacing:.4px;
+    }
+    .strike-stat strong { display:block; font-size:17px; margin-top:4px; }
+    .strike-health { height:7px; background:#26314a; border-radius:10px; overflow:hidden; margin:5px 0 12px; }
+    #strikeHealthBar { height:100%; width:100%; background:#35df91; transition:width .2s; }
+    .strike-canvas-wrap {
+      position:relative; width:100%; overflow:hidden;
+      background:#080d19; border:1px solid #344365;
+      border-radius:12px; touch-action:none;
+    }
+    #strikeCanvas { display:block; width:100%; height:auto; aspect-ratio:4/3; touch-action:none; }
+    .strike-crosshair {
+      position:absolute; top:10px; left:10px; font-size:11px;
+      color:#d7e5ff; background:#080d19c9;
+      padding:5px 8px; border-radius:6px; pointer-events:none;
+    }
+    .strike-controls {
+      display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:8px; margin-top:10px;
+    }
+    .strike-controls button { min-height:48px; font-weight:700; touch-action:manipulation; }
+    .strike-fire { background:#d93951 !important; color:white !important; }
+    .strike-message {
+      padding:11px; margin-top:10px; border-radius:9px;
+      background:#11182b; color:#dce7ff; font-size:13px;
+    }
+    .strike-help { font-size:12px; color:#aebbd5; line-height:1.5; margin:10px 0; }
+    .strike-start { width:100%; margin-top:10px; }
+    .strike-hidden { display:none !important; }
+    .strike-result { font-size:18px; font-weight:800; margin:12px 0; }
+    @media(max-width:420px) {
+      .strike-stat { padding:8px 2px; }
+      .strike-stat span { font-size:9px; }
+      .strike-stat strong { font-size:15px; }
+      .strike-controls { gap:5px; }
+      .strike-controls button { padding:8px 3px; font-size:12px; }
+    }
+  </style>
 </head>
 <body>
   <header class="topbar">
@@ -38,7 +92,7 @@
           <a class="button button-primary" href="#jogos">Explorar catálogo ↗</a>
           <button class="button button-quiet" id="heroRegister">Criar meu perfil</button>
         </div>
-        <p class="microcopy">Catálogo demonstrativo. Jogos comerciais ainda não estão integrados.</p>
+        <p class="microcopy">Jogos disponíveis nesta versão são identificados no catálogo.</p>
       </div>
       <div class="hero-art" aria-label="Arte abstrata de jogos">
         <div class="orbit orbit-one"></div>
@@ -58,7 +112,7 @@
 
     <section class="section" id="jogos">
       <div class="section-heading">
-        <div><span class="eyebrow">DESCUBRA SUA PRÓXIMA AVENTURA</span><h2>Catálogo de jogos</h2><p>Explore as categorias disponíveis na plataforma.</p></div>
+        <div><span class="eyebrow">DESCUBRA SUA PRÓXIMA AVENTURA</span><h2>Catálogo de jogos</h2><p>Escolha uma experiência e entre na arena.</p></div>
       </div>
       <div class="catalog-controls">
         <label class="search-box"><span>⌕</span><input id="gameSearch" type="search" placeholder="Buscar jogos..." aria-label="Buscar jogos"></label>
@@ -71,7 +125,7 @@
       <div class="games-grid" id="gamesGrid">
         <div class="empty-state">Carregando catálogo...</div>
       </div>
-      <p class="microcopy">Os títulos desta versão são demonstrativos. A listagem não significa que os jogos estejam hospedados ou disponíveis para execução.</p>
+      <p class="microcopy">Ativa Strike é um jogo original de navegador. Outros títulos dependem de integração própria.</p>
     </section>
 
     <section class="section two-column" id="ranking">
@@ -129,7 +183,7 @@
       <p class="microcopy">Use pelo menos 10 caracteres. Não reutilize a senha de outros serviços.</p>
       <button class="button button-primary full-width" id="authSubmit" type="submit">Criar conta</button>
       <a class="button button-quiet full-width" id="googleLogin" href="/login/google">Entrar com Google</a>
-<button class="text-button" type="button" id="switchAuth">Já tem conta? Entrar</button>
+      <button class="text-button" type="button" id="switchAuth">Já tem conta? Entrar</button>
       <p class="form-message" id="authMessage" role="status"></p>
     </form>
   </dialog>
@@ -140,9 +194,34 @@
       <span class="eyebrow" id="gameCategory">CATEGORIA</span>
       <h2 id="gameTitle">Detalhes do jogo</h2>
       <p id="gameDescription"></p>
-      <div class="notice">Este item faz parte do catálogo demonstrativo. O jogo real ainda não está integrado à plataforma.</div>
-      <button class="button button-primary full-width" id="demoScoreButton">Registrar pontuação de teste</button>
-      <p class="microcopy">A pontuação de teste não representa resultado de um jogo real e não oferece prêmios.</p>
+
+      <!-- Jogo novo: fica visível apenas ao abrir Ativa Strike -->
+      <div id="strikeArea" class="strike-area">
+        <div class="strike-hud">
+          <div class="strike-stat"><span>Pontos</span><strong id="strikeScore">0</strong></div>
+          <div class="strike-stat"><span>Tempo</span><strong id="strikeTime">60</strong></div>
+          <div class="strike-stat"><span>Munição</span><strong id="strikeAmmo">12/12</strong></div>
+          <div class="strike-stat"><span>Alvos</span><strong id="strikeTargets">0</strong></div>
+        </div>
+        <div class="strike-health"><div id="strikeHealthBar"></div></div>
+        <div class="strike-canvas-wrap">
+          <canvas id="strikeCanvas" width="800" height="600" aria-label="Arena de tiro Ativa Strike"></canvas>
+          <span class="strike-crosshair">MIRE NOS ALVOS</span>
+        </div>
+        <p class="strike-help">Toque na arena para mirar. Use ATIRAR para disparar e RECARREGAR quando a munição acabar. Acerte os alvos vermelhos e evite que eles se aproximem.</p>
+        <div class="strike-controls">
+          <button class="button button-quiet" id="strikeReload" type="button">↻ Recarregar</button>
+          <button class="button button-primary strike-fire" id="strikeFire" type="button">◎ ATIRAR</button>
+          <button class="button button-quiet" id="strikeRestart" type="button">▶ Iniciar</button>
+        </div>
+        <div id="strikeMessage" class="strike-message" role="status">Pressione Iniciar para começar a partida.</div>
+        <div id="strikeResult" class="strike-result strike-hidden"></div>
+      </div>
+
+      <!-- Janela demonstrativa mantida para os outros títulos -->
+      <div id="genericGameNotice" class="notice">Este item faz parte do catálogo demonstrativo. O jogo ainda não está integrado à plataforma.</div>
+      <button class="button button-primary full-width" id="demoScoreButton" type="button">Registrar pontuação de teste</button>
+      <p id="genericGameHelp" class="microcopy">A pontuação de teste não representa resultado de um jogo real e não oferece prêmios.</p>
       <p class="form-message" id="gameMessage" role="status"></p>
     </div>
   </dialog>
@@ -150,7 +229,7 @@
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
   <script>
-    const $ = (selector) => document.querySelector(selector);
+    const $ = selector => document.querySelector(selector);
     const state = { games: [], player: null, authMode: "register", selectedGame: null };
 
     async function api(path, options = {}) {
@@ -195,14 +274,26 @@
       $("#authDialog").showModal();
     }
 
+    function isStrikeGame(game) {
+      if (!game) return false;
+      const id = String(game.id || "").toLowerCase();
+      const name = String(game.name || "").toLowerCase();
+      return id === "acao" ||
+        id === "ativa-strike" ||
+        id === "ativa_strike" ||
+        name.includes("zona de ação") ||
+        name.includes("zona de acao") ||
+        name.includes("ativa strike");
+    }
+
     function renderGames() {
       const query = $("#gameSearch").value.trim().toLowerCase();
       const category = $("#categoryFilter").value;
       const games = state.games.filter(game =>
         (category === "all" || game.category === category) &&
-        (game.name.toLowerCase().includes(query) ||
-         game.description.toLowerCase().includes(query) ||
-         game.category.toLowerCase().includes(query))
+        (String(game.name).toLowerCase().includes(query) ||
+         String(game.description).toLowerCase().includes(query) ||
+         String(game.category).toLowerCase().includes(query))
       );
 
       $("#gameCount").textContent = state.games.length;
@@ -210,14 +301,14 @@
         <article class="game-card">
           <div class="game-art art-${index % 6}">
             <span class="game-number">${String(index + 1).padStart(2, "0")}</span>
-            <span class="game-symbol">${["✧","➤","◈","✦","◎","◇"][index % 6]}</span>
-            <span class="game-label">ATIVA / GAME</span>
+            <span class="game-symbol">${isStrikeGame(game) ? "🎯" : ["✧","➤","◈","✦","◎","◇"][index % 6]}</span>
+            <span class="game-label">${isStrikeGame(game) ? "ATIVA STRIKE" : "ATIVA / GAME"}</span>
           </div>
           <div class="game-info">
             <span class="category-label">${escapeHTML(game.category)}</span>
             <h3>${escapeHTML(game.name)}</h3>
             <p>${escapeHTML(game.description)}</p>
-            <button class="button button-quiet game-open" data-game="${escapeHTML(game.id)}">Ver detalhes ↗</button>
+            <button class="button button-quiet game-open" data-game="${escapeHTML(game.id)}">${isStrikeGame(game) ? "Jogar agora ↗" : "Ver detalhes ↗"}</button>
           </div>
         </article>`).join("") : '<div class="empty-state">Nenhum jogo encontrado. Tente outra busca.</div>';
 
@@ -227,13 +318,24 @@
     }
 
     async function showGame(id) {
-      const game = state.games.find(item => item.id === id);
+      const game = state.games.find(item => String(item.id) === String(id));
       if (!game) return;
       state.selectedGame = game;
-      $("#gameCategory").textContent = game.category.toUpperCase();
-      $("#gameTitle").textContent = game.name;
-      $("#gameDescription").textContent = game.description;
+      $("#gameCategory").textContent = String(game.category || "JOGO").toUpperCase();
+      $("#gameTitle").textContent = isStrikeGame(game) ? "Ativa Strike" : game.name;
+      $("#gameDescription").textContent = isStrikeGame(game)
+        ? "Entre na arena, acerte os alvos e conquiste a maior pontuação."
+        : game.description;
       $("#gameMessage").textContent = "";
+
+      const strike = isStrikeGame(game);
+      $("#strikeArea").classList.toggle("active", strike);
+      $("#genericGameNotice").classList.toggle("strike-hidden", strike);
+      $("#demoScoreButton").classList.toggle("strike-hidden", strike);
+      $("#genericGameHelp").classList.toggle("strike-hidden", strike);
+
+      stopStrike();
+      if (strike) prepareStrike();
       $("#gameDialog").showModal();
     }
 
@@ -278,10 +380,11 @@
       }
       try {
         const data = await api("/api/scores/me");
-        $("#scoreCount").textContent = data.items.length;
-        $("#myScores").innerHTML = data.items.length
-          ? `<h3>Seus últimos registros</h3>${data.items.slice(0, 5).map(score =>
-              `<div class="score-row"><span>${escapeHTML(score.game_id)}</span><strong>${score.points} pts</strong></div>`
+        const items = data.items || [];
+        $("#scoreCount").textContent = items.length;
+        $("#myScores").innerHTML = items.length
+          ? `<h3>Seus últimos registros</h3>${items.slice(0, 5).map(score =>
+              `<div class="score-row"><span>${escapeHTML(score.game_id)}</span><strong>${Number(score.points)} pts</strong></div>`
             ).join("")}`
           : '<p class="microcopy">Você ainda não tem pontuações registradas.</p>';
       } catch {
@@ -291,7 +394,8 @@
 
     async function refreshLeaderboard() {
       const data = await api("/api/leaderboard");
-      $("#leaderboard").innerHTML = data.items.length ? data.items.map((player, index) => `
+      const items = data.items || [];
+      $("#leaderboard").innerHTML = items.length ? items.map((player, index) => `
         <div class="leader-row">
           <span class="leader-rank">${String(index + 1).padStart(2, "0")}</span>
           <span class="leader-name">${escapeHTML(player.username)}</span>
@@ -349,7 +453,10 @@
       openAuth(state.authMode === "register" ? "login" : "register");
     });
     $("#closeDialog").addEventListener("click", () => $("#authDialog").close());
-    $("#closeGameDialog").addEventListener("click", () => $("#gameDialog").close());
+    $("#closeGameDialog").addEventListener("click", () => {
+      stopStrike();
+      $("#gameDialog").close();
+    });
     $("#openLogin").addEventListener("click", () => openAuth("login"));
     $("#openRegister").addEventListener("click", () => openAuth("register"));
     $("#heroRegister").addEventListener("click", () => openAuth("register"));
@@ -380,11 +487,338 @@
       }
     });
 
+    /* ---------------- ATIVA STRIKE: JOGO 2D ---------------- */
+    const strike = {
+      canvas: null, ctx: null, running: false, animation: 0,
+      score: 0, ammo: 12, maxAmmo: 12, health: 100,
+      timeLeft: 60, targetsHit: 0, targets: [], bullets: [],
+      aimX: 400, aimY: 250, lastTime: 0, spawnTimer: 0,
+      reloadTimer: null, saving: false, saved: false
+    };
+
+    function prepareStrike() {
+      strike.canvas = $("#strikeCanvas");
+      strike.ctx = strike.canvas.getContext("2d");
+      strike.score = 0;
+      strike.ammo = strike.maxAmmo;
+      strike.health = 100;
+      strike.timeLeft = 60;
+      strike.targetsHit = 0;
+      strike.targets = [];
+      strike.bullets = [];
+      strike.aimX = 400;
+      strike.aimY = 250;
+      strike.spawnTimer = 0;
+      strike.lastTime = 0;
+      strike.saving = false;
+      strike.saved = false;
+      clearTimeout(strike.reloadTimer);
+      $("#strikeResult").classList.add("strike-hidden");
+      $("#strikeRestart").textContent = "▶ Iniciar";
+      $("#strikeMessage").textContent = "Pressione Iniciar para começar a partida.";
+      updateStrikeHUD();
+      drawArena();
+    }
+
+    function updateStrikeHUD() {
+      $("#strikeScore").textContent = strike.score;
+      $("#strikeTime").textContent = Math.max(0, Math.ceil(strike.timeLeft));
+      $("#strikeAmmo").textContent = `${strike.ammo}/${strike.maxAmmo}`;
+      $("#strikeTargets").textContent = strike.targetsHit;
+      $("#strikeHealthBar").style.width = `${Math.max(0, strike.health)}%`;
+      $("#strikeHealthBar").style.background = strike.health <= 30 ? "#ff4d62" : "#35df91";
+    }
+
+    function drawArena() {
+      if (!strike.ctx || !strike.canvas) return;
+      const ctx = strike.ctx, w = strike.canvas.width, h = strike.canvas.height;
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "#0a1120";
+      ctx.fillRect(0, 0, w, h);
+
+      // Piso e perspectiva da arena
+      const grad = ctx.createLinearGradient(0, h * .45, 0, h);
+      grad.addColorStop(0, "#18263b");
+      grad.addColorStop(1, "#090d17");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, h * .42, w, h * .58);
+
+      ctx.strokeStyle = "#243650";
+      ctx.lineWidth = 1;
+      for (let i = -8; i <= 8; i++) {
+        ctx.beginPath();
+        ctx.moveTo(w / 2 + i * 22, h * .42);
+        ctx.lineTo(w / 2 + i * 80, h);
+        ctx.stroke();
+      }
+      for (let y = h * .5; y < h; y += 24) {
+        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+      }
+
+      // Estruturas da arena
+      ctx.fillStyle = "#17243a";
+      ctx.fillRect(28, 100, 100, 185);
+      ctx.fillRect(w - 128, 130, 100, 155);
+      ctx.fillStyle = "#263c59";
+      ctx.fillRect(40, 115, 76, 10);
+      ctx.fillRect(w - 116, 145, 76, 10);
+      ctx.fillStyle = "#101a2b";
+      ctx.fillRect(w / 2 - 65, 100, 130, 85);
+      ctx.strokeStyle = "#365071";
+      ctx.strokeRect(w / 2 - 65, 100, 130, 85);
+
+      // Alvos
+      strike.targets.forEach(target => {
+        if (target.dead) return;
+        const r = target.r;
+        ctx.save();
+        ctx.translate(target.x, target.y);
+        ctx.fillStyle = "#461c30";
+        ctx.beginPath(); ctx.arc(0, 0, r + 5, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#f0445e";
+        ctx.beginPath(); ctx.arc(0, 0, r, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = "#ffb0b8";
+        ctx.beginPath(); ctx.arc(-r * .25, -r * .25, r * .3, 0, Math.PI * 2); ctx.fill();
+        ctx.strokeStyle = "#ff7586";
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(0, 0, r + 2, 0, Math.PI * 2); ctx.stroke();
+        ctx.restore();
+      });
+
+      // Disparos
+      strike.bullets.forEach(bullet => {
+        ctx.strokeStyle = "#ffe28a";
+        ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(bullet.x, bullet.y);
+        ctx.lineTo(bullet.x - bullet.vx * .035, bullet.y - bullet.vy * .035);
+        ctx.stroke();
+      });
+
+      // Arma estilizada do jogador
+      ctx.fillStyle = "#273b56";
+      ctx.beginPath();
+      ctx.moveTo(w / 2 - 40, h);
+      ctx.lineTo(w / 2 - 22, h - 75);
+      ctx.lineTo(w / 2 + 22, h - 75);
+      ctx.lineTo(w / 2 + 40, h);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = "#6883a8";
+      ctx.fillRect(w / 2 - 10, h - 95, 20, 55);
+
+      // Mira
+      ctx.strokeStyle = "#dff8ff";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(strike.aimX, strike.aimY, 13, 0, Math.PI * 2);
+      ctx.moveTo(strike.aimX - 21, strike.aimY);
+      ctx.lineTo(strike.aimX - 6, strike.aimY);
+      ctx.moveTo(strike.aimX + 6, strike.aimY);
+      ctx.lineTo(strike.aimX + 21, strike.aimY);
+      ctx.moveTo(strike.aimX, strike.aimY - 21);
+      ctx.lineTo(strike.aimX, strike.aimY - 6);
+      ctx.moveTo(strike.aimX, strike.aimY + 6);
+      ctx.lineTo(strike.aimX, strike.aimY + 21);
+      ctx.stroke();
+
+      if (!strike.running && strike.timeLeft > 0) {
+        ctx.fillStyle = "#080d19b8";
+        ctx.fillRect(0, 0, w, h);
+        ctx.fillStyle = "#ffffff";
+        ctx.textAlign = "center";
+        ctx.font = "bold 32px sans-serif";
+        ctx.fillText("ATIVA STRIKE", w / 2, h / 2 - 15);
+        ctx.font = "16px sans-serif";
+        ctx.fillStyle = "#b9c9e6";
+        ctx.fillText("Prepare-se para entrar na arena", w / 2, h / 2 + 20);
+      }
+    }
+
+    function spawnTarget() {
+      const w = strike.canvas.width, h = strike.canvas.height;
+      const side = Math.random() < .5 ? 0 : 1;
+      const x = side ? w - 155 - Math.random() * 80 : 155 + Math.random() * 80;
+      const y = 150 + Math.random() * 210;
+      const speed = 18 + Math.random() * 22;
+      strike.targets.push({
+        x, y, r: 17 + Math.random() * 7,
+        vx: (w / 2 - x > 0 ? 1 : -1) * speed,
+        vy: (h * .68 - y > 0 ? 1 : -1) * speed * .25,
+        dead: false
+      });
+    }
+
+    function startStrike() {
+      if (strike.running) return;
+      if (strike.timeLeft <= 0 || strike.health <= 0) prepareStrike();
+      strike.running = true;
+      strike.lastTime = 0;
+      $("#strikeRestart").textContent = "↻ Reiniciar";
+      $("#strikeMessage").textContent = "Partida em andamento! Acerte os alvos vermelhos.";
+      strike.animation = requestAnimationFrame(strikeLoop);
+    }
+
+    function stopStrike() {
+      strike.running = false;
+      if (strike.animation) cancelAnimationFrame(strike.animation);
+      strike.animation = 0;
+      clearTimeout(strike.reloadTimer);
+    }
+
+    function strikeLoop(timestamp) {
+      if (!strike.running) return;
+      if (!strike.lastTime) strike.lastTime = timestamp;
+      const dt = Math.min((timestamp - strike.lastTime) / 1000, .05);
+      strike.lastTime = timestamp;
+
+      strike.timeLeft -= dt;
+      strike.spawnTimer += dt;
+      if (strike.spawnTimer >= 1.15 && strike.targets.filter(t => !t.dead).length < 7) {
+        spawnTarget();
+        strike.spawnTimer = 0;
+      }
+
+      const w = strike.canvas.width, h = strike.canvas.height;
+      strike.targets.forEach(target => {
+        if (target.dead) return;
+        target.x += target.vx * dt;
+        target.y += target.vy * dt;
+        if (target.x < 140 || target.x > w - 140) target.vx *= -1;
+        if (target.y < 125 || target.y > h * .68) target.vy *= -1;
+
+        // Alvos que alcançam a linha inferior causam dano
+        if (target.y > h * .64) {
+          target.dead = true;
+          strike.health = Math.max(0, strike.health - 12);
+        }
+      });
+
+      strike.bullets.forEach(bullet => {
+        bullet.x += bullet.vx * dt;
+        bullet.y += bullet.vy * dt;
+        bullet.life -= dt;
+        strike.targets.forEach(target => {
+          if (target.dead) return;
+          const distance = Math.hypot(target.x - bullet.x, target.y - bullet.y);
+          if (distance < target.r + 7) {
+            target.dead = true;
+            bullet.life = 0;
+            strike.score += 100;
+            strike.targetsHit++;
+          }
+        });
+      });
+      strike.bullets = strike.bullets.filter(b =>
+        b.life > 0 && b.x >= 0 && b.x <= w && b.y >= 0 && b.y <= h
+      );
+      strike.targets = strike.targets.filter(t => !t.dead);
+
+      updateStrikeHUD();
+      drawArena();
+
+      if (strike.timeLeft <= 0 || strike.health <= 0) {
+        finishStrike();
+        return;
+      }
+      strike.animation = requestAnimationFrame(strikeLoop);
+    }
+
+    function shootStrike() {
+      if (!strike.running) {
+        $("#strikeMessage").textContent = "Pressione Iniciar antes de atirar.";
+        return;
+      }
+      if (strike.ammo <= 0) {
+        $("#strikeMessage").textContent = "Sem munição. Toque em Recarregar.";
+        return;
+      }
+      strike.ammo--;
+      const w = strike.canvas.width, h = strike.canvas.height;
+      const sx = w / 2, sy = h - 85;
+      const dx = strike.aimX - sx, dy = strike.aimY - sy;
+      const length = Math.hypot(dx, dy) || 1;
+      const speed = 900;
+      strike.bullets.push({
+        x: sx, y: sy, vx: dx / length * speed,
+        vy: dy / length * speed, life: .65
+      });
+      updateStrikeHUD();
+    }
+
+    function reloadStrike() {
+      if (!strike.running || strike.ammo === strike.maxAmmo) return;
+      clearTimeout(strike.reloadTimer);
+      $("#strikeMessage").textContent = "Recarregando...";
+      $("#strikeReload").disabled = true;
+      strike.reloadTimer = setTimeout(() => {
+        strike.ammo = strike.maxAmmo;
+        $("#strikeReload").disabled = false;
+        $("#strikeMessage").textContent = "Munição recarregada!";
+        updateStrikeHUD();
+      }, 1000);
+    }
+
+    async function finishStrike() {
+      stopStrike();
+      strike.timeLeft = Math.max(0, strike.timeLeft);
+      updateStrikeHUD();
+      $("#strikeRestart").textContent = "▶ Jogar novamente";
+      $("#strikeResult").classList.remove("strike-hidden");
+      $("#strikeResult").textContent = `Resultado: ${strike.score} pontos · ${strike.targetsHit} alvos atingidos`;
+      $("#strikeMessage").textContent = "Partida encerrada.";
+
+      if (strike.saved || strike.saving) return;
+      if (!state.player) {
+        $("#strikeMessage").textContent = "Partida concluída. Entre na sua conta para salvar esta pontuação.";
+        strike.saved = true;
+        return;
+      }
+
+      strike.saving = true;
+      try {
+        await api("/api/scores", {
+          method: "POST",
+          body: JSON.stringify({
+            game_id: state.selectedGame.id,
+            points: strike.score
+          })
+        });
+        strike.saved = true;
+        $("#strikeMessage").textContent = `Pontuação de ${strike.score} pontos salva na sua conta!`;
+        await refreshMyScores();
+        await refreshLeaderboard();
+      } catch (error) {
+        $("#strikeMessage").textContent = `Partida concluída, mas não foi possível salvar: ${error.message}`;
+      } finally {
+        strike.saving = false;
+      }
+    }
+
+    $("#strikeCanvas").addEventListener("pointerdown", event => {
+      const rect = strike.canvas.getBoundingClientRect();
+      strike.aimX = (event.clientX - rect.left) / rect.width * strike.canvas.width;
+      strike.aimY = (event.clientY - rect.top) / rect.height * strike.canvas.height;
+      if (strike.running) shootStrike();
+      drawArena();
+    });
+    $("#strikeFire").addEventListener("pointerdown", event => {
+      event.preventDefault();
+      shootStrike();
+    });
+    $("#strikeReload").addEventListener("click", reloadStrike);
+    $("#strikeRestart").addEventListener("click", () => {
+      stopStrike();
+      prepareStrike();
+      startStrike();
+    });
+
+    // Ao fechar a janela, interrompe a animação para não consumir recursos.
+    $("#gameDialog").addEventListener("close", stopStrike);
+
     async function start() {
       $("#year").textContent = new Date().getFullYear();
       try {
         const data = await api("/api/games");
-        state.games = data.items;
+        state.games = data.items || [];
         renderGames();
         await refreshPlayer();
         await refreshLeaderboard();
