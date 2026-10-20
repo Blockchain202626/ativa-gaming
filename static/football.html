@@ -1,164 +1,154 @@
+
 <!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#07150f">
 <title>BR League Football | Ativa Gaming</title>
 <style>
-:root{color-scheme:dark;--bg:#07150f;--panel:#10231a;--line:#244333;--green:#39e58c;--muted:#a6bcae;--white:#f2fff6}
+:root{color-scheme:dark;--bg:#07150f;--panel:#10251a;--line:#294b37;--green:#39e58c;--muted:#b1c6b7;--white:#f4fff7}
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at top,#173b29 0,#07150f 55%);font-family:system-ui,-apple-system,Arial,sans-serif;color:var(--white)}
-header{padding:22px 16px 18px;border-bottom:1px solid var(--line);background:#07150feF}
-.wrap{max-width:1050px;margin:auto}
+body{margin:0;background:radial-gradient(ellipse at top,#1a412c,#07150f 65%);font-family:system-ui,Arial,sans-serif;color:var(--white)}
+header{padding:22px 16px;background:#08170ff2;border-bottom:1px solid var(--line)}
+.wrap,main{max-width:1050px;margin:auto}
 .brand{color:var(--green);font-size:12px;font-weight:900;letter-spacing:2px}
-h1{font-size:clamp(25px,6vw,40px);margin:8px 0}
-p{line-height:1.5}
-.sub{color:var(--muted);margin:0}
-main{max-width:1050px;margin:auto;padding:16px}
-.panel{background:linear-gradient(145deg,#12281d,#0c1c14);border:1px solid var(--line);border-radius:17px;padding:16px;margin:0 0 14px}
+h1{font-size:clamp(26px,6vw,40px);margin:8px 0}
 h2{font-size:19px;margin:0 0 13px}
 h3{font-size:15px;margin:0 0 8px}
-label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-select,button{font:inherit;border-radius:10px;padding:12px;border:1px solid #345742;width:100%}
-select{background:#08170f;color:white}
-button{background:var(--green);color:#062012;border:0;font-weight:850;cursor:pointer}
-button.secondary{background:#183a28;color:var(--white);border:1px solid #345742}
-button:disabled{opacity:.5}
+p{line-height:1.5}
+.muted,.note{color:var(--muted);font-size:12px}
+main{padding:15px}
+.panel{background:linear-gradient(145deg,#132a1e,#0b1b12);border:1px solid var(--line);border-radius:16px;padding:15px;margin-bottom:14px}
+label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px}
+select,button{width:100%;padding:12px;border-radius:10px;border:1px solid #365b43;font:inherit}
+select{background:#09180f;color:white}
+button{background:var(--green);color:#082012;font-weight:850;border:0;cursor:pointer}
+button.secondary{background:#193b28;color:white;border:1px solid #365b43}
+button:disabled{opacity:.45}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.stat{padding:12px;background:#091910;border:1px solid var(--line);border-radius:12px}
+.stat{background:#091910;border:1px solid var(--line);border-radius:12px;padding:12px}
 .stat small{display:block;color:var(--muted);font-size:12px}
-.stat strong{font-size:23px;display:block;margin-top:4px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
-.pitch{background:repeating-linear-gradient(0deg,#1b613b 0,#1b613b 43px,#205f3c 43px,#205f3c 86px);border:2px solid #8cc6a0;border-radius:12px;padding:12px;position:relative;overflow:hidden}
-.pitch:before{content:"";position:absolute;inset:8px;border:1px solid #ffffff65;border-radius:7px;pointer-events:none}
-.pitchrow{position:relative;display:flex;justify-content:space-around;gap:3px;margin:15px 0}
-.player{font-size:10px;text-align:center;background:#e7fff0;color:#0b2918;border-radius:8px;padding:7px 3px;min-width:0;flex:1;font-weight:800;overflow-wrap:anywhere}
-.player span{display:block;font-size:9px;font-weight:500}
-.note{font-size:12px;color:var(--muted)}
-.score{font-size:32px;font-weight:900;text-align:center;margin:8px}
-table{border-collapse:collapse;width:100%;font-size:12px}
-th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line)}
+.stat strong{font-size:22px;display:block;margin-top:4px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.layout{display:grid;gap:14px}
+.pitch{border:2px solid #a1d4ad;border-radius:12px;padding:10px;background:repeating-linear-gradient(0deg,#1a6038 0,#1a6038 42px,#216942 42px,#216942 84px)}
+.pitchrow{display:flex;justify-content:center;gap:5px;margin:10px 0}
+.slot{flex:1;min-width:0;max-width:150px;background:#e5ffed;color:#102b1b;border-radius:9px;padding:7px 3px;text-align:center;font-size:11px;font-weight:850;overflow-wrap:anywhere}
+.slot select{background:#f3fff6;color:#153421;border-color:#aacbb5;padding:6px 2px;font-size:10px}
+.slot small{display:block;font-weight:500;font-size:10px}
+.playerlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.player{background:#0a1b11;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12px}
+.player b{display:block;margin-bottom:4px}
+.pill{display:inline-block;border-radius:20px;background:#19432b;color:#b7ffd0;padding:4px 8px;font-size:10px}
+.score{text-align:center;font-size:35px;font-weight:900;margin:10px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th,td{text-align:left;padding:8px 4px;border-bottom:1px solid var(--line)}
 th{color:var(--muted)}
-td:first-child{font-weight:800}
-.tag{display:inline-block;background:#1a422c;color:#a6ffca;border-radius:20px;padding:5px 9px;font-size:11px}
-.log{padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+.scroll{overflow-x:auto}
+.log{border-bottom:1px solid var(--line);padding:10px 0;font-size:13px}
 a{color:var(--green)}
-footer{text-align:center;padding:25px 14px;color:var(--muted);font-size:12px}
-@media(min-width:700px){.grid.desktop{grid-template-columns:1fr 1fr}.layout{display:grid;grid-template-columns:1fr 1fr;gap:14px}.panel{margin-bottom:14px}}
+footer{text-align:center;padding:22px;color:var(--muted);font-size:12px}
+@media(min-width:720px){.layout{grid-template-columns:1fr 1fr}.playerlist{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 </head>
 <body>
-<header>
- <div class="wrap">
-  <div class="brand">ATIVA GAMING • FUTEBOL</div>
-  <h1>⚽ BR League Football</h1>
-  <p class="sub">Monte seu time. Escolha sua tática. Dispute o Brasileirão.</p>
- </div>
-</header>
+<header><div class="wrap">
+ <div class="brand">ATIVA GAMING • FUTEBOL</div>
+ <h1>⚽ BR League Football</h1>
+ <p class="muted">Gerencie seu clube, monte a escalação e dispute sua carreira.</p>
+</div></header>
 <main>
- <section class="panel">
-  <h2>🏟️ Meu clube</h2>
-  <label for="club">Escolha seu clube da Série A 2026</label>
-  <select id="club"></select>
-  <div class="grid" style="margin-top:12px">
-   <div class="stat"><small>Temporada</small><strong>2026</strong></div>
-   <div class="stat"><small>Modo de jogo</small><strong style="font-size:18px">Manager</strong></div>
-  </div>
-  <div class="actions">
-   <button id="saveClub">Confirmar clube</button>
-   <button class="secondary" id="official">Elenco na CBF ↗</button>
-  </div>
-  <p class="note">Os elencos mudam durante a temporada. Consulte a lista oficial antes de confirmar jogadores.</p>
- </section>
-
- <div class="layout">
-  <section class="panel">
-   <h2>📊 Centro de gestão</h2>
-   <div class="grid">
-    <div class="stat"><small>Pontos na sua carreira</small><strong id="points">0</strong></div>
-    <div class="stat"><small>Partidas disputadas</small><strong id="played">0</strong></div>
-    <div class="stat"><small>Vitórias</small><strong id="wins">0</strong></div>
-    <div class="stat"><small>Saldo de gols</small><strong id="goalDiff">0</strong></div>
-   </div>
-   <div style="margin-top:14px">
-    <label for="formation">Formação tática</label>
-    <select id="formation">
-     <option value="442">4-4-2 • Equilibrada</option>
-     <option value="433">4-3-3 • Ofensiva</option>
-     <option value="352">3-5-2 • Meio-campo forte</option>
-     <option value="541">5-4-1 • Defensiva</option>
-    </select>
-   </div>
-   <div style="margin-top:12px">
-    <label for="mentality">Mentalidade</label>
-    <select id="mentality">
-     <option value="balanced">Equilibrada</option>
-     <option value="attack">Ataque total</option>
-     <option value="defense">Defensiva</option>
-    </select>
-   </div>
-   <button style="margin-top:12px" id="saveTactic">Salvar tática</button>
-   <p id="tacticMsg" class="note">Configure seu estilo de jogo.</p>
-  </section>
-
-  <section class="panel">
-   <h2>🟢 Campo tático</h2>
-   <div class="pitch">
-    <div class="pitchrow">
-     <div class="player">GOL<span>Goleiro</span></div>
-    </div>
-    <div class="pitchrow" id="defense"></div>
-    <div class="pitchrow" id="midfield"></div>
-    <div class="pitchrow" id="attack"></div>
-   </div>
-   <p class="note">Visualização da formação. A escalação oficial completa será adicionada após validação dos elencos.</p>
-  </section>
+<section class="panel">
+ <h2>🏟️ Meu clube</h2>
+ <label for="club">Clube da carreira</label>
+ <select id="club"></select>
+ <div class="grid" style="margin-top:12px">
+  <div class="stat"><small>Temporada</small><strong>2026</strong></div>
+  <div class="stat"><small>Modo</small><strong>Manager</strong></div>
  </div>
+ <button id="confirmClub" style="margin-top:12px">Confirmar clube</button>
+ <p class="note">O elenco detalhado nesta versão é o do Flamengo. Os outros clubes serão adicionados após validação dos respectivos jogadores.</p>
+</section>
 
- <section class="panel">
-  <h2>🎮 Próxima partida</h2>
-  <div class="grid">
-   <div>
-    <label>Seu time</label>
-    <div id="homeName" style="font-weight:850;font-size:17px">Seu clube</div>
-   </div>
-   <div>
-    <label>Adversário</label>
-    <select id="opponent"></select>
-   </div>
-  </div>
-  <div class="score" id="score">VS</div>
-  <p id="matchInfo" class="note" style="text-align:center">Partida simulada • resultado não representa jogo real.</p>
-  <button id="play">▶ Simular partida</button>
-  <p class="note">A partida é uma simulação de entretenimento. Não envolve apostas nem dinheiro real.</p>
- </section>
+<div class="layout">
+<section class="panel">
+ <h2>📊 Minha carreira</h2>
+ <div class="grid">
+  <div class="stat"><small>Pontos</small><strong id="points">0</strong></div>
+  <div class="stat"><small>Jogos</small><strong id="played">0</strong></div>
+  <div class="stat"><small>Vitórias</small><strong id="wins">0</strong></div>
+  <div class="stat"><small>Saldo de gols</small><strong id="gd">0</strong></div>
+ </div>
+ <label for="formation">Formação</label>
+ <select id="formation">
+  <option value="433">4-3-3 • Ofensiva</option>
+  <option value="442">4-4-2 • Equilibrada</option>
+  <option value="352">3-5-2 • Meio forte</option>
+  <option value="541">5-4-1 • Defensiva</option>
+ </select>
+ <label for="mentality">Mentalidade</label>
+ <select id="mentality">
+  <option value="balanced">Equilibrada</option>
+  <option value="attack">Ataque total</option>
+  <option value="defense">Defensiva</option>
+ </select>
+ <button id="saveTactic" style="margin-top:10px">Salvar tática</button>
+ <p id="tacticMessage" class="note">A formação determina quantos jogadores vão em cada setor.</p>
+</section>
 
- <section class="panel">
-  <h2>🏆 Classificação da sua carreira</h2>
-  <div style="overflow-x:auto">
-   <table>
-    <thead><tr><th>#</th><th>Clube</th><th>PTS</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr></thead>
-    <tbody id="tableBody"></tbody>
-   </table>
-  </div>
-  <p class="note">Tabela da carreira simulada nesta instalação; não é a classificação oficial do Brasileirão.</p>
- </section>
+<section class="panel">
+ <h2>🟢 Campo tático</h2>
+ <div class="pitch">
+  <div class="pitchrow" id="gkRow"></div>
+  <div class="pitchrow" id="defRow"></div>
+  <div class="pitchrow" id="midRow"></div>
+  <div class="pitchrow" id="attRow"></div>
+ </div>
+ <p class="note">Toque nos nomes dentro do campo para escolher seus titulares.</p>
+ <button class="secondary" id="autoLineup" style="margin-top:8px">Montar escalação automática</button>
+ <button id="saveLineup" style="margin-top:8px">Salvar escalação</button>
+ <p id="lineupMessage" class="note">Escolha os jogadores titulares.</p>
+</section>
+</div>
 
- <section class="panel">
-  <h2>📜 Histórico de partidas</h2>
-  <div id="history"><p class="note">Você ainda não disputou nenhuma partida.</p></div>
-  <button class="secondary" id="reset" style="margin-top:12px">Reiniciar carreira</button>
- </section>
+<section class="panel">
+ <h2>👥 Elenco de referência — Flamengo</h2>
+ <p class="note">Nomes e posições organizados a partir das páginas oficiais consultadas. Confirme a situação atual de cada atleta antes de considerar a lista definitiva.</p>
+ <div class="playerlist" id="roster"></div>
+ <p><a href="https://www.flamengo.com.br/futebol/elenco" target="_blank" rel="noopener">Consultar elenco no site oficial do Flamengo ↗</a></p>
+ <p><a href="https://www.cbf.com.br/futebol-brasileiro/times/copa-do-brasil/profissional/2026/20016?tab=atletas" target="_blank" rel="noopener">Consultar registro de atletas na CBF ↗</a></p>
+</section>
 
- <section class="panel">
-  <h2>👥 Elencos profissionais</h2>
-  <p>Os nomes e vínculos dos jogadores precisam ser conferidos por clube para evitar atletas transferidos ou não inscritos. Consulte os atletas cadastrados pela CBF:</p>
-  <p><a href="https://www.cbf.com.br/futebol-brasileiro/times/campeonato-brasileiro/serie-a/2026" target="_blank" rel="noopener">Abrir clubes e elencos oficiais da Série A 2026 ↗</a></p>
-  <p class="note">Esta versão ainda não contém todos os elencos completos nem multiplayer online. Esses recursos serão adicionados em etapas, sem inventar nomes de jogadores.</p>
- </section>
+<section class="panel">
+ <h2>🎮 Próxima partida</h2>
+ <div class="grid">
+  <div><label>Seu clube</label><strong id="homeName">Flamengo</strong></div>
+  <div><label for="opponent">Adversário</label><select id="opponent"></select></div>
+ </div>
+ <div class="score" id="score">VS</div>
+ <p id="matchMessage" class="note" style="text-align:center">A simulação considera sua escalação e a tática escolhida.</p>
+ <button id="play">▶ Simular partida</button>
+ <p class="note">Partidas fictícias de entretenimento. Sem apostas ou dinheiro real.</p>
+</section>
+
+<section class="panel">
+ <h2>🏆 Classificação da carreira</h2>
+ <div class="scroll"><table>
+  <thead><tr><th>#</th><th>Clube</th><th>PTS</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr></thead>
+  <tbody id="tableBody"></tbody>
+ </table></div>
+ <p class="note">Classificação desta carreira simulada, não a tabela oficial do campeonato.</p>
+</section>
+
+<section class="panel">
+ <h2>📜 Histórico</h2>
+ <div id="history"><p class="note">Nenhuma partida disputada.</p></div>
+ <button class="secondary" id="reset" style="margin-top:12px">Reiniciar carreira</button>
+</section>
 </main>
-<footer>ATIVA GAMING • BR League Football • Protótipo de gerenciamento</footer>
+<footer>ATIVA GAMING • BR LEAGUE FOOTBALL</footer>
+
 <script>
 const clubs=[
 "Athletico Paranaense","Atlético Mineiro","Bahia","Botafogo",
@@ -166,137 +156,229 @@ const clubs=[
 "Fluminense","Grêmio","Internacional","Mirassol","Palmeiras",
 "Red Bull Bragantino","Remo","Santos","São Paulo","Vasco da Gama","Vitória"
 ];
+
+/* Referências de jogadores consultadas em páginas oficiais.
+   A lista não afirma inscrição atual de todos os atletas. */
+const roster=[
+{name:"Agustín Rossi",pos:"GOL",rating:84},
+{name:"Andrew",pos:"GOL",rating:72},
+{name:"Dyogo Alves",pos:"GOL",rating:68},
+{name:"Léo Pereira",pos:"DEF",rating:81},
+{name:"Léo Ortiz",pos:"DEF",rating:82},
+{name:"Danilo",pos:"DEF",rating:79},
+{name:"João Victor",pos:"DEF",rating:70},
+{name:"Vitão",pos:"DEF",rating:76},
+{name:"Guillermo Varela",pos:"DEF",rating:77},
+{name:"Emerson Royal",pos:"DEF",rating:79},
+{name:"Ayrton Lucas",pos:"DEF",rating:78},
+{name:"Alex Sandro",pos:"DEF",rating:80},
+{name:"Erick Pulgar",pos:"MEI",rating:81},
+{name:"Jorginho",pos:"MEI",rating:83},
+{name:"Evertton Araújo",pos:"MEI",rating:71},
+{name:"Saúl",pos:"MEI",rating:79},
+{name:"Lucas Paquetá",pos:"MEI",rating:85},
+{name:"De Arrascaeta",pos:"MEI",rating:87},
+{name:"De La Cruz",pos:"MEI",rating:82},
+{name:"Carrascal",pos:"MEI",rating:80},
+{name:"Bruno Henrique",pos:"ATA",rating:82},
+{name:"Pedro",pos:"ATA",rating:85},
+{name:"Everton Cebolinha",pos:"ATA",rating:80},
+{name:"Luiz Araújo",pos:"ATA",rating:80},
+{name:"Gonzalo Plata",pos:"ATA",rating:79},
+{name:"Samuel Lino",pos:"ATA",rating:82}
+];
 const $=id=>document.getElementById(id);
-const initial={
-club:"Flamengo",formation:"433",mentality:"balanced",
-table:{},history:[]
+const shape={
+"433":{DEF:4,MEI:3,ATA:3},
+"442":{DEF:4,MEI:4,ATA:2},
+"352":{DEF:3,MEI:5,ATA:2},
+"541":{DEF:5,MEI:4,ATA:1}
 };
+function defaultLineup(){
+ return {
+ GOL:"Agustín Rossi",
+ DEF:["Guillermo Varela","Léo Ortiz","Léo Pereira","Alex Sandro"],
+ MEI:["Erick Pulgar","Jorginho","De Arrascaeta"],
+ ATA:["Gonzalo Plata","Pedro","Samuel Lino"]
+ };
+}
+function blank(){return {pts:0,j:0,v:0,e:0,d:0,gp:0,gc:0};}
+function newState(){
+ const table={};clubs.forEach(c=>table[c]=blank());
+ return {club:"Flamengo",formation:"433",mentality:"balanced",
+ lineup:defaultLineup(),table,history:[]};
+}
 let state;
 try{
- state=JSON.parse(localStorage.getItem("brleague_save"))||initial;
-}catch(e){state=initial}
-function blank(){
- return {pts:0,j:0,v:0,e:0,d:0,gp:0,gc:0};
-}
-function ensure(){
+ state=JSON.parse(localStorage.getItem("brleague_save_v2"))||newState();
+}catch(e){state=newState();}
+function ensureState(){
+ if(!clubs.includes(state.club))state.club="Flamengo";
  if(!state.table)state.table={};
- clubs.forEach(c=>{if(!state.table[c])state.table[c]=blank()});
+ clubs.forEach(c=>{if(!state.table[c])state.table[c]=blank();});
  if(!Array.isArray(state.history))state.history=[];
- if(!clubs.includes(state.club))state.club=clubs[0];
+ if(!shape[state.formation])state.formation="433";
+ if(!state.lineup||typeof state.lineup!=="object")state.lineup=defaultLineup();
+ if(!state.lineup.GOL)state.lineup.GOL=defaultLineup().GOL;
+ ["DEF","MEI","ATA"].forEach(k=>{
+  if(!Array.isArray(state.lineup[k]))state.lineup[k]=defaultLineup()[k];
+ });
 }
-function persist(){
- localStorage.setItem("brleague_save",JSON.stringify(state));
- render();
-}
+function persist(){localStorage.setItem("brleague_save_v2",JSON.stringify(state));render();}
+function playerByName(name){return roster.find(p=>p.name===name);}
+function available(pos){return roster.filter(p=>p.pos===pos);}
 function fillSelects(){
  $("club").innerHTML=clubs.map(c=>`<option>${c}</option>`).join("");
- $("opponent").innerHTML=clubs.map(c=>`<option>${c}</option>`).join("");
+ $("opponent").innerHTML=clubs.filter(c=>c!=="Flamengo").map(c=>`<option>${c}</option>`).join("");
 }
-function renderPitch(){
- let f=state.formation||"433";
- let counts=f.split("").map(Number);
- const make=(n,pos)=>Array.from({length:n},(_,i)=>
- `<div class="player">—<span>${pos} ${i+1}</span></div>`).join("");
- $("defense").innerHTML=make(counts[0],"DEF");
- $("midfield").innerHTML=make(counts[1],"MEI");
- $("attack").innerHTML=make(counts[2],"ATA");
+function playerOptions(pos,selected){
+ return available(pos).map(p=>`<option value="${p.name}" ${p.name===selected?"selected":""}>${p.name}</option>`).join("");
+}
+function slotHtml(pos,selected,index){
+ return `<div class="slot"><small>${pos==="GOL"?"GOLEIRO":pos+" "+(index+1)}</small>
+ <select data-pos="${pos}" data-index="${index}">${playerOptions(pos,selected)}</select></div>`;
+}
+function readPitch(){
+ document.querySelectorAll(".pitch select").forEach(el=>{
+  const pos=el.dataset.pos,index=Number(el.dataset.index);
+  if(pos==="GOL")state.lineup.GOL=el.value;
+  else state.lineup[pos][index]=el.value;
+ });
+}
+function buildPitch(){
+ const counts=shape[state.formation];
+ $("gkRow").innerHTML=slotHtml("GOL",state.lineup.GOL,0);
+ ["DEF","MEI","ATA"].forEach(pos=>{
+  const count=counts[pos];
+  const previous=state.lineup[pos]||[];
+  const pool=available(pos);
+  const chosen=[];
+  for(let i=0;i<count;i++){
+   let name=previous[i];
+   if(!pool.some(p=>p.name===name)||chosen.includes(name))
+    name=pool.find(p=>!chosen.includes(p.name))?.name||pool[0].name;
+   chosen.push(name);
+  }
+  state.lineup[pos]=chosen;
+  const html=chosen.map((name,i)=>slotHtml(pos,name,i)).join("");
+  $(pos==="DEF"?"defRow":pos==="MEI"?"midRow":"attRow").innerHTML=html;
+ });
+}
+function renderRoster(){
+ $("roster").innerHTML=roster.map(p=>
+ `<div class="player"><b>${p.name}</b><span class="pill">${p.pos}</span> <span class="muted">Nota de jogo: ${p.rating}</span></div>`
+ ).join("");
 }
 function render(){
- ensure();
+ ensureState();
  $("club").value=state.club;
- $("formation").value=state.formation||"433";
- $("mentality").value=state.mentality||"balanced";
+ $("formation").value=state.formation;
+ $("mentality").value=state.mentality;
  $("homeName").textContent=state.club;
- if($("opponent").value===state.club){
-  $("opponent").value=clubs.find(c=>c!==state.club);
- }
- const mine=state.table[state.club];
- $("points").textContent=mine.pts;
- $("played").textContent=mine.j;
- $("wins").textContent=mine.v;
- $("goalDiff").textContent=mine.gp-mine.gc;
+ if($("opponent").value===state.club)$("opponent").selectedIndex=0;
+ const t=state.table[state.club];
+ $("points").textContent=t.pts;
+ $("played").textContent=t.j;
+ $("wins").textContent=t.v;
+ $("gd").textContent=t.gp-t.gc;
  $("tableBody").innerHTML=clubs.slice().sort((a,b)=>{
   let A=state.table[a],B=state.table[b];
   return B.pts-A.pts||(B.gp-B.gc)-(A.gp-A.gc)||B.gp-A.gp;
  }).map((c,i)=>{
-  let t=state.table[c];
-  return `<tr><td>${i+1}</td><td>${c}${c===state.club?" ★":""}</td><td>${t.pts}</td><td>${t.j}</td><td>${t.v}</td><td>${t.e}</td><td>${t.d}</td><td>${t.gp-t.gc}</td></tr>`;
+  let x=state.table[c];
+  return `<tr><td>${i+1}</td><td>${c}${c===state.club?" ★":""}</td><td>${x.pts}</td><td>${x.j}</td><td>${x.v}</td><td>${x.e}</td><td>${x.d}</td><td>${x.gp-x.gc}</td></tr>`;
  }).join("");
  $("history").innerHTML=state.history.length?
- state.history.slice().reverse().map(m=>`<div class="log"><strong>${m.home} ${m.hg} × ${m.ag} ${m.away}</strong><br><span class="note">${m.note}</span></div>`).join("")
- :'<p class="note">Você ainda não disputou nenhuma partida.</p>';
- renderPitch();
+ state.history.slice().reverse().map(m=>`<div class="log"><b>${m.home} ${m.hg} × ${m.ag} ${m.away}</b><br><span class="note">${m.note}</span></div>`).join("")
+ :'<p class="note">Nenhuma partida disputada.</p>';
+ buildPitch();
+}
+function currentLineupStrength(){
+ const names=[state.lineup.GOL,...state.lineup.DEF,...state.lineup.MEI,...state.lineup.ATA];
+ const ratings=names.map(n=>playerByName(n)?.rating||65);
+ return ratings.reduce((a,b)=>a+b,0)/Math.max(1,ratings.length);
 }
 function teamStrength(club){
- const favorites=["Flamengo","Palmeiras","Cruzeiro","Fluminense","Bahia","Athletico Paranaense"];
- return favorites.includes(club)?72:clubs.indexOf(club)%5+66;
+ if(club==="Flamengo")return currentLineupStrength();
+ const favorites=["Palmeiras","Cruzeiro","Bahia","Fluminense","Botafogo"];
+ return favorites.includes(club)?77:70+(clubs.indexOf(club)%5);
 }
-function randGoal(x){
- let n=0;
- for(let i=0;i<5;i++)if(Math.random()<x/5)n++;
- return Math.min(n,5);
+function goals(chance){
+ let result=0;
+ for(let i=0;i<5;i++)if(Math.random()<chance/5)result++;
+ return Math.min(result,5);
 }
 function playMatch(){
+ readPitch();
  const home=state.club,away=$("opponent").value;
- if(home===away){alert("Escolha um adversário diferente do seu clube.");return;}
- const f=state.formation||"433";
- const mentality=state.mentality||"balanced";
+ if(home===away){alert("Escolha um adversário diferente.");return;}
  let hs=teamStrength(home),as=teamStrength(away);
- if(f==="433")hs+=2;
- if(f==="352")hs+=1;
- if(f==="541")hs-=1;
- if(mentality==="attack")hs+=3;
- if(mentality==="defense")as-=1;
- const hg=randGoal(Math.max(0.5,1.3+(hs-as)/22));
- const ag=randGoal(Math.max(0.4,1.15+(as-hs)/22));
+ if(state.formation==="433")hs+=2;
+ if(state.formation==="352")hs+=1;
+ if(state.formation==="541")hs-=1;
+ if(state.mentality==="attack")hs+=3;
+ if(state.mentality==="defense")hs-=1;
+ const hg=goals(Math.max(.45,1.35+(hs-as)/22));
+ const ag=goals(Math.max(.4,1.2+(as-hs)/22));
  const H=state.table[home],A=state.table[away];
  H.j++;A.j++;H.gp+=hg;H.gc+=ag;A.gp+=ag;A.gc+=hg;
  let note;
- if(hg>ag){H.v++;H.pts+=3;A.d++;note="Vitória! +3 pontos.";}
- else if(hg<ag){A.v++;A.pts+=3;H.d++;note="Derrota. Ajuste sua estratégia.";}
- else{H.e++;A.e++;H.pts++;A.pts++;note="Empate. Cada equipe ganhou 1 ponto.";}
- state.history.push({home,away,hg,ag,note,formation:f});
+ if(hg>ag){H.v++;H.pts+=3;A.d++;note="Vitória: 3 pontos para "+home+".";}
+ else if(hg<ag){A.v++;A.pts+=3;H.d++;note="Derrota. Revise a escalação e a tática.";}
+ else{H.e++;A.e++;H.pts++;A.pts++;note="Empate: um ponto para cada clube.";}
+ state.history.push({home,away,hg,ag,note,formation:state.formation,
+ lineup:[state.lineup.GOL,...state.lineup.DEF,...state.lineup.MEI,...state.lineup.ATA]});
  if(state.history.length>30)state.history.shift();
- $("score").textContent=`${hg} × ${ag}`;
- $("matchInfo").textContent=note+" Resultado fictício da simulação.";
+ $("score").textContent=hg+" × "+ag;
+ $("matchMessage").textContent=note+" Resultado gerado pelo simulador.";
  persist();
 }
-fillSelects();ensure();render();
-$("saveClub").addEventListener("click",()=>{
+fillSelects();ensureState();renderRoster();render();
+$("confirmClub").onclick=()=>{
  state.club=$("club").value;
- if($("opponent").value===state.club){
-  $("opponent").value=clubs.find(c=>c!==state.club);
- }
+ $("homeName").textContent=state.club;
  $("score").textContent="VS";
- $("matchInfo").textContent="Clube selecionado. Pronto para a partida.";
+ $("matchMessage").textContent="Clube confirmado.";
  persist();
-});
-$("official").addEventListener("click",()=>{
- window.open("https://www.cbf.com.br/futebol-brasileiro/times/campeonato-brasileiro/serie-a/2026","_blank","noopener");
-});
-$("saveTactic").addEventListener("click",()=>{
+};
+$("saveTactic").onclick=()=>{
+ readPitch();
  state.formation=$("formation").value;
  state.mentality=$("mentality").value;
- $("tacticMsg").textContent="Tática salva para sua carreira.";
+ $("tacticMessage").textContent="Tática salva. Confira os jogadores do campo.";
  persist();
+};
+$("formation").addEventListener("change",()=>{
+ readPitch();state.formation=$("formation").value;buildPitch();
 });
-$("play").addEventListener("click",playMatch);
-$("reset").addEventListener("click",()=>{
- if(!confirm("Deseja apagar os resultados desta carreira neste navegador?"))return;
- state={club:state.club,formation:"433",mentality:"balanced",table:{},history:[]};
- ensure();persist();
+$("mentality").addEventListener("change",()=>{
+ state.mentality=$("mentality").value;
+});
+$("autoLineup").onclick=()=>{
+ state.lineup=defaultLineup();
+ buildPitch();
+ $("lineupMessage").textContent="Escalação padrão carregada. Você pode trocar os jogadores.";
+};
+$("saveLineup").onclick=()=>{
+ readPitch();
+ const all=[state.lineup.GOL,...state.lineup.DEF,...state.lineup.MEI,...state.lineup.ATA];
+ if(new Set(all).size!==all.length){
+  $("lineupMessage").textContent="Há jogador repetido. Escolha atletas diferentes.";
+  return;
+ }
+ persist();
+ $("lineupMessage").textContent="Escalação salva com sucesso!";
+};
+$("play").onclick=playMatch;
+$("reset").onclick=()=>{
+ if(!confirm("Reiniciar os resultados desta carreira?"))return;
+ state=newState();persist();
  $("score").textContent="VS";
- $("matchInfo").textContent="Nova carreira iniciada.";
-});
+ $("matchMessage").textContent="Nova carreira iniciada.";
+};
 $("club").addEventListener("change",()=>{
  $("homeName").textContent=$("club").value;
-});
-$("opponent").addEventListener("change",()=>{
- if($("opponent").value===state.club){
-  $("matchInfo").textContent="Escolha um clube adversário diferente.";
- }
 });
 </script>
 </body>
 </html>
-
