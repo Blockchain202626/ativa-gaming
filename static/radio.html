@@ -4,130 +4,242 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#080b12">
-<title>Rádio Ativa | Ativa Gaming</title>
+<meta name="description" content="Rádio Mistreet — música e cultura dentro da Ativa Gaming.">
+<title>Rádio Mistreet | Ativa Gaming</title>
 <style>
-:root{color-scheme:dark;--bg:#080b12;--panel:#121925;--line:#263345;--green:#58f0a4;--muted:#9ba9bb}
-*{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at top,#153b35 0,#080b12 48%);color:#f4f7fb;font-family:Arial,sans-serif;min-height:100vh}
-header{display:flex;justify-content:space-between;align-items:center;padding:18px 5%;border-bottom:1px solid #263345;background:#080b12d9;gap:12px}
-.brand{font-weight:900;letter-spacing:1px;font-size:18px}.brand span{color:var(--green)}
-a{color:inherit;text-decoration:none}
-.wrap{width:min(1000px,92%);margin:28px auto 50px}
-.tag{color:var(--green);font-size:12px;font-weight:bold;letter-spacing:2px}
-h1{font-size:clamp(32px,7vw,58px);line-height:1.03;margin:12px 0}
-p{color:var(--muted);line-height:1.6}
-.hero{padding:22px 0 26px}
-.grid{display:grid;grid-template-columns:1.15fr .85fr;gap:18px}
-.panel{background:linear-gradient(145deg,#17212e,#0e141e);border:1px solid var(--line);border-radius:22px;padding:20px;min-width:0}
-.player-art{min-height:190px;border-radius:16px;background:radial-gradient(circle at 50% 40%,#28745c,#142a2a 45%,#0c121b 78%);display:flex;align-items:center;justify-content:center;text-align:center;padding:18px}
-.logo{width:105px;height:105px;border:2px solid var(--green);border-radius:26px;display:grid;place-items:center;font-size:48px;font-weight:900;box-shadow:0 0 35px #58f0a433}
-h2{margin:18px 0 8px;font-size:22px}
-.artist{color:var(--green);font-weight:bold;font-size:13px;letter-spacing:1px}
-.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px}
-button,.btn{border:1px solid var(--line);border-radius:12px;padding:12px 16px;background:#1b2836;color:white;font-weight:bold;cursor:pointer;display:inline-block}
-button.primary,.btn.primary{background:var(--green);color:#07130d;border-color:var(--green)}
-button:active{transform:scale(.98)}
-input[type=range]{width:100%;accent-color:var(--green)}
-iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:14px;background:#000}
-.notice{font-size:12px;color:var(--muted);border-top:1px solid var(--line);margin-top:16px;padding-top:14px}
-.station{display:flex;gap:12px;align-items:center;padding:14px 0;border-bottom:1px solid var(--line)}
-.station-icon{width:46px;height:46px;border-radius:12px;background:#203c35;display:grid;place-items:center;font-size:22px}
-.station small{display:block;color:var(--muted);margin-top:5px}
-.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
-footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
-@media(max-width:700px){.grid{grid-template-columns:1fr}.wrap{margin-top:16px}.panel{padding:16px}header{padding:16px 4%}}
+:root {
+  color-scheme: dark;
+  --bg: #080b12;
+  --panel: #121925;
+  --line: #263345;
+  --green: #58f0a4;
+  --muted: #9ba9bb;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: radial-gradient(ellipse at top,#153b35 0,#080b12 48%);
+  color: #f4f7fb;
+  font-family: Arial,sans-serif;
+  min-height: 100vh;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 5%;
+  border-bottom: 1px solid var(--line);
+  background: #080b12d9;
+  gap: 12px;
+}
+.brand { font-weight: 900; letter-spacing: 1px; font-size: 18px; }
+.brand span { color: var(--green); }
+a { color: inherit; text-decoration: none; }
+.wrap { width: min(1000px,92%); margin: 28px auto 50px; }
+.tag { color: var(--green); font-size: 12px; font-weight: bold; letter-spacing: 2px; }
+h1 { font-size: clamp(32px,7vw,58px); line-height: 1.03; margin: 12px 0; }
+p { color: var(--muted); line-height: 1.6; }
+.hero { padding: 22px 0 26px; }
+.grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; }
+.panel {
+  background: linear-gradient(145deg,#17212e,#0e141e);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 20px;
+  min-width: 0;
+}
+.player-art {
+  min-height: 190px;
+  border-radius: 16px;
+  background: radial-gradient(circle at 50% 40%,#28745c,#142a2a 45%,#0c121b 78%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 18px;
+}
+.logo {
+  width: 105px;
+  height: 105px;
+  border: 2px solid var(--green);
+  border-radius: 26px;
+  display: grid;
+  place-items: center;
+  font-size: 48px;
+  font-weight: 900;
+  box-shadow: 0 0 35px #58f0a433;
+}
+h2 { margin: 18px 0 8px; font-size: 22px; }
+.artist { color: var(--green); font-weight: bold; font-size: 13px; letter-spacing: 1px; }
+.controls { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+button,.btn {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px 16px;
+  background: #1b2836;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+}
+button.primary,.btn.primary { background: var(--green); color: #07130d; border-color: var(--green); }
+button:active,.btn:active { transform: scale(.98); }
+button:focus-visible,.btn:focus-visible,a:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+}
+iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: 0;
+  border-radius: 14px;
+  background: #000;
+}
+.notice {
+  font-size: 12px;
+  color: var(--muted);
+  border-top: 1px solid var(--line);
+  margin-top: 16px;
+  padding-top: 14px;
+}
+.station { display: flex; gap: 12px; align-items: center; padding: 14px 0; border-bottom: 1px solid var(--line); }
+.station-icon {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: #203c35;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+}
+.station small { display: block; color: var(--muted); margin-top: 5px; line-height: 1.5; }
+.links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 20px; }
+@media(max-width:700px) {
+  .grid { grid-template-columns: 1fr; }
+  .wrap { margin-top: 16px; }
+  .panel { padding: 16px; }
+  header { padding: 16px 4%; }
+  .links .btn { flex: 1 1 100%; }
+}
 </style>
 </head>
 <body>
 <header>
-  <a class="brand" href="/">ATIVA <span>GAMING</span></a>
+  <a class="brand" href="/" aria-label="Voltar à Ativa Gaming">
+    ATIVA <span>GAMING</span>
+  </a>
   <span class="tag">RÁDIO ONLINE</span>
 </header>
 
 <main class="wrap">
   <section class="hero">
     <div class="tag">SUA TRILHA. SEU JOGO.</div>
-    <h1>Rádio <span style="color:var(--green)">Ativa</span></h1>
-    <p>Entre no clima, escolha sua música e prepare-se para jogar. Um novo espaço musical da Ativa Gaming.</p>
+    <h1>Rádio <span style="color:var(--green)">Mistreet</span></h1>
+    <p>Um espaço musical da Ativa Gaming para curtir sons, descobrir seleções e entrar no clima antes de jogar.</p>
   </section>
 
   <div class="grid">
     <section class="panel">
       <div class="player-art">
         <div>
-          <div class="logo">A</div>
-          <div class="tag" style="margin-top:14px">ATIVA MUSIC</div>
+          <div class="logo">M</div>
+          <div class="tag" style="margin-top:14px">MISTREET MUSIC</div>
         </div>
       </div>
+
       <div style="margin-top:20px">
-        <div class="artist">FAIXA EM DESTAQUE</div>
+        <div class="artist">SELEÇÃO EM DESTAQUE</div>
         <h2>Seu som começa aqui</h2>
-        <p>Vídeo selecionado para testar o player da rádio.</p>
+        <p>Confira o vídeo selecionado e inicie a reprodução no player abaixo.</p>
       </div>
+
       <div class="controls">
-        <button class="primary" id="playButton">▶ Abrir música</button>
-        <a class="btn" href="https://youtu.be/n43oZSY7df0" target="_blank" rel="noopener">YouTube ↗</a>
+        <button class="primary" id="playButton" type="button">▶ Ir para o player</button>
+        <a class="btn" href="https://youtu.be/n43oZSY7df0"
+           target="_blank" rel="noopener noreferrer">Abrir no YouTube ↗</a>
       </div>
-      <div class="notice">A reprodução começa quando você toca no vídeo. A disponibilidade do player depende das configurações do vídeo e do YouTube.</div>
+
+      <div class="notice">
+        Para ouvir, toque em reproduzir no próprio vídeo. O navegador pode impedir que o áudio comece automaticamente.
+      </div>
     </section>
 
     <section class="panel">
       <div class="tag">ESTAÇÕES</div>
       <h2>Escolha seu ambiente</h2>
+
       <div class="station">
         <div class="station-icon">🎧</div>
-        <div><strong>Ativa Music</strong><small>Estação principal</small></div>
+        <div>
+          <strong>Mistreet Music</strong>
+          <small>Identidade musical da rádio em desenvolvimento.</small>
+        </div>
       </div>
+
       <div class="station">
         <div class="station-icon">🎤</div>
-        <div><strong>Mainstreet</strong><small>Estação planejada · parceria não confirmada</small></div>
+        <div>
+          <strong>Mainstreet</strong>
+          <small>Possível espaço musical futuro. Nenhuma parceria está confirmada.</small>
+        </div>
       </div>
+
       <div class="station">
         <div class="station-icon">🎮</div>
-        <div><strong>Gaming Vibes</strong><small>Espaço para futuras playlists</small></div>
+        <div>
+          <strong>Gaming Vibes</strong>
+          <small>Espaço planejado para futuras seleções musicais.</small>
+        </div>
       </div>
+
       <h2>Volume</h2>
-      <input id="volume" type="range" min="0" max="100" value="80" aria-label="Volume">
-      <p id="volumeLabel">Volume: 80%</p>
-      <p class="notice">O controle de volume desta versão é demonstrativo e não controla o áudio interno do YouTube. Use os controles do próprio vídeo para ajustar o som.</p>
+      <p>Para ajustar o som, use os controles do próprio vídeo.</p>
+      <p class="notice">
+        O volume é controlado pelo player externo. Esta página não altera diretamente o volume interno do YouTube.
+      </p>
     </section>
   </div>
 
-  <section class="panel" style="margin-top:18px">
+  <section class="panel" id="player" style="margin-top:18px">
     <div class="tag">PLAYER DE VÍDEO</div>
     <h2>Ouça a seleção</h2>
-    <p>Toque em reproduzir no vídeo abaixo. Em alguns celulares, o YouTube pode exigir que a reprodução seja iniciada diretamente no próprio player.</p>
+    <p>Toque no botão de reprodução do vídeo. Se ele não carregar, tente abrir a seleção diretamente no YouTube.</p>
+
     <iframe id="musicFrame"
       src="https://www.youtube-nocookie.com/embed/n43oZSY7df0?rel=0"
-      title="Vídeo musical selecionado para a Rádio Ativa"
+      title="Seleção musical da Rádio Mistreet"
       loading="lazy"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       referrerpolicy="strict-origin-when-cross-origin"
       allowfullscreen></iframe>
+
     <div class="links">
       <a class="btn primary" href="/">← Voltar à Ativa Gaming</a>
-      <a class="btn" href="/static/football.html">⚽ BR League Football</a>
-      <a class="btn" href="https://youtu.be/n43oZSY7df0" target="_blank" rel="noopener">Abrir no YouTube ↗</a>
+      <a class="btn" href="/static/football.html">⚽ BR League Futebol</a>
+      <a class="btn" href="https://youtu.be/n43oZSY7df0"
+         target="_blank" rel="noopener noreferrer">Abrir no YouTube ↗</a>
     </div>
-    <p class="notice">A estação Mainstreet está planejada, mas não representa uma parceria confirmada. O uso de músicas em uma plataforma pública ou comercial depende das autorizações aplicáveis.</p>
+
+    <p class="notice">
+      A estação Mainstreet é apenas uma ideia planejada, sem parceria confirmada. A utilização de músicas em uma plataforma pública ou comercial pode exigir autorizações dos titulares dos direitos.
+    </p>
   </section>
 </main>
 
-<footer>© <span id="year"></span> Ativa Gaming · Rádio em desenvolvimento</footer>
+<footer>
+  © <span id="year"></span> Ativa Gaming · Rádio Mistreet em desenvolvimento
+</footer>
 
 <script>
 document.getElementById("year").textContent = new Date().getFullYear();
 
 document.getElementById("playButton").addEventListener("click", () => {
-  document.getElementById("musicFrame").scrollIntoView({
-    behavior: "smooth",
-    block: "center"
-  });
-});
-
-document.getElementById("volume").addEventListener("input", event => {
-  document.getElementById("volumeLabel").textContent =
-    "Volume: " + event.target.value + "%";
+  const player = document.getElementById("player");
+  player.scrollIntoView({ behavior: "smooth", block: "center" });
 });
 </script>
 </body>
