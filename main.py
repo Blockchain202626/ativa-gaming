@@ -1,4 +1,3 @@
-
 import hashlib
 import hmac
 import os
@@ -748,3 +747,9 @@ def partnerships():
         "advertising": "not_configured",
         "note": "Planos demonstrativos; não há cobrança ativa.",
     }
+
+
+# Carteira universal: importar somente depois de init_db() e da migração.
+# O módulo cria as tabelas da carteira sem apagar as contas existentes.
+from wallet_integration import router as wallet_router
+app.include_router(wallet_router)
