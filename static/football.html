@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -10,42 +9,38 @@
 :root{color-scheme:dark;--bg:#07150f;--panel:#10251a;--line:#294b37;--green:#39e58c;--muted:#b1c6b7;--white:#f4fff7}
 *{box-sizing:border-box}
 body{margin:0;background:radial-gradient(ellipse at top,#1a412c,#07150f 65%);font-family:system-ui,Arial,sans-serif;color:var(--white)}
-header{padding:22px 16px;background:#08170ff2;border-bottom:1px solid var(--line)}
+header{padding:22px 16px;background:#08170f;border-bottom:1px solid var(--line)}
 .wrap,main{max-width:1050px;margin:auto}
 .brand{color:var(--green);font-size:12px;font-weight:900;letter-spacing:2px}
 h1{font-size:clamp(26px,6vw,40px);margin:8px 0}
 h2{font-size:19px;margin:0 0 13px}
-h3{font-size:15px;margin:0 0 8px}
-p{line-height:1.5}
-.muted,.note{color:var(--muted);font-size:12px}
 main{padding:15px}
 .panel{background:linear-gradient(145deg,#132a1e,#0b1b12);border:1px solid var(--line);border-radius:16px;padding:15px;margin-bottom:14px}
+.muted,.note{color:var(--muted);font-size:12px;line-height:1.5}
 label{display:block;font-size:12px;color:var(--muted);margin:9px 0 5px}
-select,button{width:100%;padding:12px;border-radius:10px;border:1px solid #365b43;font:inherit}
+select,button{width:100%;padding:11px;border-radius:10px;border:1px solid #365b43;font:inherit}
 select{background:#09180f;color:white}
-button{background:var(--green);color:#082012;font-weight:850;border:0;cursor:pointer}
+button{background:var(--green);color:#082012;font-weight:850;border:0;cursor:pointer;margin-top:8px}
 button.secondary{background:#193b28;color:white;border:1px solid #365b43}
-button:disabled{opacity:.45}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .stat{background:#091910;border:1px solid var(--line);border-radius:12px;padding:12px}
 .stat small{display:block;color:var(--muted);font-size:12px}
 .stat strong{font-size:22px;display:block;margin-top:4px}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
 .layout{display:grid;gap:14px}
-.pitch{border:2px solid #a1d4ad;border-radius:12px;padding:10px;background:repeating-linear-gradient(0deg,#1a6038 0,#1a6038 42px,#216942 42px,#216942 84px)}
-.pitchrow{display:flex;justify-content:center;gap:5px;margin:10px 0}
-.slot{flex:1;min-width:0;max-width:150px;background:#e5ffed;color:#102b1b;border-radius:9px;padding:7px 3px;text-align:center;font-size:11px;font-weight:850;overflow-wrap:anywhere}
-.slot select{background:#f3fff6;color:#153421;border-color:#aacbb5;padding:6px 2px;font-size:10px}
+.pitch{border:2px solid #a1d4ad;border-radius:12px;padding:8px;background:repeating-linear-gradient(0deg,#1a6038 0,#1a6038 42px,#216942 42px,#216942 84px)}
+.pitchrow{display:flex;justify-content:center;gap:4px;margin:9px 0}
+.slot{flex:1;min-width:0;max-width:150px;background:#e5ffed;color:#102b1b;border-radius:8px;padding:5px 2px;text-align:center;font-size:10px;font-weight:800;overflow:hidden}
+.slot select{background:#f3fff6;color:#153421;border-color:#aacbb5;padding:5px 1px;font-size:10px}
 .slot small{display:block;font-weight:500;font-size:10px}
 .playerlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
 .player{background:#0a1b11;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12px}
 .player b{display:block;margin-bottom:4px}
 .pill{display:inline-block;border-radius:20px;background:#19432b;color:#b7ffd0;padding:4px 8px;font-size:10px}
 .score{text-align:center;font-size:35px;font-weight:900;margin:10px}
+.scroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th,td{text-align:left;padding:8px 4px;border-bottom:1px solid var(--line)}
 th{color:var(--muted)}
-.scroll{overflow-x:auto}
 .log{border-bottom:1px solid var(--line);padding:10px 0;font-size:13px}
 a{color:var(--green)}
 footer{text-align:center;padding:22px;color:var(--muted);font-size:12px}
@@ -54,102 +49,96 @@ footer{text-align:center;padding:22px;color:var(--muted);font-size:12px}
 </head>
 <body>
 <header><div class="wrap">
- <div class="brand">ATIVA GAMING • FUTEBOL</div>
- <h1>⚽ BR League Football</h1>
- <p class="muted">Gerencie seu clube, monte a escalação e dispute sua carreira.</p>
+<div class="brand">ATIVA GAMING • FUTEBOL</div>
+<h1>⚽ BR League Football</h1>
+<p class="muted">Monte seu time, dispute partidas e suba na classificação.</p>
 </div></header>
+
 <main>
 <section class="panel">
- <h2>🏟️ Meu clube</h2>
- <label for="club">Clube da carreira</label>
- <select id="club"></select>
- <div class="grid" style="margin-top:12px">
-  <div class="stat"><small>Temporada</small><strong>2026</strong></div>
-  <div class="stat"><small>Modo</small><strong>Manager</strong></div>
- </div>
- <button id="confirmClub" style="margin-top:12px">Confirmar clube</button>
- <p class="note">O elenco detalhado nesta versão é o do Flamengo. Os outros clubes serão adicionados após validação dos respectivos jogadores.</p>
+<h2>🏟️ Meu clube</h2>
+<label for="club">Clube da carreira</label>
+<select id="club"></select>
+<button id="confirmClub">Confirmar clube</button>
+<p class="note">Partidas e classificações são simuladas. As notas dos jogadores são fictícias.</p>
 </section>
 
 <div class="layout">
 <section class="panel">
- <h2>📊 Minha carreira</h2>
- <div class="grid">
-  <div class="stat"><small>Pontos</small><strong id="points">0</strong></div>
-  <div class="stat"><small>Jogos</small><strong id="played">0</strong></div>
-  <div class="stat"><small>Vitórias</small><strong id="wins">0</strong></div>
-  <div class="stat"><small>Saldo de gols</small><strong id="gd">0</strong></div>
- </div>
- <label for="formation">Formação</label>
- <select id="formation">
-  <option value="433">4-3-3 • Ofensiva</option>
-  <option value="442">4-4-2 • Equilibrada</option>
-  <option value="352">3-5-2 • Meio forte</option>
-  <option value="541">5-4-1 • Defensiva</option>
- </select>
- <label for="mentality">Mentalidade</label>
- <select id="mentality">
-  <option value="balanced">Equilibrada</option>
-  <option value="attack">Ataque total</option>
-  <option value="defense">Defensiva</option>
- </select>
- <button id="saveTactic" style="margin-top:10px">Salvar tática</button>
- <p id="tacticMessage" class="note">A formação determina quantos jogadores vão em cada setor.</p>
+<h2>📊 Minha carreira</h2>
+<div class="grid">
+<div class="stat"><small>Pontos</small><strong id="points">0</strong></div>
+<div class="stat"><small>Jogos</small><strong id="played">0</strong></div>
+<div class="stat"><small>Vitórias</small><strong id="wins">0</strong></div>
+<div class="stat"><small>Saldo de gols</small><strong id="gd">0</strong></div>
+</div>
+<label for="formation">Formação</label>
+<select id="formation">
+<option value="433">4-3-3</option>
+<option value="442">4-4-2</option>
+<option value="352">3-5-2</option>
+<option value="541">5-4-1</option>
+</select>
+<label for="mentality">Mentalidade</label>
+<select id="mentality">
+<option value="balanced">Equilibrada</option>
+<option value="attack">Ataque total</option>
+<option value="defense">Defensiva</option>
+</select>
+<button id="saveTactic">Salvar tática</button>
+<p id="tacticMessage" class="note"></p>
 </section>
 
 <section class="panel">
- <h2>🟢 Campo tático</h2>
- <div class="pitch">
-  <div class="pitchrow" id="gkRow"></div>
-  <div class="pitchrow" id="defRow"></div>
-  <div class="pitchrow" id="midRow"></div>
-  <div class="pitchrow" id="attRow"></div>
- </div>
- <p class="note">Toque nos nomes dentro do campo para escolher seus titulares.</p>
- <button class="secondary" id="autoLineup" style="margin-top:8px">Montar escalação automática</button>
- <button id="saveLineup" style="margin-top:8px">Salvar escalação</button>
- <p id="lineupMessage" class="note">Escolha os jogadores titulares.</p>
+<h2>🟢 Campo tático</h2>
+<div class="pitch">
+<div class="pitchrow" id="gkRow"></div>
+<div class="pitchrow" id="defRow"></div>
+<div class="pitchrow" id="midRow"></div>
+<div class="pitchrow" id="attRow"></div>
+</div>
+<p class="note">Escolha os jogadores nos seletores do campo.</p>
+<button class="secondary" id="autoLineup">Escalação automática</button>
+<button id="saveLineup">Salvar escalação</button>
+<p id="lineupMessage" class="note"></p>
 </section>
 </div>
 
 <section class="panel">
- <h2>👥 Elenco de referência — Flamengo</h2>
- <p class="note">Nomes e posições organizados a partir das páginas oficiais consultadas. Confirme a situação atual de cada atleta antes de considerar a lista definitiva.</p>
- <div class="playerlist" id="roster"></div>
- <p><a href="https://www.flamengo.com.br/futebol/elenco" target="_blank" rel="noopener">Consultar elenco no site oficial do Flamengo ↗</a></p>
- <p><a href="https://www.cbf.com.br/futebol-brasileiro/times/copa-do-brasil/profissional/2026/20016?tab=atletas" target="_blank" rel="noopener">Consultar registro de atletas na CBF ↗</a></p>
+<h2>👥 Elenco de referência</h2>
+<div id="roster" class="playerlist"></div>
+<p><a href="https://www.flamengo.com.br/futebol/elenco" target="_blank" rel="noopener">Consultar elenco oficial do Flamengo ↗</a></p>
 </section>
 
 <section class="panel">
- <h2>🎮 Próxima partida</h2>
- <div class="grid">
-  <div><label>Seu clube</label><strong id="homeName">Flamengo</strong></div>
-  <div><label for="opponent">Adversário</label><select id="opponent"></select></div>
- </div>
- <div class="score" id="score">VS</div>
- <p id="matchMessage" class="note" style="text-align:center">A simulação considera sua escalação e a tática escolhida.</p>
- <button id="play">▶ Simular partida</button>
- <p class="note">Partidas fictícias de entretenimento. Sem apostas ou dinheiro real.</p>
+<h2>🎮 Próxima partida</h2>
+<label for="opponent">Adversário</label>
+<select id="opponent"></select>
+<div id="score" class="score">VS</div>
+<p id="matchMessage" class="note">Prepare seu time e simule a partida.</p>
+<button id="play">▶ Simular partida</button>
+<p class="note">Jogo fictício, sem apostas ou dinheiro real.</p>
 </section>
 
 <section class="panel">
- <h2>🏆 Classificação da carreira</h2>
- <div class="scroll"><table>
-  <thead><tr><th>#</th><th>Clube</th><th>PTS</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr></thead>
-  <tbody id="tableBody"></tbody>
- </table></div>
- <p class="note">Classificação desta carreira simulada, não a tabela oficial do campeonato.</p>
+<h2>🏆 Classificação da carreira</h2>
+<div class="scroll"><table>
+<thead><tr><th>#</th><th>Clube</th><th>PTS</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr></thead>
+<tbody id="tableBody"></tbody>
+</table></div>
 </section>
 
 <section class="panel">
- <h2>📜 Histórico</h2>
- <div id="history"><p class="note">Nenhuma partida disputada.</p></div>
- <button class="secondary" id="reset" style="margin-top:12px">Reiniciar carreira</button>
+<h2>📜 Histórico</h2>
+<div id="history"></div>
+<button class="secondary" id="reset">Reiniciar carreira</button>
 </section>
 </main>
 <footer>ATIVA GAMING • BR LEAGUE FOOTBALL</footer>
 
 <script>
+"use strict";
+
 const clubs=[
 "Athletico Paranaense","Atlético Mineiro","Bahia","Botafogo",
 "Chapecoense","Corinthians","Coritiba","Cruzeiro","Flamengo",
@@ -157,228 +146,216 @@ const clubs=[
 "Red Bull Bragantino","Remo","Santos","São Paulo","Vasco da Gama","Vitória"
 ];
 
-/* Referências de jogadores consultadas em páginas oficiais.
-   A lista não afirma inscrição atual de todos os atletas. */
 const roster=[
-{name:"Agustín Rossi",pos:"GOL",rating:84},
-{name:"Andrew",pos:"GOL",rating:72},
-{name:"Dyogo Alves",pos:"GOL",rating:68},
-{name:"Léo Pereira",pos:"DEF",rating:81},
-{name:"Léo Ortiz",pos:"DEF",rating:82},
-{name:"Danilo",pos:"DEF",rating:79},
-{name:"João Victor",pos:"DEF",rating:70},
-{name:"Vitão",pos:"DEF",rating:76},
-{name:"Guillermo Varela",pos:"DEF",rating:77},
-{name:"Emerson Royal",pos:"DEF",rating:79},
-{name:"Ayrton Lucas",pos:"DEF",rating:78},
-{name:"Alex Sandro",pos:"DEF",rating:80},
-{name:"Erick Pulgar",pos:"MEI",rating:81},
-{name:"Jorginho",pos:"MEI",rating:83},
-{name:"Evertton Araújo",pos:"MEI",rating:71},
-{name:"Saúl",pos:"MEI",rating:79},
-{name:"Lucas Paquetá",pos:"MEI",rating:85},
-{name:"De Arrascaeta",pos:"MEI",rating:87},
-{name:"De La Cruz",pos:"MEI",rating:82},
-{name:"Carrascal",pos:"MEI",rating:80},
-{name:"Bruno Henrique",pos:"ATA",rating:82},
-{name:"Pedro",pos:"ATA",rating:85},
-{name:"Everton Cebolinha",pos:"ATA",rating:80},
-{name:"Luiz Araújo",pos:"ATA",rating:80},
-{name:"Gonzalo Plata",pos:"ATA",rating:79},
-{name:"Samuel Lino",pos:"ATA",rating:82}
-];
+["Agustín Rossi","GOL",84],["Andrew","GOL",76],["Dyogo Alves","GOL",68],
+["Danilo","DEF",80],["Léo Pereira","DEF",81],["Léo Ortiz","DEF",82],
+["Guillermo Varela","DEF",77],["Emerson Royal","DEF",79],
+["Ayrton Lucas","DEF",78],["Alex Sandro","DEF",80],
+["Erick Pulgar","MEI",81],["Jorginho","MEI",83],
+["Evertton Araújo","MEI",72],["Saúl","MEI",79],
+["Lucas Paquetá","MEI",85],["De Arrascaeta","MEI",87],
+["De La Cruz","MEI",82],["Carrascal","MEI",80],
+["Bruno Henrique","ATA",82],["Pedro","ATA",85],
+["Luiz Araújo","ATA",80],["Gonzalo Plata","ATA",79],
+["Samuel Lino","ATA",82]
+].map(([name,pos,rating])=>({name,pos,rating}));
+
 const $=id=>document.getElementById(id);
-const shape={
+const formations={
 "433":{DEF:4,MEI:3,ATA:3},
 "442":{DEF:4,MEI:4,ATA:2},
 "352":{DEF:3,MEI:5,ATA:2},
 "541":{DEF:5,MEI:4,ATA:1}
 };
+
 function defaultLineup(){
- return {
- GOL:"Agustín Rossi",
- DEF:["Guillermo Varela","Léo Ortiz","Léo Pereira","Alex Sandro"],
- MEI:["Erick Pulgar","Jorginho","De Arrascaeta"],
- ATA:["Gonzalo Plata","Pedro","Samuel Lino"]
- };
+return {
+GOL:"Agustín Rossi",
+DEF:["Guillermo Varela","Léo Ortiz","Léo Pereira","Alex Sandro"],
+MEI:["Erick Pulgar","Jorginho","De Arrascaeta"],
+ATA:["Gonzalo Plata","Pedro","Samuel Lino"]
+};
 }
 function blank(){return {pts:0,j:0,v:0,e:0,d:0,gp:0,gc:0};}
-function newState(){
- const table={};clubs.forEach(c=>table[c]=blank());
- return {club:"Flamengo",formation:"433",mentality:"balanced",
- lineup:defaultLineup(),table,history:[]};
+function newCareer(){
+const table={};
+clubs.forEach(c=>table[c]=blank());
+return {club:"Flamengo",formation:"433",mentality:"balanced",lineup:defaultLineup(),table,history:[]};
 }
+
 let state;
-try{
- state=JSON.parse(localStorage.getItem("brleague_save_v2"))||newState();
-}catch(e){state=newState();}
-function ensureState(){
- if(!clubs.includes(state.club))state.club="Flamengo";
- if(!state.table)state.table={};
- clubs.forEach(c=>{if(!state.table[c])state.table[c]=blank();});
- if(!Array.isArray(state.history))state.history=[];
- if(!shape[state.formation])state.formation="433";
- if(!state.lineup||typeof state.lineup!=="object")state.lineup=defaultLineup();
- if(!state.lineup.GOL)state.lineup.GOL=defaultLineup().GOL;
- ["DEF","MEI","ATA"].forEach(k=>{
-  if(!Array.isArray(state.lineup[k]))state.lineup[k]=defaultLineup()[k];
- });
+try{state=JSON.parse(localStorage.getItem("brleague_save_v2"))||newCareer();}
+catch(e){state=newCareer();}
+
+function fixState(){
+if(!clubs.includes(state.club))state.club="Flamengo";
+if(!formations[state.formation])state.formation="433";
+if(!state.lineup)state.lineup=defaultLineup();
+if(!state.table)state.table={};
+clubs.forEach(c=>{if(!state.table[c])state.table[c]=blank();});
+if(!Array.isArray(state.history))state.history=[];
+const d=defaultLineup();
+if(!roster.some(p=>p.name===state.lineup.GOL&&p.pos==="GOL"))state.lineup.GOL=d.GOL;
+["DEF","MEI","ATA"].forEach(pos=>{
+if(!Array.isArray(state.lineup[pos]))state.lineup[pos]=d[pos].slice();
+state.lineup[pos]=state.lineup[pos].filter(n=>roster.some(p=>p.name===n&&p.pos===pos));
+});
 }
-function persist(){localStorage.setItem("brleague_save_v2",JSON.stringify(state));render();}
-function playerByName(name){return roster.find(p=>p.name===name);}
 function available(pos){return roster.filter(p=>p.pos===pos);}
-function fillSelects(){
- $("club").innerHTML=clubs.map(c=>`<option>${c}</option>`).join("");
- $("opponent").innerHTML=clubs.filter(c=>c!=="Flamengo").map(c=>`<option>${c}</option>`).join("");
+function byName(name){return roster.find(p=>p.name===name);}
+function persist(){
+try{localStorage.setItem("brleague_save_v2",JSON.stringify(state));}
+catch(e){console.warn("Salvamento local indisponível",e);}
+render();
+}
+function fillClubOptions(){
+$("club").innerHTML=clubs.map(c=>`<option value="${c}">${c}</option>`).join("");
+}
+function fillOpponents(){
+$("opponent").innerHTML=clubs.filter(c=>c!==state.club).map(c=>`<option value="${c}">${c}</option>`).join("");
 }
 function playerOptions(pos,selected){
- return available(pos).map(p=>`<option value="${p.name}" ${p.name===selected?"selected":""}>${p.name}</option>`).join("");
+return available(pos).map(p=>`<option value="${p.name}" ${p.name===selected?"selected":""}>${p.name}</option>`).join("");
 }
-function slotHtml(pos,selected,index){
- return `<div class="slot"><small>${pos==="GOL"?"GOLEIRO":pos+" "+(index+1)}</small>
- <select data-pos="${pos}" data-index="${index}">${playerOptions(pos,selected)}</select></div>`;
+function slot(pos,name,index){
+return `<div class="slot"><small>${pos==="GOL"?"GOLEIRO":pos+" "+(index+1)}</small><select data-pos="${pos}" data-index="${index}">${playerOptions(pos,name)}</select></div>`;
 }
 function readPitch(){
- document.querySelectorAll(".pitch select").forEach(el=>{
-  const pos=el.dataset.pos,index=Number(el.dataset.index);
-  if(pos==="GOL")state.lineup.GOL=el.value;
-  else state.lineup[pos][index]=el.value;
- });
+document.querySelectorAll(".pitch select").forEach(s=>{
+const pos=s.dataset.pos,i=Number(s.dataset.index);
+if(pos==="GOL")state.lineup.GOL=s.value;
+else state.lineup[pos][i]=s.value;
+});
 }
 function buildPitch(){
- const counts=shape[state.formation];
- $("gkRow").innerHTML=slotHtml("GOL",state.lineup.GOL,0);
- ["DEF","MEI","ATA"].forEach(pos=>{
-  const count=counts[pos];
-  const previous=state.lineup[pos]||[];
-  const pool=available(pos);
-  const chosen=[];
-  for(let i=0;i<count;i++){
-   let name=previous[i];
-   if(!pool.some(p=>p.name===name)||chosen.includes(name))
-    name=pool.find(p=>!chosen.includes(p.name))?.name||pool[0].name;
-   chosen.push(name);
-  }
-  state.lineup[pos]=chosen;
-  const html=chosen.map((name,i)=>slotHtml(pos,name,i)).join("");
-  $(pos==="DEF"?"defRow":pos==="MEI"?"midRow":"attRow").innerHTML=html;
- });
+const shape=formations[state.formation];
+$("gkRow").innerHTML=slot("GOL",state.lineup.GOL,0);
+["DEF","MEI","ATA"].forEach(pos=>{
+const chosen=[],pool=available(pos),old=state.lineup[pos]||[];
+for(let i=0;i<shape[pos];i++){
+let name=old[i];
+if(!pool.some(p=>p.name===name)||chosen.includes(name)){
+name=pool.find(p=>!chosen.includes(p.name))?.name;
+}
+if(name)chosen.push(name);
+}
+state.lineup[pos]=chosen;
+const id={DEF:"defRow",MEI:"midRow",ATA:"attRow"}[pos];
+$(id).innerHTML=chosen.map((n,i)=>slot(pos,n,i)).join("");
+});
 }
 function renderRoster(){
- $("roster").innerHTML=roster.map(p=>
- `<div class="player"><b>${p.name}</b><span class="pill">${p.pos}</span> <span class="muted">Nota de jogo: ${p.rating}</span></div>`
- ).join("");
+$("roster").innerHTML=roster.map(p=>`<div class="player"><b>${p.name}</b><span class="pill">${p.pos}</span><span class="muted"> Nota: ${p.rating}</span></div>`).join("");
 }
 function render(){
- ensureState();
- $("club").value=state.club;
- $("formation").value=state.formation;
- $("mentality").value=state.mentality;
- $("homeName").textContent=state.club;
- if($("opponent").value===state.club)$("opponent").selectedIndex=0;
- const t=state.table[state.club];
- $("points").textContent=t.pts;
- $("played").textContent=t.j;
- $("wins").textContent=t.v;
- $("gd").textContent=t.gp-t.gc;
- $("tableBody").innerHTML=clubs.slice().sort((a,b)=>{
-  let A=state.table[a],B=state.table[b];
-  return B.pts-A.pts||(B.gp-B.gc)-(A.gp-A.gc)||B.gp-A.gp;
- }).map((c,i)=>{
-  let x=state.table[c];
-  return `<tr><td>${i+1}</td><td>${c}${c===state.club?" ★":""}</td><td>${x.pts}</td><td>${x.j}</td><td>${x.v}</td><td>${x.e}</td><td>${x.d}</td><td>${x.gp-x.gc}</td></tr>`;
- }).join("");
- $("history").innerHTML=state.history.length?
- state.history.slice().reverse().map(m=>`<div class="log"><b>${m.home} ${m.hg} × ${m.ag} ${m.away}</b><br><span class="note">${m.note}</span></div>`).join("")
- :'<p class="note">Nenhuma partida disputada.</p>';
- buildPitch();
+fixState();
+$("club").value=state.club;
+$("formation").value=state.formation;
+$("mentality").value=state.mentality;
+$("homeName")&&($("homeName").textContent=state.club);
+const s=state.table[state.club];
+$("points").textContent=s.pts;
+$("played").textContent=s.j;
+$("wins").textContent=s.v;
+$("gd").textContent=s.gp-s.gc;
+$("tableBody").innerHTML=clubs.slice().sort((a,b)=>{
+const A=state.table[a],B=state.table[b];
+return B.pts-A.pts||((B.gp-B.gc)-(A.gp-A.gc))||B.gp-A.gp;
+}).map((c,i)=>{
+const x=state.table[c];
+return `<tr><td>${i+1}</td><td>${c}${c===state.club?" ★":""}</td><td>${x.pts}</td><td>${x.j}</td><td>${x.v}</td><td>${x.e}</td><td>${x.d}</td><td>${x.gp-x.gc}</td></tr>`;
+}).join("");
+$("history").innerHTML=state.history.length?state.history.slice().reverse().map(m=>`<div class="log"><b>${m.home} ${m.hg} × ${m.ag} ${m.away}</b><br><span class="note">${m.note}</span></div>`).join(""):'<p class="note">Nenhuma partida disputada.</p>';
+buildPitch();
 }
-function currentLineupStrength(){
- const names=[state.lineup.GOL,...state.lineup.DEF,...state.lineup.MEI,...state.lineup.ATA];
- const ratings=names.map(n=>playerByName(n)?.rating||65);
- return ratings.reduce((a,b)=>a+b,0)/Math.max(1,ratings.length);
+function strength(club){
+if(club==="Flamengo"){
+const names=[state.lineup.GOL,...state.lineup.DEF,...state.lineup.MEI,...state.lineup.ATA];
+return names.reduce((sum,n)=>sum+(byName(n)?.rating||65),0)/Math.max(1,names.length);
 }
-function teamStrength(club){
- if(club==="Flamengo")return currentLineupStrength();
- const favorites=["Palmeiras","Cruzeiro","Bahia","Fluminense","Botafogo"];
- return favorites.includes(club)?77:70+(clubs.indexOf(club)%5);
+const fixed={"Palmeiras":78,"Cruzeiro":76,"Bahia":75,"Fluminense":75,"Botafogo":76,"Atlético Mineiro":76,"São Paulo":75,"Internacional":75};
+return fixed[club]||70+(clubs.indexOf(club)%5);
 }
 function goals(chance){
- let result=0;
- for(let i=0;i<5;i++)if(Math.random()<chance/5)result++;
- return Math.min(result,5);
+let total=0;
+for(let i=0;i<5;i++)if(Math.random()<chance/5)total++;
+return Math.min(total,5);
 }
 function playMatch(){
- readPitch();
- const home=state.club,away=$("opponent").value;
- if(home===away){alert("Escolha um adversário diferente.");return;}
- let hs=teamStrength(home),as=teamStrength(away);
- if(state.formation==="433")hs+=2;
- if(state.formation==="352")hs+=1;
- if(state.formation==="541")hs-=1;
- if(state.mentality==="attack")hs+=3;
- if(state.mentality==="defense")hs-=1;
- const hg=goals(Math.max(.45,1.35+(hs-as)/22));
- const ag=goals(Math.max(.4,1.2+(as-hs)/22));
- const H=state.table[home],A=state.table[away];
- H.j++;A.j++;H.gp+=hg;H.gc+=ag;A.gp+=ag;A.gc+=hg;
- let note;
- if(hg>ag){H.v++;H.pts+=3;A.d++;note="Vitória: 3 pontos para "+home+".";}
- else if(hg<ag){A.v++;A.pts+=3;H.d++;note="Derrota. Revise a escalação e a tática.";}
- else{H.e++;A.e++;H.pts++;A.pts++;note="Empate: um ponto para cada clube.";}
- state.history.push({home,away,hg,ag,note,formation:state.formation,
- lineup:[state.lineup.GOL,...state.lineup.DEF,...state.lineup.MEI,...state.lineup.ATA]});
- if(state.history.length>30)state.history.shift();
- $("score").textContent=hg+" × "+ag;
- $("matchMessage").textContent=note+" Resultado gerado pelo simulador.";
- persist();
+readPitch();
+const home=state.club,away=$("opponent").value;
+if(!away||away===home){alert("Escolha um adversário diferente.");return;}
+let hs=strength(home),as=strength(away);
+if(state.formation==="433")hs+=2;
+if(state.formation==="352")hs+=1;
+if(state.formation==="541")hs-=1;
+if(state.mentality==="attack")hs+=3;
+if(state.mentality==="defense")hs-=1;
+const hg=goals(Math.max(.4,1.35+(hs-as)/22));
+const ag=goals(Math.max(.4,1.2+(as-hs)/22));
+const H=state.table[home],A=state.table[away];
+H.j++;A.j++;H.gp+=hg;H.gc+=ag;A.gp+=ag;A.gc+=hg;
+let note;
+if(hg>ag){H.v++;H.pts+=3;A.d++;note=`Vitória! ${home} ganhou 3 pontos.`;}
+else if(hg<ag){A.v++;A.pts+=3;H.d++;note=`Derrota. ${away} ganhou 3 pontos.`;}
+else{H.e++;A.e++;H.pts++;A.pts++;note="Empate: um ponto para cada clube.";}
+state.history.push({home,away,hg,ag,note});
+if(state.history.length>30)state.history.shift();
+$("score").textContent=`${hg} × ${ag}`;
+$("matchMessage").textContent=note;
+persist();
 }
-fillSelects();ensureState();renderRoster();render();
+
+fillClubOptions();
+fixState();
+fillOpponents();
+renderRoster();
+render();
+
 $("confirmClub").onclick=()=>{
- state.club=$("club").value;
- $("homeName").textContent=state.club;
- $("score").textContent="VS";
- $("matchMessage").textContent="Clube confirmado.";
- persist();
+state.club=$("club").value;
+fillOpponents();
+$("score").textContent="VS";
+$("matchMessage").textContent="Clube confirmado.";
+persist();
 };
 $("saveTactic").onclick=()=>{
- readPitch();
- state.formation=$("formation").value;
- state.mentality=$("mentality").value;
- $("tacticMessage").textContent="Tática salva. Confira os jogadores do campo.";
- persist();
+readPitch();
+state.formation=$("formation").value;
+state.mentality=$("mentality").value;
+$("tacticMessage").textContent="Tática salva!";
+persist();
 };
 $("formation").addEventListener("change",()=>{
- readPitch();state.formation=$("formation").value;buildPitch();
+readPitch();
+state.formation=$("formation").value;
+buildPitch();
 });
-$("mentality").addEventListener("change",()=>{
- state.mentality=$("mentality").value;
-});
+$("mentality").addEventListener("change",()=>state.mentality=$("mentality").value);
 $("autoLineup").onclick=()=>{
- state.lineup=defaultLineup();
- buildPitch();
- $("lineupMessage").textContent="Escalação padrão carregada. Você pode trocar os jogadores.";
+state.lineup=defaultLineup();
+buildPitch();
+$("lineupMessage").textContent="Escalação padrão carregada.";
 };
 $("saveLineup").onclick=()=>{
- readPitch();
- const all=[state.lineup.GOL,...state.lineup.DEF,...state.lineup.MEI,...state.lineup.ATA];
- if(new Set(all).size!==all.length){
-  $("lineupMessage").textContent="Há jogador repetido. Escolha atletas diferentes.";
-  return;
- }
- persist();
- $("lineupMessage").textContent="Escalação salva com sucesso!";
+readPitch();
+const names=[state.lineup.GOL,...state.lineup.DEF,...state.lineup.MEI,...state.lineup.ATA];
+if(new Set(names).size!==names.length){
+$("lineupMessage").textContent="Há jogador repetido. Escolha nomes diferentes.";
+return;
+}
+persist();
+$("lineupMessage").textContent="Escalação salva com sucesso!";
 };
 $("play").onclick=playMatch;
 $("reset").onclick=()=>{
- if(!confirm("Reiniciar os resultados desta carreira?"))return;
- state=newState();persist();
- $("score").textContent="VS";
- $("matchMessage").textContent="Nova carreira iniciada.";
+if(!confirm("Reiniciar os resultados desta carreira?"))return;
+state=newCareer();
+fillOpponents();
+$("score").textContent="VS";
+$("matchMessage").textContent="Nova carreira iniciada.";
+persist();
 };
-$("club").addEventListener("change",()=>{
- $("homeName").textContent=$("club").value;
-});
 </script>
 </body>
 </html>
