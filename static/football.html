@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#07150f">
-<title>BR League Football | Ativa Gaming</title>
+<title>BR League Football — Ativa Gaming</title>
 <style>
 :root{color-scheme:dark;--bg:#07150f;--panel:#10251a;--line:#294b37;--green:#39e58c;--muted:#b1c6b7;--white:#f4fff7}
 *{box-sizing:border-box}
@@ -15,7 +15,7 @@ header{padding:22px 16px;background:#08170ff2;border-bottom:1px solid var(--line
 .brand{color:var(--green);font-size:12px;font-weight:900;letter-spacing:2px}
 h1{font-size:clamp(26px,6vw,40px);margin:8px 0}
 h2{font-size:19px;margin:0 0 13px}
-h3{font-size:15px;margin:0 0 8px}
+h3{font-size:15px;margin:12px 0 8px}
 p{line-height:1.5}
 .muted,.note{color:var(--muted);font-size:12px}
 main{padding:15px}
@@ -27,9 +27,9 @@ button{background:var(--green);color:#082012;font-weight:850;border:0;cursor:poi
 button.secondary{background:#193b28;color:white;border:1px solid #365b43}
 button:disabled{opacity:.45;cursor:not-allowed}
 .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.stat{background:#091910;border:1px solid var(--line);border-radius:12px;padding:12px}
+.stat{background:#091910;border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
 .stat small{display:block;color:var(--muted);font-size:12px}
-.stat strong{font-size:22px;display:block;margin-top:4px}
+.stat strong{font-size:clamp(17px,4vw,23px);display:block;margin-top:4px;overflow-wrap:anywhere}
 .layout{display:grid;gap:14px}
 .pitch{border:2px solid #a1d4ad;border-radius:12px;padding:10px;background:repeating-linear-gradient(0deg,#1a6038 0,#1a6038 42px,#216942 42px,#216942 84px)}
 .pitchrow{display:flex;justify-content:center;gap:5px;margin:10px 0}
@@ -37,9 +37,10 @@ button:disabled{opacity:.45;cursor:not-allowed}
 .slot select{background:#f3fff6;color:#153421;border-color:#aacbb5;padding:6px 2px;font-size:10px}
 .slot small{display:block;font-weight:500;font-size:10px}
 .playerlist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.player{background:#0a1b11;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12px;min-width:0}
-.player b{display:block;margin-bottom:4px}
-.pill{display:inline-block;border-radius:20px;background:#19432b;color:#b7ffd0;padding:4px 8px;font-size:10px}
+.player{background:#0a1b11;border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12px;min-width:0;overflow-wrap:anywhere}
+.player b{display:block;margin-bottom:5px}
+.pill{display:inline-block;border-radius:20px;background:#19432b;color:#b7ffd0;padding:4px 8px;font-size:10px;margin:2px 0}
+.price{font-weight:900;color:var(--green);font-size:15px}
 .score{text-align:center;font-size:35px;font-weight:900;margin:10px}
 table{width:100%;border-collapse:collapse;font-size:12px}
 th,td{text-align:left;padding:8px 4px;border-bottom:1px solid var(--line)}
@@ -47,9 +48,6 @@ th{color:var(--muted)}
 .scroll{overflow-x:auto}
 .log{border-bottom:1px solid var(--line);padding:10px 0;font-size:13px}
 a{color:var(--green)}
-.market-card{display:flex;flex-direction:column;gap:8px}
-.market-card .buy{margin-top:auto;padding:10px;font-size:12px}
-.price{font-weight:900;color:var(--green);font-size:15px}
 .budgetbar{border:1px solid var(--line);background:#091910;border-radius:12px;padding:14px;margin-bottom:12px}
 .budgetbar strong{font-size:24px;color:var(--green);display:block}
 .message{min-height:20px;color:var(--green);font-size:12px}
@@ -59,120 +57,112 @@ footer{text-align:center;padding:22px;color:var(--muted);font-size:12px}
 </head>
 <body>
 <header><div class="wrap">
- <div class="brand">ATIVA GAMING • FUTEBOL</div>
- <h1>⚽ BR League Football</h1>
- <p class="muted">Gerencie seu clube, contrate reforços e dispute sua carreira.</p>
+<div class="brand">ATIVA GAMING • FUTEBOL</div>
+<h1>⚽ BR League Football</h1>
+<p class="muted">Modo carreira: escalação, mercado, contratos e finanças do clube.</p>
 </div></header>
 <main>
 <section class="panel">
- <h2>🏟️ Meu clube</h2>
- <label for="club">Clube da carreira</label>
- <select id="club"></select>
- <div class="grid" style="margin-top:12px">
-  <div class="stat"><small>Temporada</small><strong>2026</strong></div>
-  <div class="stat"><small>Modo</small><strong>Manager</strong></div>
- </div>
- <button id="confirmClub" style="margin-top:12px">Confirmar clube</button>
- <p class="note">O elenco de referência é o do Flamengo. O mercado desta versão é fictício e os jogadores contratados podem entrar na sua escalação.</p>
+<h2>🏟️ Meu clube</h2>
+<label for="club">Clube da carreira</label>
+<select id="club"></select>
+<button id="confirmClub" style="margin-top:10px">Confirmar clube</button>
+<p class="note">Valores, contratos e partidas são simulados para o jogo. Não representam transações reais.</p>
+</section>
+
+<section class="panel">
+<h2>💎 Finanças e elenco</h2>
+<div class="grid">
+<div class="stat"><small>Pontos</small><strong id="points">0</strong></div>
+<div class="stat"><small>Jogos</small><strong id="played">0</strong></div>
+<div class="stat"><small>Vitórias</small><strong id="wins">0</strong></div>
+<div class="stat"><small>Valor do elenco</small><strong id="squadValue">R$ 0</strong></div>
+<div class="stat"><small>Orçamento disponível</small><strong id="budgetStat">R$ 0</strong></div>
+<div class="stat"><small>Salários por partida</small><strong id="wages">R$ 0</strong></div>
+</div>
+<p class="note" id="financeNote">Os salários são descontados do orçamento depois de cada partida.</p>
 </section>
 
 <div class="layout">
 <section class="panel">
- <h2>📊 Minha carreira</h2>
- <div class="grid">
-  <div class="stat"><small>Pontos</small><strong id="points">0</strong></div>
-  <div class="stat"><small>Jogos</small><strong id="played">0</strong></div>
-  <div class="stat"><small>Vitórias</small><strong id="wins">0</strong></div>
-  <div class="stat"><small>Saldo de gols</small><strong id="gd">0</strong></div>
- </div>
- <label for="formation">Formação</label>
- <select id="formation">
-  <option value="433">4-3-3 • Ofensiva</option>
-  <option value="442">4-4-2 • Equilibrada</option>
-  <option value="352">3-5-2 • Meio forte</option>
-  <option value="541">5-4-1 • Defensiva</option>
- </select>
- <label for="mentality">Mentalidade</label>
- <select id="mentality">
-  <option value="balanced">Equilibrada</option>
-  <option value="attack">Ataque total</option>
-  <option value="defense">Defensiva</option>
- </select>
- <button id="saveTactic" style="margin-top:10px">Salvar tática</button>
- <p id="tacticMessage" class="note">A formação determina quantos jogadores vão em cada setor.</p>
+<h2>🧠 Tática e escalação</h2>
+<label for="formation">Formação</label>
+<select id="formation">
+<option value="433">4-3-3 • Ofensiva</option>
+<option value="442">4-4-2 • Equilibrada</option>
+<option value="352">3-5-2 • Meio forte</option>
+<option value="541">5-4-1 • Defensiva</option>
+</select>
+<label for="mentality">Mentalidade</label>
+<select id="mentality">
+<option value="balanced">Equilibrada</option>
+<option value="attack">Ataque total</option>
+<option value="defense">Defensiva</option>
+</select>
+<button id="saveTactic" style="margin-top:10px">Salvar tática</button>
+<p id="tacticMessage" class="note"></p>
+<div class="pitch">
+<div class="pitchrow" id="gkRow"></div>
+<div class="pitchrow" id="defRow"></div>
+<div class="pitchrow" id="midRow"></div>
+<div class="pitchrow" id="attRow"></div>
+</div>
+<button class="secondary" id="autoLineup" style="margin-top:10px">Montar escalação padrão</button>
+<button id="saveLineup" style="margin-top:8px">Salvar escalação</button>
+<p id="lineupMessage" class="note">Escolha seus titulares.</p>
 </section>
 
 <section class="panel">
- <h2>🟢 Campo tático</h2>
- <div class="pitch">
-  <div class="pitchrow" id="gkRow"></div>
-  <div class="pitchrow" id="defRow"></div>
-  <div class="pitchrow" id="midRow"></div>
-  <div class="pitchrow" id="attRow"></div>
- </div>
- <p class="note">Toque nos nomes no campo para escolher seus titulares.</p>
- <button class="secondary" id="autoLineup" style="margin-top:8px">Montar escalação automática</button>
- <button id="saveLineup" style="margin-top:8px">Salvar escalação</button>
- <p id="lineupMessage" class="note">Escolha seus titulares.</p>
+<h2>💰 Mercado de jogadores</h2>
+<div class="budgetbar">
+<small class="muted">Orçamento de transferências</small>
+<strong id="budget">R$ 50.000.000</strong>
+<small class="muted" id="spent">Total gasto: R$ 0</small>
+</div>
+<label for="marketFilter">Filtrar posição</label>
+<select id="marketFilter">
+<option value="TODOS">Todas as posições</option>
+<option value="GOL">Goleiros</option>
+<option value="DEF">Defensores</option>
+<option value="MEI">Meio-campistas</option>
+<option value="ATA">Atacantes</option>
+</select>
+<div id="market" class="playerlist"></div>
+<p id="marketMessage" class="message" aria-live="polite"></p>
+<h3>📄 Contratos ativos</h3>
+<div id="contracts" class="playerlist"></div>
 </section>
 </div>
 
 <section class="panel">
- <h2>💰 Mercado de jogadores</h2>
- <p class="note">Contrate reforços usando o orçamento fictício do seu clube. Os valores são apenas do jogo, sem dinheiro real.</p>
- <div class="budgetbar">
-  <small class="muted">Orçamento disponível</small>
-  <strong id="budget">R$ 50.000.000</strong>
-  <small id="spent" class="muted">Total gasto: R$ 0</small>
- </div>
- <label for="marketFilter">Filtrar por posição</label>
- <select id="marketFilter">
-  <option value="TODOS">Todas as posições</option>
-  <option value="GOL">Goleiros</option>
-  <option value="DEF">Defensores</option>
-  <option value="MEI">Meio-campistas</option>
-  <option value="ATA">Atacantes</option>
- </select>
- <div class="playerlist" id="market"></div>
- <p id="marketMessage" class="message" aria-live="polite"></p>
- <h3>📋 Minhas contratações</h3>
- <div id="signedList" class="playerlist"></div>
+<h2>👥 Meu elenco</h2>
+<div id="roster" class="playerlist"></div>
+<p><a href="https://www.flamengo.com.br/futebol/elenco" target="_blank" rel="noopener">Consultar elenco oficial do Flamengo ↗</a></p>
 </section>
 
 <section class="panel">
- <h2>👥 Elenco — Flamengo</h2>
- <p class="note">Notas são valores de jogo, não avaliações oficiais dos atletas.</p>
- <div class="playerlist" id="roster"></div>
- <p><a href="https://www.flamengo.com.br/futebol/elenco" target="_blank" rel="noopener">Consultar elenco oficial do Flamengo ↗</a></p>
- <p><a href="https://www.cbf.com.br/" target="_blank" rel="noopener">Site da CBF ↗</a></p>
+<h2>🎮 Próxima partida</h2>
+<label for="opponent">Adversário</label>
+<select id="opponent"></select>
+<div class="score" id="score">VS</div>
+<p id="matchMessage" class="note" style="text-align:center">Monte a escalação e simule uma partida.</p>
+<button id="play">▶ Simular partida</button>
 </section>
 
 <section class="panel">
- <h2>🎮 Próxima partida</h2>
- <div class="grid">
-  <div><label>Seu clube</label><strong id="homeName">Flamengo</strong></div>
-  <div><label for="opponent">Adversário</label><select id="opponent"></select></div>
- </div>
- <div class="score" id="score">VS</div>
- <p id="matchMessage" class="note" style="text-align:center">A simulação considera sua escalação e a tática escolhida.</p>
- <button id="play">▶ Simular partida</button>
- <p class="note">Partidas fictícias de entretenimento. Sem apostas ou dinheiro real.</p>
+<h2>🏆 Classificação da carreira</h2>
+<div class="scroll"><table>
+<thead><tr><th>#</th><th>Clube</th><th>PTS</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr></thead>
+<tbody id="tableBody"></tbody>
+</table></div>
+<p class="note">Classificação desta carreira simulada, não a tabela oficial.</p>
 </section>
 
 <section class="panel">
- <h2>🏆 Classificação da carreira</h2>
- <div class="scroll"><table>
-  <thead><tr><th>#</th><th>Clube</th><th>PTS</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr></thead>
-  <tbody id="tableBody"></tbody>
- </table></div>
- <p class="note">Classificação desta carreira simulada, não a tabela oficial.</p>
-</section>
-
-<section class="panel">
- <h2>📜 Histórico</h2>
- <div id="history"><p class="note">Nenhuma partida disputada.</p></div>
- <button class="secondary" id="reset" style="margin-top:12px">Reiniciar carreira</button>
- <p class="note">Reiniciar apaga os resultados, o orçamento e as contratações desta carreira neste navegador.</p>
+<h2>📜 Histórico</h2>
+<div id="history"></div>
+<button class="secondary" id="reset" style="margin-top:12px">Reiniciar carreira</button>
+<p class="note">Reiniciar apaga pontos, resultados, orçamento e contratações deste navegador.</p>
 </section>
 </main>
 <footer>ATIVA GAMING • BR LEAGUE FOOTBALL</footer>
@@ -194,8 +184,6 @@ const roster=[
 {name:"Léo Pereira",pos:"DEF",rating:81},
 {name:"Léo Ortiz",pos:"DEF",rating:82},
 {name:"Danilo",pos:"DEF",rating:79},
-{name:"João Victor",pos:"DEF",rating:70},
-{name:"Vitão",pos:"DEF",rating:76},
 {name:"Guillermo Varela",pos:"DEF",rating:77},
 {name:"Emerson Royal",pos:"DEF",rating:79},
 {name:"Ayrton Lucas",pos:"DEF",rating:78},
@@ -216,23 +204,21 @@ const roster=[
 {name:"Samuel Lino",pos:"ATA",rating:82}
 ];
 
-/* Jogadores e preços inventados para o modo carreira.
-   Não representam propostas ou transferências reais. */
 const marketPlayers=[
-{name:"Caio Ventura",pos:"GOL",rating:75,price:3500000},
-{name:"Bruno Monteiro",pos:"GOL",rating:80,price:8000000},
-{name:"Rafael Nascimento",pos:"DEF",rating:74,price:4000000},
-{name:"Davi Carvalho",pos:"DEF",rating:79,price:9500000},
-{name:"Mateus Rocha",pos:"DEF",rating:83,price:16000000},
-{name:"Enzo Martins",pos:"DEF",rating:77,price:7000000},
-{name:"Gabriel Torres",pos:"MEI",rating:76,price:6000000},
-{name:"Leonardo Alves",pos:"MEI",rating:81,price:14000000},
-{name:"Nicolas Ferreira",pos:"MEI",rating:84,price:20000000},
-{name:"Arthur Ribeiro",pos:"MEI",rating:79,price:10000000},
-{name:"João Miguel",pos:"ATA",rating:77,price:8500000},
-{name:"Pedro Henrique",pos:"ATA",rating:82,price:18000000},
-{name:"Ryan Costa",pos:"ATA",rating:85,price:25000000},
-{name:"Vitor Gabriel",pos:"ATA",rating:80,price:14000000}
+{name:"Caio Ventura",pos:"GOL",rating:75,price:3500000,salary:18000},
+{name:"Bruno Monteiro",pos:"GOL",rating:80,price:8000000,salary:30000},
+{name:"Rafael Nascimento",pos:"DEF",rating:74,price:4000000,salary:16000},
+{name:"Davi Carvalho",pos:"DEF",rating:79,price:9500000,salary:28000},
+{name:"Mateus Rocha",pos:"DEF",rating:83,price:16000000,salary:45000},
+{name:"Enzo Martins",pos:"DEF",rating:77,price:7000000,salary:22000},
+{name:"Gabriel Torres",pos:"MEI",rating:76,price:6000000,salary:20000},
+{name:"Leonardo Alves",pos:"MEI",rating:81,price:14000000,salary:38000},
+{name:"Nicolas Ferreira",pos:"MEI",rating:84,price:20000000,salary:55000},
+{name:"Arthur Ribeiro",pos:"MEI",rating:79,price:10000000,salary:29000},
+{name:"João Miguel",pos:"ATA",rating:77,price:8500000,salary:25000},
+{name:"Pedro Henrique",pos:"ATA",rating:82,price:18000000,salary:48000},
+{name:"Ryan Costa",pos:"ATA",rating:85,price:25000000,salary:65000},
+{name:"Vitor Gabriel",pos:"ATA",rating:80,price:14000000,salary:36000}
 ];
 
 const $=id=>document.getElementById(id);
@@ -244,286 +230,256 @@ const shape={
 };
 
 function defaultLineup(){
- return {
- GOL:"Agustín Rossi",
- DEF:["Guillermo Varela","Léo Ortiz","Léo Pereira","Alex Sandro"],
- MEI:["Erick Pulgar","Jorginho","De Arrascaeta"],
- ATA:["Gonzalo Plata","Pedro","Samuel Lino"]
- };
+return {GOL:"Agustín Rossi",
+DEF:["Guillermo Varela","Léo Ortiz","Léo Pereira","Alex Sandro"],
+MEI:["Erick Pulgar","Jorginho","De Arrascaeta"],
+ATA:["Gonzalo Plata","Pedro","Samuel Lino"]};
 }
 function blank(){return {pts:0,j:0,v:0,e:0,d:0,gp:0,gc:0};}
 function newState(){
- const table={};clubs.forEach(c=>table[c]=blank());
- return {
- club:"Flamengo",formation:"433",mentality:"balanced",
- lineup:defaultLineup(),table,history:[],
- budget:50000000,spent:0,transfers:[]
- };
+const table={};clubs.forEach(c=>table[c]=blank());
+return {club:"Flamengo",formation:"433",mentality:"balanced",
+lineup:defaultLineup(),table,history:[],budget:50000000,spent:0,
+transfers:[],contracts:{}};
 }
 
 let state;
-try{
- state=JSON.parse(localStorage.getItem("brleague_save_v2"))||newState();
-}catch(e){state=newState();}
+try{state=JSON.parse(localStorage.getItem("brleague_save_v2"))||newState();}
+catch(e){state=newState();}
 
 function ensureState(){
- if(!clubs.includes(state.club))state.club="Flamengo";
- if(!state.table)state.table={};
- clubs.forEach(c=>{if(!state.table[c])state.table[c]=blank();});
- if(!Array.isArray(state.history))state.history=[];
- if(!shape[state.formation])state.formation="433";
- if(!state.lineup||typeof state.lineup!=="object")state.lineup=defaultLineup();
- if(!state.lineup.GOL)state.lineup.GOL=defaultLineup().GOL;
- ["DEF","MEI","ATA"].forEach(k=>{
-  if(!Array.isArray(state.lineup[k]))state.lineup[k]=defaultLineup()[k];
- });
- if(!Array.isArray(state.transfers))state.transfers=[];
- if(!Number.isFinite(state.budget))state.budget=50000000;
- if(!Number.isFinite(state.spent))state.spent=0;
- state.transfers=state.transfers.filter(n=>marketPlayers.some(p=>p.name===n));
+if(!clubs.includes(state.club))state.club="Flamengo";
+if(!state.table)state.table={};
+clubs.forEach(c=>{if(!state.table[c])state.table[c]=blank();});
+if(!Array.isArray(state.history))state.history=[];
+if(!shape[state.formation])state.formation="433";
+if(!state.lineup||typeof state.lineup!=="object")state.lineup=defaultLineup();
+if(!state.lineup.GOL)state.lineup.GOL=defaultLineup().GOL;
+["DEF","MEI","ATA"].forEach(k=>{
+if(!Array.isArray(state.lineup[k]))state.lineup[k]=defaultLineup()[k];
+});
+if(!Array.isArray(state.transfers))state.transfers=[];
+if(!Number.isFinite(state.budget))state.budget=50000000;
+if(!Number.isFinite(state.spent))state.spent=0;
+if(!state.contracts||typeof state.contracts!=="object")state.contracts={};
+state.transfers=state.transfers.filter(n=>marketPlayers.some(p=>p.name===n));
+state.transfers.forEach(n=>{
+if(!state.contracts[n])state.contracts[n]={matches:20,salary:marketPlayers.find(p=>p.name===n).salary};
+});
 }
 
-function money(value){
- return Number(value).toLocaleString("pt-BR",{
- style:"currency",currency:"BRL",maximumFractionDigits:0
- });
-}
-function allPlayers(){
- return roster.concat(marketPlayers.filter(p=>state.transfers.includes(p.name)));
-}
-function playerByName(name){return allPlayers().find(p=>p.name===name);}
+function money(n){return Number(n).toLocaleString("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0});}
+function allPlayers(){return roster.concat(marketPlayers.filter(p=>state.transfers.includes(p.name)));}
+function playerByName(n){return allPlayers().find(p=>p.name===n);}
 function available(pos){return allPlayers().filter(p=>p.pos===pos);}
+function baseValue(p){return p.price||p.rating*200000;}
+function salaryOf(p){
+if(state.contracts[p.name])return state.contracts[p.name].salary;
+return p.rating*300;
+}
+function payroll(){return allPlayers().reduce((sum,p)=>sum+salaryOf(p),0);}
+function squadValue(){return allPlayers().reduce((sum,p)=>sum+baseValue(p),0);}
+
 function persist(){
- try{
-  localStorage.setItem("brleague_save_v2",JSON.stringify(state));
- }catch(e){
-  alert("Não foi possível salvar no navegador. Verifique o espaço disponível.");
- }
- render();
+try{localStorage.setItem("brleague_save_v2",JSON.stringify(state));}
+catch(e){alert("Não foi possível salvar no navegador. Verifique o espaço disponível.");}
+render();
 }
 function fillSelects(){
- $("club").innerHTML=clubs.map(c=>`<option>${c}</option>`).join("");
- $("opponent").innerHTML=clubs.filter(c=>c!=="Flamengo").map(c=>`<option>${c}</option>`).join("");
+$("club").innerHTML=clubs.map(c=>`<option>${c}</option>`).join("");
+$("opponent").innerHTML=clubs.filter(c=>c!=="Flamengo").map(c=>`<option>${c}</option>`).join("");
 }
 function playerOptions(pos,selected){
- return available(pos).map(p=>
- `<option value="${p.name}" ${p.name===selected?"selected":""}>${p.name}</option>`
- ).join("");
+return available(pos).map(p=>`<option value="${p.name}" ${p.name===selected?"selected":""}>${p.name}</option>`).join("");
 }
 function slotHtml(pos,selected,index){
- return `<div class="slot"><small>${pos==="GOL"?"GOLEIRO":pos+" "+(index+1)}</small>
- <select data-pos="${pos}" data-index="${index}">${playerOptions(pos,selected)}</select></div>`;
+return `<div class="slot"><small>${pos==="GOL"?"GOLEIRO":pos+" "+(index+1)}</small><select data-pos="${pos}" data-index="${index}">${playerOptions(pos,selected)}</select></div>`;
 }
 function readPitch(){
- document.querySelectorAll(".pitch select").forEach(el=>{
-  const pos=el.dataset.pos,index=Number(el.dataset.index);
-  if(pos==="GOL")state.lineup.GOL=el.value;
-  else state.lineup[pos][index]=el.value;
- });
+document.querySelectorAll(".pitch select").forEach(el=>{
+const pos=el.dataset.pos,index=Number(el.dataset.index);
+if(pos==="GOL")state.lineup.GOL=el.value;
+else state.lineup[pos][index]=el.value;
+});
 }
 function buildPitch(){
- const counts=shape[state.formation];
- $("gkRow").innerHTML=slotHtml("GOL",state.lineup.GOL,0);
- ["DEF","MEI","ATA"].forEach(pos=>{
-  const count=counts[pos];
-  const previous=state.lineup[pos]||[];
-  const pool=available(pos);
-  const chosen=[];
-  for(let i=0;i<count;i++){
-   let name=previous[i];
-   if(!pool.some(p=>p.name===name)||chosen.includes(name)){
-    name=pool.find(p=>!chosen.includes(p.name))?.name||pool[0]?.name||"";
-   }
-   if(name)chosen.push(name);
-  }
-  state.lineup[pos]=chosen;
-  $(pos==="DEF"?"defRow":pos==="MEI"?"midRow":"attRow").innerHTML=
-   chosen.map((name,i)=>slotHtml(pos,name,i)).join("");
- });
+const counts=shape[state.formation];
+$("gkRow").innerHTML=slotHtml("GOL",state.lineup.GOL,0);
+["DEF","MEI","ATA"].forEach(pos=>{
+const pool=available(pos),chosen=[],previous=state.lineup[pos]||[];
+for(let i=0;i<counts[pos];i++){
+let name=previous[i];
+if(!pool.some(p=>p.name===name)||chosen.includes(name))
+name=pool.find(p=>!chosen.includes(p.name))?.name||pool[0]?.name||"";
+if(name)chosen.push(name);
+}
+state.lineup[pos]=chosen;
+$(pos==="DEF"?"defRow":pos==="MEI"?"midRow":"attRow").innerHTML=chosen.map((n,i)=>slotHtml(pos,n,i)).join("");
+});
 }
 function renderRoster(){
- $("roster").innerHTML=allPlayers().map(p=>{
-  const hired=state.transfers.includes(p.name);
-  return `<div class="player"><b>${p.name}</b>
-  <span class="pill">${p.pos}</span>
-  <span class="muted">Nota: ${p.rating}</span>
-  ${hired?'<p class="note">⭐ Contratado nesta carreira</p>':""}</div>`;
- }).join("");
+$("roster").innerHTML=allPlayers().map(p=>{
+const contracted=state.contracts[p.name];
+return `<div class="player"><b>${p.name}</b>
+<span class="pill">${p.pos}</span><span class="pill">Nota ${p.rating}</span>
+<p class="note">Valor de jogo: ${money(baseValue(p))}</p>
+<p class="note">Salário/partida: ${money(salaryOf(p))}</p>
+${contracted?`<p class="note">📄 Contrato: ${contracted.matches} partidas restantes</p>`:""}</div>`;
+}).join("");
 }
 function renderMarket(){
- const filter=$("marketFilter").value;
- const availableMarket=marketPlayers.filter(p=>
-  !state.transfers.includes(p.name)&&(filter==="TODOS"||p.pos===filter)
- );
- $("market").innerHTML=availableMarket.length?availableMarket.map(p=>{
-  const affordable=state.budget>=p.price;
-  return `<div class="player market-card">
-   <b>${p.name}</b>
-   <span class="pill">${p.pos}</span>
-   <span class="muted">Nota de jogo: ${p.rating}/100</span>
-   <span class="price">${money(p.price)}</span>
-   <button class="buy" data-buy="${p.name}" ${affordable?"":"disabled"}>
-   ${affordable?"Contratar jogador":"Saldo insuficiente"}
-   </button>
-  </div>`;
- }).join(""):'<p class="note">Não há jogadores disponíveis neste filtro.</p>';
+const filter=$("marketFilter").value;
+const list=marketPlayers.filter(p=>!state.transfers.includes(p.name)&&(filter==="TODOS"||p.pos===filter));
+$("market").innerHTML=list.length?list.map(p=>{
+const ok=state.budget>=p.price;
+return `<div class="player">
+<b>${p.name}</b><span class="pill">${p.pos}</span><span class="pill">Nota ${p.rating}</span>
+<p class="price">${money(p.price)}</p>
+<p class="note">Salário por partida: ${money(p.salary)}</p>
+<p class="note">Contrato inicial: 20 partidas</p>
+<button data-buy="${p.name}" ${ok?"":"disabled"}>${ok?"Contratar jogador":"Saldo insuficiente"}</button>
+</div>`;
+}).join(""):'<p class="note">Não há jogadores disponíveis neste filtro.</p>';
+$("budget").textContent=money(state.budget);
+$("spent").textContent="Total gasto em contratações: "+money(state.spent);
+$("contracts").innerHTML=state.transfers.length?state.transfers.map(n=>{
+const p=marketPlayers.find(x=>x.name===n),c=state.contracts[n];
+return `<div class="player"><b>${n}</b><span class="pill">${p.pos}</span>
+<p class="note">Restam ${c.matches} partidas</p>
+<p class="note">Salário: ${money(c.salary)} por partida</p>
+</div>`;
+}).join(""):'<p class="note">Nenhum contrato de reforço ativo.</p>';
+}
+function render(){
+ensureState();
+$("club").value=state.club;
+$("formation").value=state.formation;
+$("mentality").value=state.mentality;
+const t=state.table[state.club];
+$("points").textContent=t.pts;
+$("played").textContent=t.j;
+$("wins").textContent=t.v;
+$("squadValue").textContent=money(squadValue());
+$("budgetStat").textContent=money(state.budget);
+$("wages").textContent=money(payroll());
+$("financeNote").textContent="Folha por partida: "+money(payroll())+". O custo é descontado após cada jogo.";
+$("tableBody").innerHTML=clubs.slice().sort((a,b)=>{
+const A=state.table[a],B=state.table[b];
+return B.pts-A.pts||(B.gp-B.gc)-(A.gp-A.gc)||B.gp-A.gp;
+}).map((c,i)=>{
+const x=state.table[c];
+return `<tr><td>${i+1}</td><td>${c}${c===state.club?" ★":""}</td><td>${x.pts}</td><td>${x.j}</td><td>${x.v}</td><td>${x.e}</td><td>${x.d}</td><td>${x.gp-x.gc}</td></tr>`;
+}).join("");
+$("history").innerHTML=state.history.length?state.history.slice().reverse().map(m=>
+`<div class="log"><b>${m.home} ${m.hg} × ${m.ag} ${m.away}</b><br><span class="note">${m.note||""}</span></div>`
+).join(""):'<p class="note">Nenhuma partida disputada.</p>';
+buildPitch();renderRoster();renderMarket();
+}
 
- $("budget").textContent=money(state.budget);
- $("spent").textContent="Total gasto: "+money(state.spent);
- $("signedList").innerHTML=state.transfers.length?
- state.transfers.map(name=>{
-  const p=marketPlayers.find(x=>x.name===name);
-  return p?`<div class="player"><b>${p.name}</b>
-   <span class="pill">${p.pos}</span>
-   <p class="note">Nota: ${p.rating}/100</p>
-   <span class="price">${money(p.price)}</span></div>`:"";
- }).join(""):'<p class="note">Você ainda não contratou ninguém.</p>';
-}
 function buyPlayer(name){
- const p=marketPlayers.find(x=>x.name===name);
- if(!p||state.transfers.includes(name))return;
- if(state.budget<p.price){
-  $("marketMessage").textContent="Orçamento insuficiente para contratar "+name+".";
-  return;
- }
- if(!confirm("Contratar "+name+" por "+money(p.price)+"?"))return;
- state.budget-=p.price;
- state.spent+=p.price;
- state.transfers.push(name);
- persist();
- $("marketMessage").textContent=name+" contratado! Ele já está disponível na escalação.";
+const p=marketPlayers.find(x=>x.name===name);
+if(!p||state.transfers.includes(name))return;
+if(state.budget<p.price){$("marketMessage").textContent="Orçamento insuficiente.";return;}
+if(!confirm("Contratar "+name+" por "+money(p.price)+"? O salário será "+money(p.salary)+" por partida."))return;
+state.budget-=p.price;state.spent+=p.price;
+state.transfers.push(name);
+state.contracts[name]={matches:20,salary:p.salary};
+persist();
+$("marketMessage").textContent=name+" contratado por 20 partidas!";
 }
-$("market").addEventListener("click",event=>{
- const button=event.target.closest("[data-buy]");
- if(button)buyPlayer(button.dataset.buy);
+$("market").addEventListener("click",e=>{
+const b=e.target.closest("[data-buy]");if(b)buyPlayer(b.dataset.buy);
 });
 $("marketFilter").addEventListener("change",renderMarket);
 
-function render(){
- ensureState();
- $("club").value=state.club;
- $("formation").value=state.formation;
- $("mentality").value=state.mentality;
- $("homeName").textContent=state.club;
- if($("opponent").value===state.club)$("opponent").selectedIndex=0;
- const t=state.table[state.club];
- $("points").textContent=t.pts;
- $("played").textContent=t.j;
- $("wins").textContent=t.v;
- $("gd").textContent=t.gp-t.gc;
- $("tableBody").innerHTML=clubs.slice().sort((a,b)=>{
-  const A=state.table[a],B=state.table[b];
-  return B.pts-A.pts||(B.gp-B.gc)-(A.gp-A.gc)||B.gp-A.gp;
- }).map((c,i)=>{
-  const x=state.table[c];
-  return `<tr><td>${i+1}</td><td>${c}${c===state.club?" ★":""}</td>
-  <td>${x.pts}</td><td>${x.j}</td><td>${x.v}</td><td>${x.e}</td><td>${x.d}</td><td>${x.gp-x.gc}</td></tr>`;
- }).join("");
- $("history").innerHTML=state.history.length?
- state.history.slice().reverse().map(m=>
- `<div class="log"><b>${m.home} ${m.hg} × ${m.ag} ${m.away}</b><br>
- <span class="note">${m.note}</span></div>`
- ).join(""):'<p class="note">Nenhuma partida disputada.</p>';
- buildPitch();
- renderRoster();
- renderMarket();
+function currentStrength(){
+const names=[state.lineup.GOL,...state.lineup.DEF,...state.lineup.MEI,...state.lineup.ATA];
+return names.reduce((s,n)=>s+(playerByName(n)?.rating||65),0)/Math.max(1,names.length);
 }
-function currentLineupStrength(){
- const names=[state.lineup.GOL,...state.lineup.DEF,...state.lineup.MEI,...state.lineup.ATA];
- const ratings=names.map(n=>playerByName(n)?.rating||65);
- return ratings.reduce((a,b)=>a+b,0)/Math.max(1,ratings.length);
-}
-function teamStrength(club){
- if(club===state.club)return currentLineupStrength();
- const favorites=["Palmeiras","Cruzeiro","Bahia","Fluminense","Botafogo"];
- return favorites.includes(club)?77:70+(clubs.indexOf(club)%5);
+function teamStrength(c){
+if(c===state.club)return currentStrength();
+return ["Palmeiras","Cruzeiro","Bahia","Fluminense","Botafogo"].includes(c)?77:70+(clubs.indexOf(c)%5);
 }
 function goals(chance){
- let result=0;
- for(let i=0;i<5;i++)if(Math.random()<chance/5)result++;
- return Math.min(result,5);
+let n=0;for(let i=0;i<5;i++)if(Math.random()<chance/5)n++;
+return Math.min(n,5);
 }
 function playMatch(){
- readPitch();
- const home=state.club,away=$("opponent").value;
- if(home===away){alert("Escolha um adversário diferente.");return;}
- let hs=teamStrength(home),as=teamStrength(away);
- if(state.formation==="433")hs+=2;
- if(state.formation==="352")hs+=1;
- if(state.formation==="541")hs-=1;
- if(state.mentality==="attack")hs+=3;
- if(state.mentality==="defense")hs-=1;
- const hg=goals(Math.max(.45,1.35+(hs-as)/22));
- const ag=goals(Math.max(.4,1.2+(as-hs)/22));
- const H=state.table[home],A=state.table[away];
- H.j++;A.j++;H.gp+=hg;H.gc+=ag;A.gp+=ag;A.gc+=hg;
- let note;
- if(hg>ag){H.v++;H.pts+=3;A.d++;note="Vitória: 3 pontos para "+home+".";}
- else if(hg<ag){A.v++;A.pts+=3;H.d++;note="Derrota. Revise a escalação e a tática.";}
- else{H.e++;A.e++;H.pts++;A.pts++;note="Empate: um ponto para cada clube.";}
- state.history.push({
-  home,away,hg,ag,note,formation:state.formation,
-  lineup:[state.lineup.GOL,...state.lineup.DEF,...state.lineup.MEI,...state.lineup.ATA]
- });
- if(state.history.length>30)state.history.shift();
- $("score").textContent=hg+" × "+ag;
- $("matchMessage").textContent=note+" Resultado gerado pelo simulador.";
- persist();
+readPitch();
+const home=state.club,away=$("opponent").value;
+if(home===away){alert("Escolha um adversário diferente.");return;}
+const wage=payroll();
+let hs=teamStrength(home),as=teamStrength(away);
+if(state.formation==="433")hs+=2;
+if(state.formation==="352")hs+=1;
+if(state.formation==="541")hs-=1;
+if(state.mentality==="attack")hs+=3;
+if(state.mentality==="defense")hs-=1;
+const hg=goals(Math.max(.45,1.35+(hs-as)/22));
+const ag=goals(Math.max(.4,1.2+(as-hs)/22));
+const H=state.table[home],A=state.table[away];
+H.j++;A.j++;H.gp+=hg;H.gc+=ag;A.gp+=ag;A.gc+=hg;
+let note;
+if(hg>ag){H.v++;H.pts+=3;A.d++;note="Vitória: 3 pontos para "+home+".";}
+else if(hg<ag){A.v++;A.pts+=3;H.d++;note="Derrota. Revise a escalação e a tática.";}
+else{H.e++;A.e++;H.pts++;A.pts++;note="Empate: um ponto para cada clube.";}
+
+state.budget-=wage;
+note+=" Folha salarial descontada: "+money(wage)+".";
+
+for(const name of [...state.transfers]){
+if(state.contracts[name]){
+state.contracts[name].matches--;
+if(state.contracts[name].matches<=0){
+delete state.contracts[name];
+state.transfers=state.transfers.filter(n=>n!==name);
+note+=" Contrato de "+name+" terminou; o jogador voltou ao mercado.";
+}
+}
+}
+state.history.push({home,away,hg,ag,note});
+if(state.history.length>50)state.history.shift();
+$("score").textContent=hg+" × "+ag;
+$("matchMessage").textContent=note;
+persist();
 }
 
-fillSelects();
-ensureState();
-render();
+fillSelects();ensureState();render();
 
 $("confirmClub").onclick=()=>{
- state.club=$("club").value;
- $("homeName").textContent=state.club;
- $("score").textContent="VS";
- $("matchMessage").textContent="Clube confirmado.";
- persist();
+state.club=$("club").value;
+$("opponent").innerHTML=clubs.filter(c=>c!==state.club).map(c=>`<option>${c}</option>`).join("");
+$("score").textContent="VS";
+persist();
 };
 $("saveTactic").onclick=()=>{
- readPitch();
- state.formation=$("formation").value;
- state.mentality=$("mentality").value;
- $("tacticMessage").textContent="Tática salva. Confira os jogadores do campo.";
- persist();
+readPitch();state.formation=$("formation").value;state.mentality=$("mentality").value;
+persist();$("tacticMessage").textContent="Tática salva com sucesso!";
 };
 $("formation").addEventListener("change",()=>{
- readPitch();
- state.formation=$("formation").value;
- buildPitch();
+readPitch();state.formation=$("formation").value;buildPitch();
 });
-$("mentality").addEventListener("change",()=>{
- state.mentality=$("mentality").value;
-});
+$("mentality").addEventListener("change",()=>state.mentality=$("mentality").value);
 $("autoLineup").onclick=()=>{
- state.lineup=defaultLineup();
- buildPitch();
- $("lineupMessage").textContent="Escalação padrão carregada. Você pode trocar os jogadores.";
+state.lineup=defaultLineup();buildPitch();
+$("lineupMessage").textContent="Escalação padrão carregada.";
 };
 $("saveLineup").onclick=()=>{
- readPitch();
- const all=[state.lineup.GOL,...state.lineup.DEF,...state.lineup.MEI,...state.lineup.ATA];
- if(new Set(all).size!==all.length){
-  $("lineupMessage").textContent="Há jogador repetido. Escolha atletas diferentes.";
-  return;
- }
- persist();
- $("lineupMessage").textContent="Escalação salva com sucesso!";
+readPitch();
+const names=[state.lineup.GOL,...state.lineup.DEF,...state.lineup.MEI,...state.lineup.ATA];
+if(new Set(names).size!==names.length){
+$("lineupMessage").textContent="Há jogador repetido. Escolha atletas diferentes.";return;
+}
+persist();$("lineupMessage").textContent="Escalação salva com sucesso!";
 };
 $("play").onclick=playMatch;
 $("reset").onclick=()=>{
- if(!confirm("Reiniciar a carreira? Isso apaga resultados e contratações salvos neste navegador."))return;
- state=newState();
- persist();
- $("score").textContent="VS";
- $("matchMessage").textContent="Nova carreira iniciada.";
- $("marketMessage").textContent="Carreira reiniciada.";
+if(!confirm("Reiniciar a carreira? Isso apaga a classificação, contratações e histórico deste navegador."))return;
+state=newState();persist();
+$("score").textContent="VS";
+$("matchMessage").textContent="Nova carreira iniciada.";
 };
-$("club").addEventListener("change",()=>{
- $("homeName").textContent=$("club").value;
-});
+$("club").addEventListener("change",()=>{});
 </script>
 </body>
 </html>
