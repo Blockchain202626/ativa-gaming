@@ -1,1 +1,302 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#07150f">
+<title>BR League Football | Ativa Gaming</title>
+<style>
+:root{color-scheme:dark;--bg:#07150f;--panel:#10231a;--line:#244333;--green:#39e58c;--muted:#a6bcae;--white:#f2fff6}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#173b29 0,#07150f 55%);font-family:system-ui,-apple-system,Arial,sans-serif;color:var(--white)}
+header{padding:22px 16px 18px;border-bottom:1px solid var(--line);background:#07150feF}
+.wrap{max-width:1050px;margin:auto}
+.brand{color:var(--green);font-size:12px;font-weight:900;letter-spacing:2px}
+h1{font-size:clamp(25px,6vw,40px);margin:8px 0}
+p{line-height:1.5}
+.sub{color:var(--muted);margin:0}
+main{max-width:1050px;margin:auto;padding:16px}
+.panel{background:linear-gradient(145deg,#12281d,#0c1c14);border:1px solid var(--line);border-radius:17px;padding:16px;margin:0 0 14px}
+h2{font-size:19px;margin:0 0 13px}
+h3{font-size:15px;margin:0 0 8px}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+select,button{font:inherit;border-radius:10px;padding:12px;border:1px solid #345742;width:100%}
+select{background:#08170f;color:white}
+button{background:var(--green);color:#062012;border:0;font-weight:850;cursor:pointer}
+button.secondary{background:#183a28;color:var(--white);border:1px solid #345742}
+button:disabled{opacity:.5}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{padding:12px;background:#091910;border:1px solid var(--line);border-radius:12px}
+.stat small{display:block;color:var(--muted);font-size:12px}
+.stat strong{font-size:23px;display:block;margin-top:4px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.pitch{background:repeating-linear-gradient(0deg,#1b613b 0,#1b613b 43px,#205f3c 43px,#205f3c 86px);border:2px solid #8cc6a0;border-radius:12px;padding:12px;position:relative;overflow:hidden}
+.pitch:before{content:"";position:absolute;inset:8px;border:1px solid #ffffff65;border-radius:7px;pointer-events:none}
+.pitchrow{position:relative;display:flex;justify-content:space-around;gap:3px;margin:15px 0}
+.player{font-size:10px;text-align:center;background:#e7fff0;color:#0b2918;border-radius:8px;padding:7px 3px;min-width:0;flex:1;font-weight:800;overflow-wrap:anywhere}
+.player span{display:block;font-size:9px;font-weight:500}
+.note{font-size:12px;color:var(--muted)}
+.score{font-size:32px;font-weight:900;text-align:center;margin:8px}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{text-align:left;padding:9px 5px;border-bottom:1px solid var(--line)}
+th{color:var(--muted)}
+td:first-child{font-weight:800}
+.tag{display:inline-block;background:#1a422c;color:#a6ffca;border-radius:20px;padding:5px 9px;font-size:11px}
+.log{padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+a{color:var(--green)}
+footer{text-align:center;padding:25px 14px;color:var(--muted);font-size:12px}
+@media(min-width:700px){.grid.desktop{grid-template-columns:1fr 1fr}.layout{display:grid;grid-template-columns:1fr 1fr;gap:14px}.panel{margin-bottom:14px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="wrap">
+  <div class="brand">ATIVA GAMING • FUTEBOL</div>
+  <h1>⚽ BR League Football</h1>
+  <p class="sub">Monte seu time. Escolha sua tática. Dispute o Brasileirão.</p>
+ </div>
+</header>
+<main>
+ <section class="panel">
+  <h2>🏟️ Meu clube</h2>
+  <label for="club">Escolha seu clube da Série A 2026</label>
+  <select id="club"></select>
+  <div class="grid" style="margin-top:12px">
+   <div class="stat"><small>Temporada</small><strong>2026</strong></div>
+   <div class="stat"><small>Modo de jogo</small><strong style="font-size:18px">Manager</strong></div>
+  </div>
+  <div class="actions">
+   <button id="saveClub">Confirmar clube</button>
+   <button class="secondary" id="official">Elenco na CBF ↗</button>
+  </div>
+  <p class="note">Os elencos mudam durante a temporada. Consulte a lista oficial antes de confirmar jogadores.</p>
+ </section>
+
+ <div class="layout">
+  <section class="panel">
+   <h2>📊 Centro de gestão</h2>
+   <div class="grid">
+    <div class="stat"><small>Pontos na sua carreira</small><strong id="points">0</strong></div>
+    <div class="stat"><small>Partidas disputadas</small><strong id="played">0</strong></div>
+    <div class="stat"><small>Vitórias</small><strong id="wins">0</strong></div>
+    <div class="stat"><small>Saldo de gols</small><strong id="goalDiff">0</strong></div>
+   </div>
+   <div style="margin-top:14px">
+    <label for="formation">Formação tática</label>
+    <select id="formation">
+     <option value="442">4-4-2 • Equilibrada</option>
+     <option value="433">4-3-3 • Ofensiva</option>
+     <option value="352">3-5-2 • Meio-campo forte</option>
+     <option value="541">5-4-1 • Defensiva</option>
+    </select>
+   </div>
+   <div style="margin-top:12px">
+    <label for="mentality">Mentalidade</label>
+    <select id="mentality">
+     <option value="balanced">Equilibrada</option>
+     <option value="attack">Ataque total</option>
+     <option value="defense">Defensiva</option>
+    </select>
+   </div>
+   <button style="margin-top:12px" id="saveTactic">Salvar tática</button>
+   <p id="tacticMsg" class="note">Configure seu estilo de jogo.</p>
+  </section>
+
+  <section class="panel">
+   <h2>🟢 Campo tático</h2>
+   <div class="pitch">
+    <div class="pitchrow">
+     <div class="player">GOL<span>Goleiro</span></div>
+    </div>
+    <div class="pitchrow" id="defense"></div>
+    <div class="pitchrow" id="midfield"></div>
+    <div class="pitchrow" id="attack"></div>
+   </div>
+   <p class="note">Visualização da formação. A escalação oficial completa será adicionada após validação dos elencos.</p>
+  </section>
+ </div>
+
+ <section class="panel">
+  <h2>🎮 Próxima partida</h2>
+  <div class="grid">
+   <div>
+    <label>Seu time</label>
+    <div id="homeName" style="font-weight:850;font-size:17px">Seu clube</div>
+   </div>
+   <div>
+    <label>Adversário</label>
+    <select id="opponent"></select>
+   </div>
+  </div>
+  <div class="score" id="score">VS</div>
+  <p id="matchInfo" class="note" style="text-align:center">Partida simulada • resultado não representa jogo real.</p>
+  <button id="play">▶ Simular partida</button>
+  <p class="note">A partida é uma simulação de entretenimento. Não envolve apostas nem dinheiro real.</p>
+ </section>
+
+ <section class="panel">
+  <h2>🏆 Classificação da sua carreira</h2>
+  <div style="overflow-x:auto">
+   <table>
+    <thead><tr><th>#</th><th>Clube</th><th>PTS</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr></thead>
+    <tbody id="tableBody"></tbody>
+   </table>
+  </div>
+  <p class="note">Tabela da carreira simulada nesta instalação; não é a classificação oficial do Brasileirão.</p>
+ </section>
+
+ <section class="panel">
+  <h2>📜 Histórico de partidas</h2>
+  <div id="history"><p class="note">Você ainda não disputou nenhuma partida.</p></div>
+  <button class="secondary" id="reset" style="margin-top:12px">Reiniciar carreira</button>
+ </section>
+
+ <section class="panel">
+  <h2>👥 Elencos profissionais</h2>
+  <p>Os nomes e vínculos dos jogadores precisam ser conferidos por clube para evitar atletas transferidos ou não inscritos. Consulte os atletas cadastrados pela CBF:</p>
+  <p><a href="https://www.cbf.com.br/futebol-brasileiro/times/campeonato-brasileiro/serie-a/2026" target="_blank" rel="noopener">Abrir clubes e elencos oficiais da Série A 2026 ↗</a></p>
+  <p class="note">Esta versão ainda não contém todos os elencos completos nem multiplayer online. Esses recursos serão adicionados em etapas, sem inventar nomes de jogadores.</p>
+ </section>
+</main>
+<footer>ATIVA GAMING • BR League Football • Protótipo de gerenciamento</footer>
+<script>
+const clubs=[
+"Athletico Paranaense","Atlético Mineiro","Bahia","Botafogo",
+"Chapecoense","Corinthians","Coritiba","Cruzeiro","Flamengo",
+"Fluminense","Grêmio","Internacional","Mirassol","Palmeiras",
+"Red Bull Bragantino","Remo","Santos","São Paulo","Vasco da Gama","Vitória"
+];
+const $=id=>document.getElementById(id);
+const initial={
+club:"Flamengo",formation:"433",mentality:"balanced",
+table:{},history:[]
+};
+let state;
+try{
+ state=JSON.parse(localStorage.getItem("brleague_save"))||initial;
+}catch(e){state=initial}
+function blank(){
+ return {pts:0,j:0,v:0,e:0,d:0,gp:0,gc:0};
+}
+function ensure(){
+ if(!state.table)state.table={};
+ clubs.forEach(c=>{if(!state.table[c])state.table[c]=blank()});
+ if(!Array.isArray(state.history))state.history=[];
+ if(!clubs.includes(state.club))state.club=clubs[0];
+}
+function persist(){
+ localStorage.setItem("brleague_save",JSON.stringify(state));
+ render();
+}
+function fillSelects(){
+ $("club").innerHTML=clubs.map(c=>`<option>${c}</option>`).join("");
+ $("opponent").innerHTML=clubs.map(c=>`<option>${c}</option>`).join("");
+}
+function renderPitch(){
+ let f=state.formation||"433";
+ let counts=f.split("").map(Number);
+ const make=(n,pos)=>Array.from({length:n},(_,i)=>
+ `<div class="player">—<span>${pos} ${i+1}</span></div>`).join("");
+ $("defense").innerHTML=make(counts[0],"DEF");
+ $("midfield").innerHTML=make(counts[1],"MEI");
+ $("attack").innerHTML=make(counts[2],"ATA");
+}
+function render(){
+ ensure();
+ $("club").value=state.club;
+ $("formation").value=state.formation||"433";
+ $("mentality").value=state.mentality||"balanced";
+ $("homeName").textContent=state.club;
+ if($("opponent").value===state.club){
+  $("opponent").value=clubs.find(c=>c!==state.club);
+ }
+ const mine=state.table[state.club];
+ $("points").textContent=mine.pts;
+ $("played").textContent=mine.j;
+ $("wins").textContent=mine.v;
+ $("goalDiff").textContent=mine.gp-mine.gc;
+ $("tableBody").innerHTML=clubs.slice().sort((a,b)=>{
+  let A=state.table[a],B=state.table[b];
+  return B.pts-A.pts||(B.gp-B.gc)-(A.gp-A.gc)||B.gp-A.gp;
+ }).map((c,i)=>{
+  let t=state.table[c];
+  return `<tr><td>${i+1}</td><td>${c}${c===state.club?" ★":""}</td><td>${t.pts}</td><td>${t.j}</td><td>${t.v}</td><td>${t.e}</td><td>${t.d}</td><td>${t.gp-t.gc}</td></tr>`;
+ }).join("");
+ $("history").innerHTML=state.history.length?
+ state.history.slice().reverse().map(m=>`<div class="log"><strong>${m.home} ${m.hg} × ${m.ag} ${m.away}</strong><br><span class="note">${m.note}</span></div>`).join("")
+ :'<p class="note">Você ainda não disputou nenhuma partida.</p>';
+ renderPitch();
+}
+function teamStrength(club){
+ const favorites=["Flamengo","Palmeiras","Cruzeiro","Fluminense","Bahia","Athletico Paranaense"];
+ return favorites.includes(club)?72:clubs.indexOf(club)%5+66;
+}
+function randGoal(x){
+ let n=0;
+ for(let i=0;i<5;i++)if(Math.random()<x/5)n++;
+ return Math.min(n,5);
+}
+function playMatch(){
+ const home=state.club,away=$("opponent").value;
+ if(home===away){alert("Escolha um adversário diferente do seu clube.");return;}
+ const f=state.formation||"433";
+ const mentality=state.mentality||"balanced";
+ let hs=teamStrength(home),as=teamStrength(away);
+ if(f==="433")hs+=2;
+ if(f==="352")hs+=1;
+ if(f==="541")hs-=1;
+ if(mentality==="attack")hs+=3;
+ if(mentality==="defense")as-=1;
+ const hg=randGoal(Math.max(0.5,1.3+(hs-as)/22));
+ const ag=randGoal(Math.max(0.4,1.15+(as-hs)/22));
+ const H=state.table[home],A=state.table[away];
+ H.j++;A.j++;H.gp+=hg;H.gc+=ag;A.gp+=ag;A.gc+=hg;
+ let note;
+ if(hg>ag){H.v++;H.pts+=3;A.d++;note="Vitória! +3 pontos.";}
+ else if(hg<ag){A.v++;A.pts+=3;H.d++;note="Derrota. Ajuste sua estratégia.";}
+ else{H.e++;A.e++;H.pts++;A.pts++;note="Empate. Cada equipe ganhou 1 ponto.";}
+ state.history.push({home,away,hg,ag,note,formation:f});
+ if(state.history.length>30)state.history.shift();
+ $("score").textContent=`${hg} × ${ag}`;
+ $("matchInfo").textContent=note+" Resultado fictício da simulação.";
+ persist();
+}
+fillSelects();ensure();render();
+$("saveClub").addEventListener("click",()=>{
+ state.club=$("club").value;
+ if($("opponent").value===state.club){
+  $("opponent").value=clubs.find(c=>c!==state.club);
+ }
+ $("score").textContent="VS";
+ $("matchInfo").textContent="Clube selecionado. Pronto para a partida.";
+ persist();
+});
+$("official").addEventListener("click",()=>{
+ window.open("https://www.cbf.com.br/futebol-brasileiro/times/campeonato-brasileiro/serie-a/2026","_blank","noopener");
+});
+$("saveTactic").addEventListener("click",()=>{
+ state.formation=$("formation").value;
+ state.mentality=$("mentality").value;
+ $("tacticMsg").textContent="Tática salva para sua carreira.";
+ persist();
+});
+$("play").addEventListener("click",playMatch);
+$("reset").addEventListener("click",()=>{
+ if(!confirm("Deseja apagar os resultados desta carreira neste navegador?"))return;
+ state={club:state.club,formation:"433",mentality:"balanced",table:{},history:[]};
+ ensure();persist();
+ $("score").textContent="VS";
+ $("matchInfo").textContent="Nova carreira iniciada.";
+});
+$("club").addEventListener("change",()=>{
+ $("homeName").textContent=$("club").value;
+});
+$("opponent").addEventListener("change",()=>{
+ if($("opponent").value===state.club){
+  $("matchInfo").textContent="Escolha um clube adversário diferente.";
+ }
+});
+</script>
+</body>
+</html>
 
