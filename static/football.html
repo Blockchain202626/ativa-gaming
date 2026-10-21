@@ -1,919 +1,446 @@
-
 <!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#07150f">
 <meta name="description" content="BR League Football — modo carreira de futebol da Ativa Gaming.">
 <title>BR League Football — Ativa Gaming</title>
 <style>
-:root{
-  color-scheme:dark;
-  --bg:#07150f;
-  --panel:#10251a;
-  --line:#294b37;
-  --green:#39e58c;
-  --muted:#b1c6b7;
-  --white:#f4fff7;
-  --danger:#ff8585;
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
-  margin:0;
-  background:radial-gradient(ellipse at top,#1a412c,#07150f 65%);
-  font-family:system-ui,Arial,sans-serif;
-  color:var(--white);
-}
-header{
-  padding:22px 16px;
-  background:#08170ff2;
-  border-bottom:1px solid var(--line);
-}
-.wrap,main{max-width:1050px;margin:auto}
-.brand{
-  color:var(--green);
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:2px;
-}
-h1{font-size:clamp(26px,6vw,40px);margin:8px 0}
-h2{font-size:19px;margin:0 0 13px}
-h3{font-size:15px;margin:12px 0 8px}
-p{line-height:1.5}
-.muted,.note{color:var(--muted);font-size:12px}
-main{padding:15px}
-.panel{
-  background:linear-gradient(145deg,#132a1e,#0b1b12);
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:15px;
-  margin-bottom:14px;
-  min-width:0;
-}
-label{
-  display:block;
-  font-size:12px;
-  color:var(--muted);
-  margin:9px 0 5px;
-}
-select,button{
-  width:100%;
-  min-height:44px;
-  padding:12px;
-  border-radius:10px;
-  border:1px solid #365b43;
-  font:inherit;
-}
-select{background:#09180f;color:white}
-button{
-  background:var(--green);
-  color:#082012;
-  font-weight:850;
-  border:0;
-  cursor:pointer;
-  touch-action:manipulation;
-}
-button.secondary{
-  background:#193b28;
-  color:white;
-  border:1px solid #365b43;
-}
-button:disabled{opacity:.45;cursor:not-allowed}
-button:focus-visible,select:focus-visible,a:focus-visible{
-  outline:2px solid var(--green);
-  outline-offset:3px;
-}
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px;
-}
-.stat{
-  background:#091910;
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:12px;
-  min-width:0;
-}
-.stat small{display:block;color:var(--muted);font-size:12px}
-.stat strong{
-  font-size:clamp(17px,4vw,23px);
-  display:block;
-  margin-top:4px;
-  overflow-wrap:anywhere;
-}
-.layout{display:grid;gap:14px}
-.pitch{
-  border:2px solid #a1d4ad;
-  border-radius:12px;
-  padding:10px;
-  background:repeating-linear-gradient(
-    0deg,#1a6038 0,#1a6038 42px,#216942 42px,#216942 84px
-  );
-  overflow:hidden;
-}
-.pitchrow{
-  display:flex;
-  justify-content:center;
-  gap:5px;
-  margin:10px 0;
-}
-.slot{
-  flex:1;
-  min-width:0;
-  max-width:150px;
-  background:#e5ffed;
-  color:#102b1b;
-  border-radius:9px;
-  padding:7px 3px;
-  text-align:center;
-  font-size:11px;
-  font-weight:850;
-  overflow-wrap:anywhere;
-}
-.slot select{
-  background:#f3fff6;
-  color:#153421;
-  border-color:#aacbb5;
-  padding:6px 2px;
-  font-size:10px;
-  min-height:42px;
-}
-.slot small{display:block;font-weight:500;font-size:10px}
-.playerlist{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:8px;
-}
-.player{
-  background:#0a1b11;
-  border:1px solid var(--line);
-  border-radius:10px;
-  padding:10px;
-  font-size:12px;
-  min-width:0;
-  overflow-wrap:anywhere;
-}
-.player b{display:block;margin-bottom:5px}
-.pill{
-  display:inline-block;
-  border-radius:20px;
-  background:#19432b;
-  color:#b7ffd0;
-  padding:4px 8px;
-  font-size:10px;
-  margin:2px 0;
-}
-.price{font-weight:900;color:var(--green);font-size:15px}
-.score{text-align:center;font-size:35px;font-weight:900;margin:10px}
-table{width:100%;border-collapse:collapse;font-size:12px}
-th,td{text-align:left;padding:8px 4px;border-bottom:1px solid var(--line)}
-th{color:var(--muted)}
-.scroll{overflow-x:auto}
-.log{border-bottom:1px solid var(--line);padding:10px 0;font-size:13px}
-a{color:var(--green)}
-.budgetbar{
-  border:1px solid var(--line);
-  background:#091910;
-  border-radius:12px;
-  padding:14px;
-  margin-bottom:12px;
-}
-.budgetbar strong{font-size:24px;color:var(--green);display:block}
-.message{min-height:20px;color:var(--green);font-size:12px}
-.message.error{color:var(--danger)}
-.status{
-  padding:10px 12px;
-  border-radius:10px;
-  border:1px solid var(--line);
-  background:#091910;
-  font-size:12px;
-  color:var(--muted);
-}
-footer{text-align:center;padding:22px;color:var(--muted);font-size:12px}
-@media(min-width:720px){
-  .layout{grid-template-columns:1fr 1fr}
-  .playerlist{grid-template-columns:repeat(3,minmax(0,1fr))}
-}
-@media(max-width:380px){
-  main{padding:10px}
-  .panel{padding:12px}
-  .pitch{padding:5px}
-  .pitchrow{gap:3px}
-  .slot{padding:5px 1px;font-size:10px}
-  .slot select{font-size:9px}
-  .playerlist{grid-template-columns:1fr}
-}
+:root{color-scheme:dark;--bg:#06110d;--panel:#0d1d16;--panel2:#12271d;--line:#244334;--text:#eef8f0;--muted:#9cb6a5;--green:#35e58a;--green2:#17ad65;--gold:#ffd166;--red:#ff7272;--blue:#75b9ff;--radius:18px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#16452b 0,transparent 45%),var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;touch-action:manipulation}button:focus-visible,select:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+a{color:var(--green)}.wrap{width:min(1120px,100%);margin:auto;padding:14px 13px 40px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:5px 0 18px}.brand{display:flex;align-items:center;gap:11px}.logo{display:grid;place-items:center;width:48px;height:48px;border-radius:15px;background:linear-gradient(145deg,#4bff9b,#13834e);color:#052113;font-weight:1000;font-size:19px;box-shadow:0 7px 25px #1de37a2b}.brand h1{font-size:clamp(18px,4vw,25px);line-height:1.1;margin:0}.brand p{margin:4px 0 0;color:var(--muted);font-size:12px}.pill{display:inline-flex;align-items:center;gap:6px;border:1px solid #286b48;background:#10291c;color:#8af5b7;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:800;white-space:nowrap}
+.hero{position:relative;overflow:hidden;border:1px solid #276341;border-radius:24px;padding:21px;background:linear-gradient(120deg,#123a25,#0c2117 65%,#10281b);margin-bottom:15px}.hero:after{content:"⚽";position:absolute;font-size:130px;opacity:.07;right:12px;bottom:-33px;transform:rotate(-18deg)}.eyebrow{color:var(--green);font-size:11px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase}.hero h2{font-size:clamp(24px,6vw,36px);line-height:1.05;margin:8px 0}.hero p{color:#bdd5c5;max-width:650px;margin:0}.hero-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:17px;position:relative;z-index:1}
+.btn{border:1px solid var(--line);background:#183226;color:var(--text);border-radius:12px;padding:11px 14px;font-weight:800;min-height:43px}.btn.primary{background:linear-gradient(135deg,var(--green),#18b866);color:#042012;border:0}.btn.ghost{background:#091911}.btn.danger{border-color:#713b3b;color:#ffaaaa;background:#281414}.btn.small{min-height:34px;padding:7px 10px;font-size:12px;border-radius:9px}.btn:disabled{opacity:.42;cursor:not-allowed}
+.stats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px;margin:14px 0}.stat{padding:13px;border:1px solid var(--line);border-radius:15px;background:linear-gradient(145deg,#10251a,#0b1912);min-width:0}.stat span{display:block;color:var(--muted);font-size:11px}.stat strong{display:block;font-size:clamp(16px,3.7vw,23px);margin-top:5px;overflow-wrap:anywhere}.stat small{display:block;color:#77d99e;font-size:10px;margin-top:3px}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:13px;align-items:start}.stack{display:grid;gap:13px}.panel{background:linear-gradient(150deg,#10231a,#0b1812);border:1px solid var(--line);border-radius:var(--radius);padding:16px;min-width:0}.panel h3{margin:0 0 5px;font-size:17px}.sub{margin:0 0 14px;color:var(--muted);font-size:12px}.section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.section-title h3{margin:0}.tag{font-size:10px;font-weight:900;color:#9ff7bd;border:1px solid #2b6a46;border-radius:999px;padding:5px 8px;white-space:nowrap}
+label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}select{width:100%;color:var(--text);background:#091810;border:1px solid #31533f;border-radius:11px;padding:11px;min-height:43px}option{background:#10231a}.fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{min-width:0}.row-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}
+.pitch{border:1px solid #3b8858;border-radius:15px;padding:12px;background:repeating-linear-gradient(0deg,#12502d 0,#12502d 32px,#155733 32px,#155733 64px);position:relative;overflow:hidden}.pitch:before{content:"";position:absolute;inset:8px;border:1px solid #ffffff42;border-radius:9px;pointer-events:none}.pitch:after{content:"";position:absolute;left:50%;top:8px;bottom:8px;border-left:1px solid #ffffff42;pointer-events:none}.pitch-label{position:relative;z-index:1;font-size:10px;color:#d6ffe3;text-align:center;font-weight:800;margin-bottom:8px}.formation-rows{position:relative;z-index:1;display:flex;flex-direction:column;gap:7px}.line-row{display:flex;justify-content:space-around;gap:4px;min-height:53px;align-items:center}.player-chip{width:24%;max-width:90px;min-width:0;text-align:center;background:#e9fff0;color:#0b4225;border:1px solid #8be7ac;border-radius:10px;padding:5px 3px;box-shadow:0 3px 8px #001b0b55}.player-chip strong{display:block;font-size:12px}.player-chip span{display:block;font-size:9px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.player-chip em{display:block;font-style:normal;font-weight:900;font-size:10px}
+.squad-list,.market-list,.event-list{display:grid;gap:8px}.player-row{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid #234433;background:#0a1911;border-radius:12px;padding:10px}.player-info{min-width:0}.player-info strong{display:block;font-size:13px}.player-info small{color:var(--muted);font-size:11px}.rating{display:inline-grid;place-items:center;min-width:35px;height:32px;border-radius:9px;background:#173b27;color:#8effb5;font-weight:950}.money{font-size:12px;color:#a4f4bd;font-weight:800}.empty{padding:18px;text-align:center;color:var(--muted);border:1px dashed #31533f;border-radius:12px;font-size:12px}
+.match-card{overflow:hidden;border:1px solid #2d7049;border-radius:18px;background:#07180f}.match-top{padding:13px 15px;background:linear-gradient(110deg,#17452b,#0e2a1b);display:flex;justify-content:space-between;align-items:center;gap:10px}.match-top span{font-size:11px;color:#b4d9c0}.scoreboard{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;padding:22px 13px 17px;text-align:center}.team{min-width:0}.team .crest{display:grid;place-items:center;width:54px;height:54px;margin:0 auto 8px;border-radius:16px;background:linear-gradient(140deg,#214e34,#0d291a);border:1px solid #3a8758;font-size:25px}.team strong{display:block;font-size:clamp(12px,3vw,16px);overflow-wrap:anywhere}.team small{color:var(--muted);font-size:10px}.score{font-size:clamp(34px,9vw,48px);font-weight:1000;letter-spacing:2px;white-space:nowrap}.score small{display:block;font-size:10px;letter-spacing:1px;color:var(--muted)}.match-controls{padding:0 13px 14px}.match-controls .btn{width:100%;font-size:15px;min-height:49px}.match-status{text-align:center;color:var(--muted);font-size:11px;padding:0 12px 12px}.live-match{display:none;border-top:1px solid #2b583d;padding:13px}.live-match.show{display:block}.live-clock{display:flex;justify-content:space-between;align-items:center;font-size:12px;margin-bottom:10px}.live-clock strong{color:var(--green);font-size:17px}.event-list{max-height:260px;overflow:auto}.event{display:flex;gap:9px;align-items:flex-start;border:1px solid #234433;border-radius:10px;padding:8px;background:#0a1a11;font-size:12px}.minute{font-weight:950;color:var(--green);min-width:32px}.event.goal{border-color:#a17c2d;background:#2a2411}.event.goal .minute{color:var(--gold)}.event.good{border-color:#2a7650}.event.bad{border-color:#704343}.result-banner{display:none;margin:12px 0 0;padding:12px;border:1px solid #326e49;border-radius:12px;background:#102b1a}.result-banner.show{display:block}.result-banner strong{display:block;color:var(--green);font-size:15px}.result-banner p{font-size:12px;color:#b6d3c0;margin:5px 0 0}
+.table-wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap}th,td{text-align:left;padding:9px 7px;border-bottom:1px solid #203c2c}th{font-size:10px;color:var(--muted);font-weight:800}tr.you td{color:#8effb5;background:#102b1a}td:first-child{width:25px;color:var(--muted)}
+.history-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid #203c2c}.history-row:last-child{border:0}.history-row strong{display:block;font-size:12px}.history-row small{color:var(--muted);font-size:10px}.history-score{font-weight:1000;font-size:17px}
+.notice{color:var(--muted);font-size:11px;line-height:1.5;margin-top:12px}.notice b{color:#c8e8d2}.footer{text-align:center;color:#688d75;font-size:11px;padding:22px 0 0}
+.toast{position:fixed;left:50%;bottom:18px;transform:translate(-50%,20px);opacity:0;pointer-events:none;transition:.2s;z-index:20;background:#eafff0;color:#07341b;padding:12px 16px;border-radius:12px;font-weight:850;font-size:13px;box-shadow:0 10px 40px #0008;max-width:90vw;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:760px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat:last-child{grid-column:span 2}.grid{grid-template-columns:1fr}.wrap{padding:10px 10px 30px}.hero{padding:18px}.panel{padding:13px}.brand .pill{display:none}}
+@media(min-width:761px){.main-col{position:sticky;top:10px}.hero{padding:25px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
 <body>
+<div class="wrap">
 <header>
-  <div class="wrap">
-    <div class="brand">ATIVA GAMING • FUTEBOL</div>
-    <h1>⚽ BR League Football</h1>
-    <p class="muted">Modo carreira: escalação, mercado, contratos e finanças do clube.</p>
-    <div class="status">🎮 Carreira simulada • Compatível com celular • Progresso salvo neste navegador</div>
-  </div>
+  <div class="brand"><div class="logo">AG</div><div><h1>BR League Football</h1><p>Modo carreira • Ativa Gaming</p></div></div>
+  <span class="pill">● CARREIRA SIMULADA</span>
 </header>
 
-<main>
-<section class="panel">
-  <h2>🏟️ Meu clube</h2>
-  <label for="club">Clube da carreira</label>
-  <select id="club"></select>
-  <button id="confirmClub" style="margin-top:10px">Confirmar clube</button>
-  <p class="note">Valores, contratos e partidas são simulados para o jogo. Não representam transações reais nem partidas oficiais.</p>
+<section class="hero">
+  <div class="eyebrow">Ativa Gaming apresenta</div>
+  <h2>Seu clube. Suas táticas.<br>Seu campeonato.</h2>
+  <p>Monte o elenco, administre o orçamento e viva partidas simuladas com lances, gols e decisões táticas. Seu progresso fica salvo neste navegador.</p>
+  <div class="hero-actions"><button class="btn primary" id="goMatch">⚽ Ir para a partida</button><button class="btn" id="goSquad">👥 Gerenciar elenco</button></div>
 </section>
 
-<section class="panel">
-  <h2>💎 Finanças e elenco</h2>
-  <div class="grid">
-    <div class="stat"><small>Pontos</small><strong id="points">0</strong></div>
-    <div class="stat"><small>Jogos</small><strong id="played">0</strong></div>
-    <div class="stat"><small>Vitórias</small><strong id="wins">0</strong></div>
-    <div class="stat"><small>Valor do elenco</small><strong id="squadValue">R$ 0</strong></div>
-    <div class="stat"><small>Orçamento disponível</small><strong id="budgetStat">R$ 0</strong></div>
-    <div class="stat"><small>Salários por partida</small><strong id="wages">R$ 0</strong></div>
-  </div>
-  <p class="note" id="financeNote">Os salários são descontados do orçamento depois de cada partida.</p>
+<section class="stats" aria-label="Resumo da carreira">
+  <div class="stat"><span>Pontos</span><strong id="statPoints">0</strong><small id="statRank">Liga em andamento</small></div>
+  <div class="stat"><span>Jogos</span><strong id="statGames">0</strong><small id="statRecord">0V • 0E • 0D</small></div>
+  <div class="stat"><span>Vitórias</span><strong id="statWins">0</strong><small>na carreira</small></div>
+  <div class="stat"><span>Valor do elenco</span><strong id="statValue">R$ 0</strong><small>estimativa simulada</small></div>
+  <div class="stat"><span>Orçamento</span><strong id="statBudget">R$ 50 mi</strong><small id="statPayroll">Folha por jogo: R$ 0</small></div>
 </section>
 
-<div class="layout">
-<section class="panel">
-  <h2>🧠 Tática e escalação</h2>
+<div class="grid">
+<div class="stack main-col">
+  <section class="panel" id="clubPanel">
+    <div class="section-title"><h3>🏟️ Meu clube</h3><span class="tag">CARREIRA</span></div>
+    <p class="sub">Escolha sua equipe. A carreira reinicia ao confirmar outro clube.</p>
+    <label for="clubSelect">Clube da carreira</label>
+    <select id="clubSelect"></select>
+    <div class="row-actions"><button class="btn primary" id="confirmClub">Confirmar clube</button><span class="notice" id="clubNote">Seu clube atual é Flamengo.</span></div>
+  </section>
 
-  <label for="formation">Formação</label>
-  <select id="formation">
-    <option value="433">4-3-3 • Ofensiva</option>
-    <option value="442">4-4-2 • Equilibrada</option>
-    <option value="352">3-5-2 • Meio forte</option>
-    <option value="541">5-4-1 • Defensiva</option>
-  </select>
+  <section class="panel" id="squadPanel">
+    <div class="section-title"><h3>🧠 Formação e escalação</h3><span class="tag">TÁTICA</span></div>
+    <p class="sub">A formação define quantos defensores, meio-campistas e atacantes entram em campo.</p>
+    <div class="fields">
+      <div class="field"><label for="formation">Formação</label><select id="formation"><option value="433">4-3-3 • Ofensiva</option><option value="442">4-4-2 • Equilibrada</option><option value="352">3-5-2 • Meio forte</option><option value="541">5-4-1 • Defensiva</option></select></div>
+      <div class="field"><label for="mentality">Mentalidade</label><select id="mentality"><option value="balanced">Equilibrada</option><option value="attack">Atacar</option><option value="defend">Defender</option></select></div>
+    </div>
+    <div class="pitch" style="margin-top:12px"><div class="pitch-label">ESCALAÇÃO TITULAR</div><div class="formation-rows" id="pitchRows"></div></div>
+    <div class="row-actions"><button class="btn" id="autoLineup">✨ Montar melhor time</button><button class="btn primary" id="saveLineup">Salvar escalação</button></div>
+    <p class="notice" id="lineupNote">Escalação carregada.</p>
+    <div class="section-title" style="margin-top:18px"><h3>👥 Elenco</h3><span class="tag" id="squadCount">0 jogadores</span></div>
+    <div class="squad-list" id="squadList"></div>
+  </section>
 
-  <label for="mentality">Mentalidade</label>
-  <select id="mentality">
-    <option value="balanced">Equilibrada</option>
-    <option value="attack">Ataque total</option>
-    <option value="defense">Defensiva</option>
-  </select>
-
-  <button id="saveTactic" style="margin-top:10px">Salvar tática</button>
-  <p id="tacticMessage" class="note" aria-live="polite"></p>
-
-  <div class="pitch" aria-label="Campo para montar a escalação">
-    <div class="pitchrow" id="gkRow"></div>
-    <div class="pitchrow" id="defRow"></div>
-    <div class="pitchrow" id="midRow"></div>
-    <div class="pitchrow" id="attRow"></div>
-  </div>
-
-  <button class="secondary" id="autoLineup" style="margin-top:10px">Montar escalação padrão</button>
-  <button id="saveLineup" style="margin-top:8px">Salvar escalação</button>
-  <p id="lineupMessage" class="note" aria-live="polite">Escolha seus titulares.</p>
-</section>
-
-<section class="panel">
-  <h2>💰 Mercado de jogadores</h2>
-  <div class="budgetbar">
-    <small class="muted">Orçamento de transferências</small>
-    <strong id="budget">R$ 50.000.000</strong>
-    <small class="muted" id="spent">Total gasto: R$ 0</small>
-  </div>
-
-  <label for="marketFilter">Filtrar posição</label>
-  <select id="marketFilter">
-    <option value="TODOS">Todas as posições</option>
-    <option value="GOL">Goleiros</option>
-    <option value="DEF">Defensores</option>
-    <option value="MEI">Meio-campistas</option>
-    <option value="ATA">Atacantes</option>
-  </select>
-
-  <div id="market" class="playerlist"></div>
-  <p id="marketMessage" class="message" aria-live="polite"></p>
-
-  <h3>📄 Contratos ativos</h3>
-  <div id="contracts" class="playerlist"></div>
-</section>
+  <section class="panel" id="marketPanel">
+    <div class="section-title"><h3>🔁 Mercado de transferências</h3><span class="tag">SIMULADO</span></div>
+    <p class="sub">Contrate jogadores fictícios usando o orçamento da carreira. As compras não envolvem dinheiro real.</p>
+    <label for="positionFilter">Filtrar posição</label><select id="positionFilter"><option value="ALL">Todas as posições</option><option value="GOL">Goleiros</option><option value="DEF">Defensores</option><option value="MEI">Meio-campistas</option><option value="ATA">Atacantes</option></select>
+    <div class="market-list" id="marketList" style="margin-top:10px"></div>
+  </section>
 </div>
 
-<section class="panel">
-  <h2>👥 Meu elenco</h2>
-  <div id="roster" class="playerlist"></div>
-  <p><a href="https://www.flamengo.com.br/futebol/elenco" target="_blank" rel="noopener noreferrer">Consultar elenco oficial do Flamengo ↗</a></p>
-  <p class="note">Os jogadores e suas notas nesta versão fazem parte da simulação do jogo.</p>
-</section>
+<div class="stack">
+  <section class="panel" id="matchPanel">
+    <div class="section-title"><h3>🏆 Central da partida</h3><span class="tag">MATCH DAY</span></div>
+    <div class="fiel
+     ds" style="margin-bottom:12px">
+      <div class="field"><label for="opponent">Adversário</label><select id="opponent"></select></div>
+      <div class="field"><label for="matchMode">Ritmo da narração</label><select id="matchMode"><option value="normal">Completa</option><option value="fast">Rápida</option></select></div>
+    </div>
+    <div class="match-card">
+      <div class="match-top"><strong id="matchCompetition">BR League • Rodada 1</strong><span id="matchWeather">Simulação local</span></div>
+      <div class="scoreboard">
+        <div class="team"><div class="crest" id="homeCrest">🔴⚫</div><strong id="homeName">Flamengo</strong><small>MANDANTE</small></div>
+        <div class="score"><span id="homeScore">—</span> : <span id="awayScore">—</span><small id="scoreMinute">PRÉ-JOGO</small></div>
+        <div class="team"><div class="crest" id="awayCrest">⚽</div><strong id="awayName">Palmeiras</strong><small>VISITANTE</small></div>
+      </div>
+      <div class="match-controls"><button class="btn primary" id="playMatch">▶ Simular partida</button></div>
+      <div class="match-status" id="matchStatus">Tudo pronto. Confira sua escalação antes de iniciar.</div>
+      <div class="live-match" id="liveMatch">
+        <div class="live-clock"><span>RELATO DA PARTIDA</span><strong id="liveClock">0′</strong><span id="livePossession">Jogo simulado</span></div>
+        <div class="event-list" id="eventList"></div>
+      </div>
+    </div>
+    <div class="result-banner" id="resultBanner"><strong id="resultTitle">Fim de jogo</strong><p id="resultText"></p></div>
+    <p class="notice">Os resultados, atletas e eventos são gerados pelo simulador. Não são placares oficiais nem apostas.</p>
+  </section>
 
-<section class="panel">
-  <h2>🎮 Próxima partida</h2>
-  <label for="opponent">Adversário</label>
-  <select id="opponent"></select>
-  <div class="score" id="score">VS</div>
-  <p id="matchMessage" class="note" style="text-align:center" aria-live="polite">Monte a escalação e simule uma partida.</p>
-  <button id="play">▶ Simular partida</button>
-</section>
+  <section class="panel">
+    <div class="section-title"><h3>📊 Classificação</h3><span class="tag" id="roundTag">RODADA 1</span></div>
+    <p class="sub">Tabela da sua carreira, atualizada após cada partida disputada.</p>
+    <div class="table-wrap"><table><thead><tr><th>#</th><th>Clube</th><th>PTS</th><th>J</th><th>V</th><th>SG</th></tr></thead><tbody id="leagueTable"></tbody></table></div>
+  </section>
 
-<section class="panel">
-  <h2>🏆 Classificação da carreira</h2>
-  <div class="scroll">
-    <table>
-      <thead>
-        <tr><th>#</th><th>Clube</th><th>PTS</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr>
-      </thead>
-      <tbody id="tableBody"></tbody>
-    </table>
-  </div>
-  <p class="note">Classificação desta carreira simulada, não a tabela oficial.</p>
-</section>
+  <section class="panel">
+    <div class="section-title"><h3>📜 Histórico</h3><span class="tag" id="historyCount">0 jogos</span></div>
+    <div id="historyList" class="squad-list"><div class="empty">Sua primeira partida aparecerá aqui.</div></div>
+    <div class="row-actions"><button class="btn danger small" id="resetCareer">Reiniciar carreira</button></div>
+  </section>
 
-<section class="panel">
-  <h2>📜 Histórico</h2>
-  <div id="history"></div>
-  <button class="secondary" id="reset" style="margin-top:12px">Reiniciar carreira</button>
-  <p class="note">Reiniciar apaga pontos, resultados, orçamento e contratações deste navegador.</p>
-</section>
-</main>
-
-<footer>ATIVA GAMING • BR LEAGUE FOOTBALL</footer>
+  <section class="panel">
+    <div class="section-title"><h3>📑 Contratos</h3><span class="tag">ELENCO</span></div>
+    <p class="sub">Jogadores contratados do mercado ficam disponíveis por 5 partidas simuladas.</p>
+    <div id="contractsList" class="squad-list"><div class="empty">Nenhum contrato ativo.</div></div>
+    <p class="notice">O elenco inicial e o mercado são dados de demonstração. Nomes, notas, preços e resultados não representam avaliações oficiais.</p>
+  </section>
+</div>
+</div>
+<div class="footer">Ativa Gaming • BR League Football • Carreira fictícia salva neste navegador</div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 "use strict";
-
-const clubs=[
-  "Athletico Paranaense","Atlético Mineiro","Bahia","Botafogo",
-  "Chapecoense","Corinthians","Coritiba","Cruzeiro","Flamengo",
-  "Fluminense","Grêmio","Internacional","Mirassol","Palmeiras",
-  "Red Bull Bragantino","Remo","Santos","São Paulo","Vasco da Gama","Vitória"
+const SAVE_KEY = "brleague_save_v2";
+const clubs = [
+"Athletico Paranaense","Atlético Mineiro","Bahia","Botafogo","Chapecoense","Corinthians","Coritiba","Cruzeiro","Flamengo","Fluminense","Grêmio","Internacional","Mirassol","Palmeiras","Red Bull Bragantino","Remo","Santos","São Paulo","Vasco da Gama","Vitória"
 ];
-
-const roster=[
-  {name:"Agustín Rossi",pos:"GOL",rating:84},
-  {name:"Andrew",pos:"GOL",rating:72},
-  {name:"Dyogo Alves",pos:"GOL",rating:68},
-  {name:"Léo Pereira",pos:"DEF",rating:81},
-  {name:"Léo Ortiz",pos:"DEF",rating:82},
-  {name:"Danilo",pos:"DEF",rating:79},
-  {name:"Guillermo Varela",pos:"DEF",rating:77},
-  {name:"Emerson Royal",pos:"DEF",rating:79},
-  {name:"Ayrton Lucas",pos:"DEF",rating:78},
-  {name:"Alex Sandro",pos:"DEF",rating:80},
-  {name:"Erick Pulgar",pos:"MEI",rating:81},
-  {name:"Jorginho",pos:"MEI",rating:83},
-  {name:"Evertton Araújo",pos:"MEI",rating:71},
-  {name:"Saúl",pos:"MEI",rating:79},
-  {name:"Lucas Paquetá",pos:"MEI",rating:85},
-  {name:"De Arrascaeta",pos:"MEI",rating:87},
-  {name:"De La Cruz",pos:"MEI",rating:82},
-  {name:"Carrascal",pos:"MEI",rating:80},
-  {name:"Bruno Henrique",pos:"ATA",rating:82},
-  {name:"Pedro",pos:"ATA",rating:85},
-  {name:"Everton Cebolinha",pos:"ATA",rating:80},
-  {name:"Luiz Araújo",pos:"ATA",rating:80},
-  {name:"Gonzalo Plata",pos:"ATA",rating:79},
-  {name:"Samuel Lino",pos:"ATA",rating:82}
-];
-
-const marketPlayers=[
-  {name:"Caio Ventura",pos:"GOL",rating:75,price:3500000,salary:18000},
-  {name:"Bruno Monteiro",pos:"GOL",rating:80,price:8000000,salary:30000},
-  {name:"Rafael Nascimento",pos:"DEF",rating:74,price:4000000,salary:16000},
-  {name:"Davi Carvalho",pos:"DEF",rating:79,price:9500000,salary:28000},
-  {name:"Mateus Rocha",pos:"DEF",rating:83,price:16000000,salary:45000},
-  {name:"Enzo Martins",pos:"DEF",rating:77,price:7000000,salary:22000},
-  {name:"Gabriel Torres",pos:"MEI",rating:76,price:6000000,salary:20000},
-  {name:"Leonardo Alves",pos:"MEI",rating:81,price:14000000,salary:38000},
-  {name:"Nicolas Ferreira",pos:"MEI",rating:84,price:20000000,salary:55000},
-  {name:"Arthur Ribeiro",pos:"MEI",rating:79,price:10000000,salary:29000},
-  {name:"João Miguel",pos:"ATA",rating:77,price:8500000,salary:25000},
-  {name:"Pedro Henrique",pos:"ATA",rating:82,price:18000000,salary:48000},
-  {name:"Ryan Costa",pos:"ATA",rating:85,price:25000000,salary:65000},
-  {name:"Vitor Gabriel",pos:"ATA",rating:80,price:14000000,salary:36000}
-];
-
-const $=id=>document.getElementById(id);
-const shape={
-  "433":{DEF:4,MEI:3,ATA:3},
-  "442":{DEF:4,MEI:4,ATA:2},
-  "352":{DEF:3,MEI:5,ATA:2},
-  "541":{DEF:5,MEI:4,ATA:1}
+const rosters = {
+"Flamengo":[
+["Agustín Rossi","GOL",84],["Andrew","GOL",72],["Dyogo Alves","GOL",68],["Léo Pereira","DEF",81],["Léo Ortiz","DEF",82],["Danilo","DEF",79],["Guillermo Varela","DEF",77],["Emerson Royal","DEF",79],["Ayrton Lucas","DEF",78],["Alex Sandro","DEF",80],["Erick Pulgar","MEI",81],["Jorginho","MEI",83],["Evertton Araújo","MEI",71],["Saúl","MEI",79],["Lucas Paquetá","MEI",85],["De Arrascaeta","MEI",87],["De La Cruz","MEI",82],["Carrascal","MEI",80],["Bruno Henrique","ATA",82],["Pedro","ATA",85],["Everton Cebolinha","ATA",80],["Luiz Araújo","ATA",80],["Gonzalo Plata","ATA",79],["Samuel Lino","ATA",82]
+],
+"Palmeiras":[["Goleiro titular","GOL",83],["Reserva do gol","GOL",71],["Zagueiro central","DEF",82],["Lateral esquerdo","DEF",80],["Lateral direito","DEF",79],["Zagueiro reserva","DEF",76],["Volante marcador","MEI",83],["Meia criativo","MEI",84],["Meia de ligação","MEI",80],["Ponta veloz","ATA",82],["Centroavante","ATA",85],["Atacante reserva","ATA",77]],
+"Corinthians":[["Goleiro titular","GOL",80],["Reserva do gol","GOL",70],["Zagueiro central","DEF",79],["Lateral esquerdo","DEF",77],["Lateral direito","DEF",78],["Zagueiro reserva","DEF",75],["Volante marcador","MEI",80],["Meia criativo","MEI",81],["Meia de ligação","MEI",77],["Ponta veloz","ATA",80],["Centroavante","ATA",82],["Atacante reserva","ATA",76]]
 };
-
-function defaultLineup(){
-  return {
-    GOL:"Agustín Rossi",
-    DEF:["Guillermo Varela","Léo Ortiz","Léo Pereira","Alex Sandro"],
-    MEI:["Erick Pulgar","Jorginho","De Arrascaeta"],
-    ATA:["Gonzalo Plata","Pedro","Samuel Lino"]
-  };
+const baseFlamengo = rosters["Flamengo"].map((p,i)=>({id:"f"+i,name:p[0],pos:p[1],rating:p[2],value:Math.round(p[2]*p[2]*2800),salary:Math.round(p[2]*380),origin:"base",matchesLeft:null}));
+const marketPlayers = [
+["Caio Ventura","GOL",75,3500000,18000],["Bruno Monteiro","GOL",80,8000000,30000],
+["Rafael Nascimento","DEF",74,4000000,16000],["Davi Carvalho","DEF",79,9500000,28000],["Mateus Rocha","DEF",83,16000000,45000],["Enzo Martins","DEF",77,7000000,22000],
+["Gabriel Torres","MEI",76,6000000,20000],["Leonardo Alves","MEI",81,14000000,38000],["Nicolas Ferreira","MEI",84,20000000,55000],["Arthur Ribeiro","MEI",79,10000000,29000],
+["João Miguel","ATA",77,8500000,25000],["Pedro Henrique","ATA",82,18000000,48000],["Ryan Costa","ATA",85,25000000,65000],["Vitor Gabriel","ATA",80,14000000,36000]
+].map((p,i)=>({id:"m"+i,name:p[0],pos:p[1],rating:p[2],value:p[3],salary:p[4],origin:"market",matchesLeft:5}));
+const shapeMap={"433":{DEF:4,MEI:3,ATA:3},"442":{DEF:4,MEI:4,ATA:2},"352":{DEF:3,MEI:5,ATA:2},"541":{DEF:5,MEI:4,ATA:1}};
+const posOrder=["ATA","MEI","DEF"];
+const money=n=>new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL",maximumFractionDigits:0}).format(Math.max(0,Number(n)||0));
+const shortMoney=n=>{n=Number(n)||0;if(n>=1e6)return "R$ "+(n/1e6).toLocaleString("pt-BR",{maximumFractionDigits:1})+" mi";if(n>=1e3)return "R$ "+(n/1e3).toLocaleString("pt-BR",{maximumFractionDigits:0})+" mil";return money(n)};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const clone=x=>JSON.parse(JSON.stringify(x));
+function freshState(club="Flamengo"){
+ const roster=club==="Flamengo"?clone(baseFlamengo):genericRoster(club);
+ const state={club,roster,budget:50000000,spent:0,formation:"433",mentality:"balanced",lineup:[],transfers:[],history:[],table:clubs.map(name=>({name,pts:0,gp:0,w:0,d:0,l:0,gf:0,ga:0})),lastResult:null,round:1,market:clone(marketPlayers)};
+ state.lineup=makeAutoLineup(state.roster,state.formation);
+ return state;
 }
-function blank(){
-  return {pts:0,j:0,v:0,e:0,d:0,gp:0,gc:0};
+function genericRoster(club){
+ const base=clone(rosters[club]||[["Goleiro titular","GOL",80],["Reserva do gol","GOL",70],["Zagueiro central","DEF",79],["Lateral esquerdo","DEF",77],["Lateral direito","DEF",78],["Zagueiro reserva","DEF",75],["Volante marcador","MEI",80],["Meia criativo","MEI",81],["Meia de ligação","MEI",77],["Ponta veloz","ATA",80],["Centroavante","ATA",82],["Atacante reserva","ATA",76]]);
+ return base.map((p,i)=>({id:"b"+i,name:p[0],pos:p[1],rating:p[2],value:p[2]*p[2]*2600,salary:p[2]*360,origin:"base",matchesLeft:null}));
 }
-function newState(){
-  const table={};
-  clubs.forEach(c=>table[c]=blank());
-  return {
-    club:"Flamengo",
-    formation:"433",
-    mentality:"balanced",
-    lineup:defaultLineup(),
-    table,
-    history:[],
-    budget:50000000,
-    spent:0,
-    transfers:[],
-    contracts:{}
-  };
+function makeAutoLineup(roster,formation){
+ const counts=shapeMap[formation]||shapeMap["433"];
+ const chosen=[];
+ const keeper=roster.filter(p=>p.pos==="GOL").sort((a,b)=>b.rating-a.rating)[0];
+ if(keeper)chosen.push(keeper.id);
+ for(const pos of posOrder){const players=roster.filter(p=>p.pos===pos).sort((a,b)=>b.rating-a.rating);chosen.push(...players.slice(0,counts[pos]).map(p=>p.id));}
+ return chosen;
 }
-
-function validNumber(n){
-  return typeof n==="number"&&Number.isFinite(n);
+function normalizeState(s){
+ if(!s||!clubs.includes(s.club))return freshState();
+ const defaults=freshState(s.club);
+ s={...defaults,...s};
+ s.roster=Array.isArray(s.roster)?s.roster:defaults.roster;
+ s.market=Array.isArray(s.market)?s.market:clone(marketPlayers);
+ s.history=Array.isArray(s.history)?s.history:[];
+ s.table=Array.isArray(s.table)&&s.table.length?s.table:defaults.table;
+ s.budget=Number.isFinite(Number(s.budget))?Number(s.budget):50000000;
+ s.spent=Number(s.spent)||0;
+ if(!shapeMap[s.formation])s.formation="433";
+ if(!["attack","balanced","defend"].includes(s.mentality))s.mentality="balanced";
+ const ids=new Set(s.roster.map(p=>p.id));
+ s.lineup=Array.isArray(s.lineup)?s.lineup.filter(id=>ids.has(id)):[];
+ if(!s.lineup.length)s.lineup=makeAutoLineup(s.roster,s.formation);
+ s.round=Math.max(1,Number(s.round)||1);
+ return s;
 }
-
-let state;
-try{
-  const saved=JSON.parse(localStorage.getItem("brleague_save_v2"));
-  state=saved&&typeof saved==="object"&&!Array.isArray(saved)?saved:newState();
-}catch(e){
-  state=newState();
+function loadState(){try{const raw=localStorage.getItem(SAVE_KEY);return raw?normalizeState(JSON.parse(raw)):freshState();}catch(e){return freshState();}}
+let state=loadState(), currentEvents=[], simulating=false, toastTimer=null;
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(e){notify("Não foi possível salvar neste navegador.");}}
+function notify(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2400);}
+function byId(id){return document.getElementById(id);}
+function getPlayer(id){return state.roster.find(p=>p.id===id);}
+function activeLineup(){return state.lineup.map(getPlayer).filter(Boolean);}
+function avg(arr){return arr.length?arr.reduce((n,p)=>n+p.rating,0)/arr.length:0;}
+function currentStrength(){const list=activeLineup();return list.length?avg(list)+({attack:2.5,balanced:0,defend:-1}[state.mentality]||0):0;}
+function teamStrength(club){if(club===state.club)return currentStrength();const t=clubs.indexOf(club);return 73+(Math.abs(t*7+club.length*3)%12);}
+function payroll(){return state.roster.reduce((n,p)=>n+(Number(p.salary)||0),0);}
+function squadValue(){return state.roster.reduce((n,p)=>n+(Number(p.value)||0),0);}
+function leagueRow(name){return state.table.find(t=>t.name===name);}
+function sortedTable(){return [...state.table].sort((a,b)=>b.pts-a.pts||((b.gf-b.ga)-(a.gf-a.ga))||b.gf-a.gf||a.name.localeCompare(b.name));}
+function initSelects(){
+ byId("clubSelect").innerHTML=clubs.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+ byId("opponent").innerHTML=clubs.filter(c=>c!==state.club).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+ byId("clubSelect").value=state.club;
+ byId("formation").value=state.formation;byId("mentality").value=state.mentality;
 }
-
-function ensureState(){
-  if(!state||typeof state!=="object"||Array.isArray(state))state=newState();
-
-  if(!clubs.includes(state.club))state.club="Flamengo";
-  if(!state.table||typeof state.table!=="object"||Array.isArray(state.table))state.table={};
-
-  clubs.forEach(c=>{
-    const t=state.table[c];
-    if(!t||typeof t!=="object"){
-      state.table[c]=blank();
-      return;
-    }
-    ["pts","j","v","e","d","gp","gc"].forEach(k=>{
-      if(!validNumber(t[k])||t[k]<0)t[k]=0;
-    });
-  });
-
-  if(!Array.isArray(state.history))state.history=[];
-  if(!shape[state.formation])state.formation="433";
-  if(!["balanced","attack","defense"].includes(state.mentality))state.mentality="balanced";
-
-  if(!state.lineup||typeof state.lineup!=="object")state.lineup=defaultLineup();
-  if(!state.lineup.GOL)state.lineup.GOL=defaultLineup().GOL;
-
-  ["DEF","MEI","ATA"].forEach(k=>{
-    if(!Array.isArray(state.lineup[k]))state.lineup[k]=defaultLineup()[k];
-  });
-
-  if(!Array.isArray(state.transfers))state.transfers=[];
-  if(!validNumber(state.budget))state.budget=50000000;
-  if(!validNumber(state.spent)||state.spent<0)state.spent=0;
-  if(!state.contracts||typeof state.contracts!=="object"||Array.isArray(state.contracts))state.contracts={};
-
-  state.transfers=state.transfers.filter((n,i,a)=>
-    a.indexOf(n)===i&&marketPlayers.some(p=>p.name===n)
-  );
-
-  state.transfers.forEach(n=>{
-    const p=marketPlayers.find(x=>x.name===n);
-    if(!state.contracts[n]||typeof state.contracts[n]!=="object"){
-      state.contracts[n]={matches:20,salary:p.salary};
-    }
-    if(!validNumber(state.contracts[n].matches)||state.contracts[n].matches<1){
-      state.contracts[n].matches=20;
-    }
-    if(!validNumber(state.contracts[n].salary)||state.contracts[n].salary<0){
-      state.contracts[n].salary=p.salary;
-    }
-  });
+function refreshOpponent(){
+ const old=byId("opponent").value;
+ byId("opponent").innerHTML=clubs.filter(c=>c!==state.club).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+ byId("opponent").value=clubs.includes(old)&&old!==state.club?old:(state.club==="Flamengo"?"Palmeiras":clubs.find(c=>c!==state.club));
 }
-
-function money(n){
-  return Number(n).toLocaleString("pt-BR",{
-    style:"currency",currency:"BRL",maximumFractionDigits:0
-  });
+function renderStats(){
+ const me=leagueRow(state.club)||{pts:0,gp:0,w:0,d:0,l:0};
+ byId("statPoints").textContent=me.pts;byId("statGames").textContent=me.gp;byId("statWins").textContent=me.w;
+ byId("statRecord").textContent=`${me.w}V • ${me.d}E • ${me.l}D`;
+ const rank=sortedTable().findIndex(t=>t.name===state.club)+1;byId("statRank").textContent=`${rank}º na classificação`;
+ byId("statValue").textContent=shortMoney(squadValue());byId("statBudget").textContent=shortMoney(state.budget);
+ byId("statPayroll").textContent=`Folha por jogo: ${shortMoney(payroll())}`;
+ byId("clubNote").textContent=`Clube atual: ${state.club}.`;
+ byId("squadCount").textContent=`${state.roster.length} jogadores`;
+ byId("roundTag").textContent=`RODADA ${state.round}`;
+ byId("matchCompetition").textContent=`BR League • Rodada ${state.round}`;
 }
-function allPlayers(){
-  return roster.concat(marketPlayers.filter(p=>state.transfers.includes(p.name)));
+function renderPitch(){
+ const counts=shapeMap[state.formation], roster=activeLineup();
+ const keeper=roster.find(p=>p.pos==="GOL");
+ let html="";
+ if(keeper)html+=`<div class="line-row">${chip(keeper)}</div>`;
+ for(const pos of posOrder){
+   const players=roster.filter(p=>p.pos===pos);
+   if(players.length)html+=`<div class="line-row">${players.map(chip).join("")}</div>`;
+ }
+ byId("pitchRows").innerHTML=html||'<div class="empty">Monte sua escalação.</div>';
+ const need=1+counts.DEF+counts.MEI+counts.ATA;
+ const missing=need-roster.length;
+ byId("lineupNote").textContent=missing>0?`Faltam ${missing} jogador(es) para completar a formação ${state.formation}.`:`${roster.length} titulares • Força média ${currentStrength().toFixed(1)} • Mentalidade ${state.mentality==="attack"?"ofensiva":state.mentality==="defend"?"defensiva":"equilibrada"}.`;
 }
-function playerByName(n){
-  return allPlayers().find(p=>p.name===n);
+function chip(p){return `<div class="player-chip" title="${esc(p.name)}"><strong>${p.rating}</strong><span>${esc(p.name)}</span><em>${p.pos}</em></div>`;}
+function renderSquad(){
+ byId("squadList").innerHTML=state.roster.slice().sort((a,b)=>posOrder.indexOf(a.pos)-posOrder.indexOf(b.pos)||b.rating-a.rating).map(p=>`<div class="player-row"><div class="player-info"><strong>${esc(p.name)}</strong><small>${p.pos} • ${shortMoney(p.salary)}/jogo${p.matchesLeft?` • ${p.matchesLeft} jogos de contrato`:""}</small></div><span class="rating">${p.rating}</span></div>`).join("");
 }
-function available(pos){
-  return allPlayers().filter(p=>p.pos===pos);
-}
-function baseValue(p){
-  return p.price||p.rating*200000;
-}
-function salaryOf(p){
-  if(state.contracts[p.name])return state.contracts[p.name].salary;
-  return p.rating*300;
-}
-function payroll(){
-  return allPlayers().reduce((sum,p)=>sum+salaryOf(p),0);
-}
-function squadValue(){
-  return allPlayers().reduce((sum,p)=>sum+baseValue(p),0);
-}
-
-function persist(){
-  try{
-    localStorage.setItem("brleague_save_v2",JSON.stringify(state));
-  }catch(e){
-    alert("Não foi possível salvar a carreira neste navegador. Verifique o espaço disponível ou as configurações do navegador.");
-  }
-  render();
-}
-
-function fillSelects(){
-  $("club").innerHTML=clubs.map(c=>`<option value="${c}">${c}</option>`).join("");
-  updateOpponents();
-}
-function updateOpponents(){
-  const current=$("opponent").value;
-  const opponents=clubs.filter(c=>c!==state.club);
-  $("opponent").innerHTML=opponents.map(c=>`<option value="${c}">${c}</option>`).join("");
-  if(opponents.includes(current))$("opponent").value=current;
-}
-function playerOptions(pos,selected){
-  return available(pos).map(p=>
-    `<option value="${p.name}" ${p.name===selected?"selected":""}>${p.name}</option>`
-  ).join("");
-}
-function slotHtml(pos,selected,index){
-  const label=pos==="GOL"?"GOLEIRO":pos+" "+(index+1);
-  return `<div class="slot">
-    <small>${label}</small>
-    <select aria-label="${label}" data-pos="${pos}" data-index="${index}">
-      ${playerOptions(pos,selected)}
-    </select>
-  </div>`;
-}
-function readPitch(){
-  document.querySelectorAll(".pitch select").forEach(el=>{
-    const pos=el.dataset.pos;
-    const index=Number(el.dataset.index);
-    if(pos==="GOL")state.lineup.GOL=el.value;
-    else if(state.lineup[pos])state.lineup[pos][index]=el.value;
-  });
-}
-function buildPitch(){
-  const counts=shape[state.formation];
-  $("gkRow").innerHTML=slotHtml("GOL",state.lineup.GOL,0);
-
-  ["DEF","MEI","ATA"].forEach(pos=>{
-    const pool=available(pos);
-    const chosen=[];
-    const previous=state.lineup[pos]||[];
-
-    for(let i=0;i<counts[pos];i++){
-      let name=previous[i];
-
-      if(!pool.some(p=>p.name===name)||chosen.includes(name)){
-        name=pool.find(p=>!chosen.includes(p.name))?.name||pool[0]?.name||"";
-      }
-
-      if(name)chosen.push(name);
-    }
-
-    state.lineup[pos]=chosen;
-    const row=pos==="DEF"?"defRow":pos==="MEI"?"midRow":"attRow";
-    $(row).innerHTML=chosen.map((n,i)=>slotHtml(pos,n,i)).join("");
-  });
-}
-function validateLineup(){
-  const counts=shape[state.formation];
-  const names=[state.lineup.GOL];
-
-  for(const pos of ["DEF","MEI","ATA"]){
-    if(!Array.isArray(state.lineup[pos])||state.lineup[pos].length!==counts[pos]){
-      return "A escalação está incompleta. Revise os titulares.";
-    }
-    names.push(...state.lineup[pos]);
-  }
-
-  if(names.some(n=>!n||!playerByName(n))){
-    return "Há posições sem jogador válido. Monte a escalação novamente.";
-  }
-
-  if(new Set(names).size!==names.length){
-    return "Há jogador repetido. Escolha atletas diferentes antes de jogar.";
-  }
-
-  if(!playerByName(state.lineup.GOL)||playerByName(state.lineup.GOL).pos!=="GOL"){
-    return "Escolha um goleiro válido.";
-  }
-
-  for(const pos of ["DEF","MEI","ATA"]){
-    if(state.lineup[pos].some(n=>playerByName(n)?.pos!==pos)){
-      return "Um jogador está em uma posição incorreta. Revise a escalação.";
-    }
-  }
-
-  return "";
-}
-
-function renderRoster(){
-  $("roster").innerHTML=allPlayers().map(p=>{
-    const contracted=state.contracts[p.name];
-    return `<div class="player">
-      <b>${p.name}</b>
-      <span class="pill">${p.pos}</span>
-      <span class="pill">Nota ${p.rating}</span>
-      <p class="note">Valor de jogo: ${money(baseValue(p))}</p>
-      <p class="note">Salário/partida: ${money(salaryOf(p))}</p>
-      ${contracted?`<p class="note">📄 Contrato: ${contracted.matches} partidas restantes</p>`:""}
-    </div>`;
-  }).join("");
-}
-
 function renderMarket(){
-  const filter=$("marketFilter").value;
-  const list=marketPlayers.filter(p=>
-    !state.transfers.includes(p.name)&&(filter==="TODOS"||p.pos===filter)
-  );
-
-  $("market").innerHTML=list.length?list.map(p=>{
-    const ok=state.budget>=p.price;
-    return `<div class="player">
-      <b>${p.name}</b>
-      <span class="pill">${p.pos}</span>
-      <span class="pill">Nota ${p.rating}</span>
-      <p class="price">${money(p.price)}</p>
-      <p class="note">Salário por partida: ${money(p.salary)}</p>
-      <p class="note">Contrato inicial: 20 partidas</p>
-      <button data-buy="${p.name}" ${ok?"":"disabled"}>
-        ${ok?"Contratar jogador":"Saldo insuficiente"}
-      </button>
-    </div>`;
-  }).join(""):'<p class="note">Não há jogadores disponíveis neste filtro.</p>';
-
-  $("budget").textContent=money(state.budget);
-  $("spent").textContent="Total gasto em contratações: "+money(state.spent);
-
-  $("contracts").innerHTML=state.transfers.length?
-    state.transfers.map(n=>{
-      const p=marketPlayers.find(x=>x.name===n);
-      const c=state.contracts[n];
-      if(!p||!c)return "";
-      return `<div class="player">
-        <b>${n}</b>
-        <span class="pill">${p.pos}</span>
-        <p class="note">Restam ${c.matches} partidas</p>
-        <p class="note">Salário: ${money(c.salary)} por partida</p>
-      </div>`;
-    }).join(""):'<p class="note">Nenhum contrato de reforço ativo.</p>';
+ const filter=byId("positionFilter").value||"ALL";
+ const list=state.market.filter(p=>filter==="ALL"||p.pos===filter);
+ byId("marketList").innerHTML=list.length?list.map(p=>`<div class="player-row"><div class="player-info"><strong>${esc(p.name)}</strong><small>${p.pos} • salário ${shortMoney(p.salary)}/jogo</small><div class="money">${shortMoney(p.value)}</div></div><span class="rating">${p.rating}</span><button class="btn small primary" data-buy="${esc(p.id)}" ${state.budget<p.value?"disabled":""}>Contratar</button></div>`).join(""):'<div class="empty">Não há jogadores nessa posição no mercado.</div>';
 }
-
+function renderTable(){
+ const rows=sortedTable();
+ byId("leagueTable").innerHTML=rows.map((t,i)=>`<tr class="${t.name===state.club?"you":""}"><td>${i+1}</td><td>${esc(t.name)}</td><td><b>${t.pts}</b></td><td>${t.gp}</td><td>${t.w}</td><td>${t.gf-t.ga>0?"+":""}${t.gf-t.ga}</td></tr>`).join("");
+}
+function renderHistory(){
+ byId("historyCount").textContent=`${state.history.length} jogos`;
+ byId("historyList").innerHTML=state.history.length?state.history.slice(0,12).map(h=>`<div class="history-row"><div><strong>${esc(h.home)} × ${esc(h.away)}</strong><small>Rodada ${h.round} • ${esc(h.outcome||"Partida simulada")}</small></div><div class="history-score">${h.hg} : ${h.ag}</div></div>`).join(""):'<div class="empty">Sua primeira partida aparecerá aqui.</div>';
+}
+function renderContracts(){
+ const list=state.roster.filter(p=>p.origin==="market");
+ byId("contractsList").innerHTML=list.length?list.map(p=>`<div class="player-row"><div class="player-info"><strong>${esc(p.name)}</strong><small>${p.pos} • ${shortMoney(p.salary)}/jogo</small></div><span class="tag">${p.matchesLeft} jogos</span></div>`).join(""):'<div class="empty">Nenhum contrato ativo.</div>';
+}
 function render(){
-  ensureState();
-
-  $("club").value=state.club;
-  $("formation").value=state.formation;
-  $("mentality").value=state.mentality;
-
-  const t=state.table[state.club];
-  $("points").textContent=t.pts;
-  $("played").textContent=t.j;
-  $("wins").textContent=t.v;
-  $("squadValue").textContent=money(squadValue());
-  $("budgetStat").textContent=money(state.budget);
-  $("wages").textContent=money(payroll());
-  $("financeNote").textContent=
-    "Folha por partida: "+money(payroll())+". O custo é descontado após cada jogo.";
-
-  $("tableBody").innerHTML=clubs.slice().sort((a,b)=>{
-    const A=state.table[a],B=state.table[b];
-    return B.pts-A.pts||
-      (B.gp-B.gc)-(A.gp-A.gc)||
-      B.gp-A.gp;
-  }).map((c,i)=>{
-    const x=state.table[c];
-    return `<tr>
-      <td>${i+1}</td><td>${c}${c===state.club?" ★":""}</td>
-      <td>${x.pts}</td><td>${x.j}</td><td>${x.v}</td>
-      <td>${x.e}</td><td>${x.d}</td><td>${x.gp-x.gc}</td>
-    </tr>`;
-  }).join("");
-
-  $("history").innerHTML=state.history.length?
-    state.history.slice().reverse().map(m=>
-      `<div class="log">
-        <b>${m.home} ${m.hg} × ${m.ag} ${m.away}</b><br>
-        <span class="note">${m.note||""}</span>
-      </div>`
-    ).join(""):'<p class="note">Nenhuma partida disputada.</p>';
-
-  updateOpponents();
-  buildPitch();
-  renderRoster();
-  renderMarket();
+ renderStats();renderPitch();renderSquad();renderMarket();renderTable();renderHistory();renderContracts();
+ byId("formation").value=state.formation;byId("mentality").value=state.mentality;
+ byId("homeName").textContent=state.club;byId("homeCrest").textContent=state.club==="Flamengo"?"🔴⚫":"🛡️";
+ const opponent=byId("opponent").value||clubs.find(c=>c!==state.club);
+ byId("awayName").textContent=opponent;byId("awayCrest").textContent=opponent==="Palmeiras"?"🟢⚪":"⚽";
 }
-
-function buyPlayer(name){
-  const p=marketPlayers.find(x=>x.name===name);
-
-  if(!p||state.transfers.includes(name))return;
-
-  if(state.budget<p.price){
-    $("marketMessage").textContent="Orçamento insuficiente.";
-    $("marketMessage").className="message error";
-    return;
-  }
-
-  if(!confirm("Contratar "+name+" por "+money(p.price)+
-    "? O salário será "+money(p.salary)+" por partida."))return;
-
-  state.budget-=p.price;
-  state.spent+=p.price;
-  state.transfers.push(name);
-  state.contracts[name]={matches:20,salary:p.salary};
-
-  persist();
-  $("marketMessage").textContent=name+" contratado por 20 partidas!";
-  $("marketMessage").className="message";
+function buyPlayer(id){
+ const p=state.market.find(x=>x.id===id);if(!p)return;
+ if(state.budget<p.value){notify("Orçamento insuficiente para essa contratação.");return;}
+ if(state.roster.length>=32){notify("Elenco cheio. Limite de 32 jogadores.");return;}
+ state.budget-=p.value;state.spent+=p.value;
+ const signed={...p,id:"c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),origin:"market",matchesLeft:5};
+ state.roster.push(signed);state.market=state.market.filter(x=>x.id!==id);
+ save();render();notify(`${p.name} contratado por ${shortMoney(p.value)}.`);
 }
-
-$("market").addEventListener("click",e=>{
-  const b=e.target.closest("[data-buy]");
-  if(b)buyPlayer(b.dataset.buy);
-});
-$("marketFilter").addEventListener("change",renderMarket);
-
-function currentStrength(){
-  const names=[
-    state.lineup.GOL,
-    ...state.lineup.DEF,
-    ...state.lineup.MEI,
-    ...state.lineup.ATA
-  ];
-  return names.reduce((s,n)=>s+(playerByName(n)?.rating||65),0)/
-    Math.max(1,names.length);
+function setLineupAuto(){state.lineup=makeAutoLineup(state.roster,state.formation);save();render();notify("Melhor escalação disponível montada.");}
+function lineupValid(){
+ const required=1+Object.values(shapeMap[state.formation]).reduce((a,b)=>a+b,0);
+ const list=activeLineup();
+ if(list.length!==required)return {ok:false,message:`Sua escalação tem ${list.length} titulares; a formação exige ${required}. Use “Montar melhor time”.`};
+ const counts={GOL:0,DEF:0,MEI:0,ATA:0};list.forEach(p=>counts[p.pos]++);
+ const need=shapeMap[state.formation];
+ if(counts.GOL!==1||counts.DEF!==need.DEF||counts.MEI!==need.MEI||counts.ATA!==need.ATA)return {ok:false,message:"A distribuição de posições não combina com a formação. Monte a escalação novamente."};
+ return {ok:true};
 }
-function teamStrength(c){
-  if(c===state.club)return currentStrength();
-  return ["Palmeiras","Cruzeiro","Bahia","Fluminense","Botafogo"].includes(c)?
-    77:70+(clubs.indexOf(c)%5);
+function seededRand(seed){let x=seed>>>0;return()=>{x=(x*1664525+1013904223)>>>0;return x/4294967296;};}
+function simulateScore(ours,theirs,rand){
+ const attack=state.mentality==="attack"?1.22:state.mentality==="defend"?.78:1;
+ const defense=state.mentality==="defend"?1.2:state.mentality==="attack"?.86:1;
+ const homeAdv=ours===state.club?1.07:1;
+ const xgO=Math.max(.25,Math.min(3.8,(1.05+(ours-theirs)*.075)*attack*homeAdv));
+ const xgT=Math.max(.25,Math.min(3.8,(1.05+(theirs-ours)*.075)/defense));
+ const goals=x=>{let n=0;const chance=Math.min(.78,x/3.2);for(let i=0;i<5;i++){if(rand()<chance*Math.max(.1,(x/2.2)))n++;}return Math.min(5,n);};
+ return [goals(xgO),goals(xgT)];
 }
-function goals(chance){
-  let n=0;
-  for(let i=0;i<5;i++){
-    if(Math.random()<Math.max(0,Math.min(1,chance/5)))n++;
-  }
-  return Math.min(n,5);
+function chooseScorer(rand){
+ const forwards=activeLineup().filter(p=>p.pos==="ATA"), mids=activeLineup().filter(p=>p.pos==="MEI");
+ const pool=[...forwards,...forwards,...mids].sort((a,b)=>b.rating-a.rating);
+ return pool.length?pool[Math.floor(rand()*Math.min(pool.length,Math.max(1,Math.ceil(pool.length*.7))) )].name:"Ataque do time";
 }
-
+  
+function makeEvents(home,away,hg,ag,rand){
+ const events=[];
+ const goals=[];
+ for(let i=0;i<hg;i++)goals.push({minute:Math.floor(4+rand()*88),side:"home"});
+ for(let i=0;i<ag;i++)goals.push({minute:Math.floor(4+rand()*88),side:"away"});
+ goals.sort((a,b)=>a.minute-b.minute);
+ const goalMap=new Map(goals.map(g=>[g.minute,g]));
+ const moments=[5,12,19,27,34,41,45,52,59,66,73,81,88];
+ const textsHome=["A equipe acelera pela direita e cruza na área.","Boa troca de passes no meio-campo; a defesa corta.","Finalização perigosa! O goleiro espalma para escanteio.","Pressão alta recupera a bola perto da área.","Chute de média distância passa perto da trave.","Bela defesa impede o gol da equipe mandante.","O time tenta construir jogada com paciência."];
+ const textsAway=["O adversário avança em velocidade pelo corredor.","A defesa se fecha e afasta o perigo.","Contra-ataque rápido termina em finalização defendida.","Disputa intensa no meio-campo pela posse.","Bola levantada na área; a zaga ganha pelo alto.","O goleiro sai bem e fica com a bola.","A equipe visitante tenta surpreender em bola parada."];
+ const goalMinutes=new Set();
+ goals.forEach(g=>{let m=g.minute;while(goalMinutes.has(m))m=Math.min(90,m+1);g.minute=m;goalMinutes.add(m);});
+ for(const minute of moments){
+   if(minute===45){events.push({minute:45,text:"Intervalo! As equipes recebem orientações para a etapa final.",type:"good"});continue;}
+   if(minute===88){events.push({minute:90,text:"A arbitragem indica 2 minutos de acréscimo.",type:"normal"});continue;}
+   const goal=goals.find(g=>g.minute===minute);
+   if(goal){
+     const scorer=goal.side==="home"?chooseScorer(rand):["Atacante visitante","Meia visitante","Centroavante rival"][Math.floor(rand()*3)];
+     events.push({minute,text:`⚽ GOL! ${scorer} marca para ${goal.side==="home"?home:away}!`,type:"goal"});
+   }else{
+     const homePoss=rand()<.5;
+     const list=homePoss?textsHome:textsAway;
+     events.push({minute,text:list[Math.floor(rand()*list.length)],type:rand()<.15?"bad":"normal"});
+   }
+ }
+ for(const g of goals){if(!events.some(e=>e.minute===g.minute&&e.type==="goal"))events.push({minute:g.minute,text:`⚽ GOL! ${g.side==="home"?home:away} balança a rede!`,type:"goal"});}
+ events.sort((a,b)=>a.minute-b.minute);
+ events.push({minute:92,text:"Fim de jogo! O árbitro encerra a partida.",type:"good"});
+ return events;
+}
+function showEvents(events,hg,ag,home,away){
+ const container=byId("eventList");
+ container.innerHTML=events.map(e=>`<div class="event ${e.type}"><span class="minute">${e.minute===92?"FT":e.minute+"′"}</span><span>${esc(e.text)}</span></div>`).join("");
+ byId("liveClock").textContent="FT 90+2′";
+ byId("livePossession").textContent="Simulação concluída";
+ byId("homeScore").textContent=hg;byId("awayScore").textContent=ag;byId("scoreMinute").textContent="FIM DE JOGO";
+ byId("liveMatch").classList.add("show");
+}
 function playMatch(){
-  readPitch();
-
-  const lineupError=validateLineup();
-  if(lineupError){
-    $("matchMessage").textContent=lineupError;
-    return;
-  }
-
-  const home=state.club;
-  const away=$("opponent").value;
-
-  if(!clubs.includes(away)||home===away){
-    $("matchMessage").textContent="Escolha um adversário válido e diferente do seu clube.";
-    return;
-  }
-
-  const wage=payroll();
-
-  if(!validNumber(state.budget)||state.budget<wage){
-    $("matchMessage").textContent=
-      "Orçamento insuficiente para pagar a folha salarial de "+money(wage)+
-      ". Contrate menos jogadores ou reorganize as finanças antes da próxima partida.";
-    return;
-  }
-
-  let hs=teamStrength(home);
-  const as=teamStrength(away);
-
-  if(state.formation==="433")hs+=2;
-  if(state.formation==="352")hs+=1;
-  if(state.formation==="541")hs-=1;
-  if(state.mentality==="attack")hs+=3;
-  if(state.mentality==="defense")hs-=1;
-
-  const hg=goals(Math.max(.45,1.35+(hs-as)/22));
-  const ag=goals(Math.max(.4,1.2+(as-hs)/22));
-
-  const H=state.table[home];
-  const A=state.table[away];
-
-  H.j++;A.j++;
-  H.gp+=hg;H.gc+=ag;
-  A.gp+=ag;A.gc+=hg;
-
-  let note;
-  if(hg>ag){
-    H.v++;H.pts+=3;A.d++;
-    note="Vitória: 3 pontos para "+home+".";
-  }else if(hg<ag){
-    A.v++;A.pts+=3;H.d++;
-    note="Derrota. Revise a escalação e a tática.";
-  }else{
-    H.e++;A.e++;H.pts++;A.pts++;
-    note="Empate: um ponto para cada clube.";
-  }
-
-  state.budget-=wage;
-  note+=" Folha salarial descontada: "+money(wage)+".";
-
-  for(const name of [...state.transfers]){
-    if(state.contracts[name]){
-      state.contracts[name].matches--;
-
-      if(state.contracts[name].matches<=0){
-        delete state.contracts[name];
-        state.transfers=state.transfers.filter(n=>n!==name);
-        note+=" Contrato de "+name+" terminou; o jogador voltou ao mercado.";
-      }
-    }
-  }
-
-  state.history.push({home,away,hg,ag,note});
-  if(state.history.length>50)state.history.shift();
-
-  $("score").textContent=hg+" × "+ag;
-  $("matchMessage").textContent=note;
-  persist();
+ if(simulating)return;
+ const valid=lineupValid();if(!valid.ok){notify(valid.message);byId("lineupNote").textContent=valid.message;return;}
+ const opponent=byId("opponent").value;
+ if(!opponent||opponent===state.club){notify("Escolha um adversário válido.");return;}
+ if(state.budget<payroll()){notify("Orçamento insuficiente para pagar a folha simulada desta partida. Contrate menos ou reinicie a carreira.");return;}
+ simulating=true;byId("playMatch").disabled=true;byId("playMatch").textContent="⏳ Simulando partida…";
+ byId("resultBanner").classList.remove("show");
+ const seed=Date.now()^(state.round*982451653)^state.roster.length;
+ const rand=seededRand(seed);
+ const strength=currentStrength(),opponentStrength=teamStrength(opponent);
+ const [hg,ag]=simulateScore(strength,opponentStrength,rand);
+ const events=makeEvents(state.club,opponent,hg,ag,rand);
+ byId("homeScore").textContent="0";byId("awayScore").textContent="0";byId("scoreMinute").textContent="PRÉ-JOGO";
+ byId("liveMatch").classList.add("show");
+ byId("eventList").innerHTML='<div class="event good"><span class="minute">0′</span><span>Apito inicial! A bola está rolando na simulação.</span></div>';
+ byId("matchStatus").textContent="Partida em andamento…";
+ const reduced=byId("matchMode").value==="fast";
+ let i=0;
+ const tick=()=>{
+   if(i>=events.length){
+     showEvents(events,hg,ag,state.club,opponent);
+     finishMatch(hg,ag,state.club,opponent);
+     simulating=false;byId("playMatch").disabled=false;byId("playMatch").textContent="▶ Simular próxima partida";
+     return;
+   }
+   const e=events[i++];
+   if(e.type==="goal"){
+     const done=events.slice(0,i).filter(x=>x.type==="goal");
+     const homeGoals=done.filter(x=>x.text.includes(`para ${state.club}!`)||x.text.includes(`${state.club} balança`)).length;
+     const awayGoals=done.length-homeGoals;
+     byId("homeScore").textContent=homeGoals;byId("awayScore").textContent=awayGoals;
+   }
+   byId("liveClock").textContent=e.minute===92?"90+2′":e.minute+"′";
+   const div=document.createElement("div");div.className="event "+e.type;div.innerHTML=`<span class="minute">${e.minute===92?"FT":e.minute+"′"}</span><span>${esc(e.text)}</span>`;
+   byId("eventList").appendChild(div);byId("eventList").scrollTop=byId("eventList").scrollHeight;
+   if(e.type==="goal")byId("scoreMinute").textContent=e.minute+"′";
+   const delay=reduced?90:450;
+   setTimeout(tick,delay);
+ };
+ tick();
 }
-
-fillSelects();
-ensureState();
-render();
-
-$("confirmClub").onclick=()=>{
-  const selected=$("club").value;
-  if(!clubs.includes(selected))return;
-
-  state.club=selected;
-  updateOpponents();
-  $("score").textContent="VS";
-  $("matchMessage").textContent="Clube confirmado. Prepare a escalação para a próxima partida.";
-  persist();
-};
-
-$("saveTactic").onclick=()=>{
-  readPitch();
-  state.formation=$("formation").value;
-  state.mentality=$("mentality").value;
-  buildPitch();
-  persist();
-  $("tacticMessage").textContent="Tática salva com sucesso!";
-};
-
-$("formation").addEventListener("change",()=>{
-  readPitch();
-  state.formation=$("formation").value;
-  buildPitch();
-  $("tacticMessage").textContent=
-    "Formação alterada. Confira os titulares e salve a tática.";
-});
-
-$("mentality").addEventListener("change",()=>{
-  state.mentality=$("mentality").value;
-});
-
-$("autoLineup").onclick=()=>{
-  state.lineup=defaultLineup();
-  buildPitch();
-  $("lineupMessage").textContent="Escalação padrão carregada. Salve para confirmar.";
-};
-
-$("saveLineup").onclick=()=>{
-  readPitch();
-
-  const error=validateLineup();
-  if(error){
-    $("lineupMessage").textContent=error;
-    return;
-  }
-
-  persist();
-  $("lineupMessage").textContent="Escalação salva com sucesso!";
-};
-
-$("play").onclick=playMatch;
-
-$("reset").onclick=()=>{
-  if(!confirm("Reiniciar a carreira? Isso apaga a classificação, contratações e histórico deste navegador."))return;
-
-  state=newState();
-  persist();
-  $("score").textContent="VS";
-  $("matchMessage").textContent="Nova carreira iniciada.";
-  $("lineupMessage").textContent="Escolha seus titulares.";
-  $("tacticMessage").textContent="";
-  $("marketMessage").textContent="";
-};
+function finishMatch(hg,ag,home,away){
+ const me=leagueRow(home),opp=leagueRow(away);
+ me.gp++;opp.gp++;me.gf+=hg;me.ga+=ag;opp.gf+=ag;opp.ga+=hg;
+ let outcome="";
+ if(hg>ag){me.w++;me.pts+=3;opp.l++;outcome="Vitória";}else if(hg<ag){opp.w++;opp.pts+=3;me.l++;outcome="Derrota";}else{me.d++;opp.d++;me.pts++;opp.pts++;outcome="Empate";}
+ state.budget=Math.max(0,state.budget-payroll());
+ state.roster=state.roster.map(p=>p.origin==="market"?{...p,matchesLeft:(p.matchesLeft||1)-1}:p);
+ const expired=state.roster.filter(p=>p.origin==="market"&&p.matchesLeft<=0);
+ expired.forEach(p=>{state.market.push({...p,id:"r"+p.id+state.round,origin:"market",matchesLeft:5});});
+ state.roster=state.roster.filter(p=>!(p.origin==="market"&&p.matchesLeft<=0));
+ state.market=state.market.filter((p,i,a)=>a.findIndex(q=>q.id===p.id)===i);
+ state.history.unshift({home,away,hg,ag,round:state.round,outcome,when:new Date().toLocaleDateString("pt-BR")});
+ state.history=state.history.slice(0,50);state.round++;
+ state.lastResult={home,away,hg,ag,outcome};
+ save();render();
+ byId("resultTitle").textContent=hg>ag?"🏆 Vitória!":hg<ag?"⚠️ Derrota":"🤝 Empate";
+ byId("resultText").textContent=`${home} ${hg} × ${ag} ${away}. ${outcome}: ${hg>ag?"3 pontos":hg===ag?"1 ponto":"0 ponto"}. Folha simulada descontada: ${shortMoney(payroll())}.`;
+ byId("resultBanner").classList.add("show");
+ byId("matchStatus").textContent=`Partida encerrada: ${outcome.toLowerCase()}.`;
+ notify(`${outcome}! Resultado ${hg} × ${ag}.`);
+}
+function resetCareer(){
+ if(!confirm("Tem certeza que deseja apagar esta carreira e começar novamente? Esta ação não pode ser desfeita."))return;
+ state=freshState(byId("clubSelect").value||"Flamengo");save();initSelects();refreshOpponent();render();
+ byId("homeScore").textContent="—";byId("awayScore").textContent="—";byId("scoreMinute").textContent="PRÉ-JOGO";byId("liveMatch").classList.remove("show");byId("resultBanner").classList.remove("show");
+ notify("Carreira reiniciada.");
+}
+function changeClub(){
+ const club=byId("clubSelect").value;if(club===state.club){notify("Esse já é o seu clube atual.");return;}
+ if(!confirm(`Trocar para ${club}? O progresso da carreira atual será reiniciado.`)){byId("clubSelect").value=state.club;return;}
+ state=freshState(club);save();initSelects();refreshOpponent();render();
+ byId("homeScore").textContent="—";byId("awayScore").textContent="—";byId("scoreMinute").textContent="PRÉ-JOGO";byId("liveMatch").classList.remove("show");byId("resultBanner").classList.remove("show");
+ notify(`Nova carreira iniciada com ${club}.`);
+}
+function changeFormation(){state.formation=byId("formation").value;state.lineup=makeAutoLineup(state.roster,state.formation);save();render();notify("Formação alterada e escalação reorganizada.");}
+function changeMentality(){state.mentality=byId("mentality").value;save();render();notify("Mentalidade tática atualizada.");}
+function bind(){
+ byId("confirmClub").addEventListener("click",changeClub);
+ byId("formation").addEventListener("change",changeFormation);
+ byId("mentality").addEventListener("change",changeMentality);
+ byId("autoLineup").addEventListener("click",setLineupAuto);
+ byId("saveLineup").addEventListener("click",()=>{const v=lineupValid();save();render();notify(v.ok?"Escalação salva!":v.message);});
+ byId("playMatch").addEventListener("click",playMatch);
+ byId("resetCareer").addEventListener("click",resetCareer);
+ byId("positionFilter").addEventListener("change",renderMarket);
+ byId("marketList").addEventListener("click",e=>{const b=e.target.closest("[data-buy]");if(b)buyPlayer(b.dataset.buy);});
+ byId("goMatch").addEventListener("click",()=>byId("matchPanel").scrollIntoView({behavior:"smooth",block:"start"}));
+ byId("goSquad").addEventListener("click",()=>byId("squadPanel").scrollIntoView({behavior:"smooth",block:"start"}));
+ byId("opponent").addEventListener("change",()=>{byId("awayName").textContent=byId("opponent").value;byId("awayCrest").textContent=byId("opponent").value==="Palmeiras"?"🟢⚪":"⚽";});
+}
+initSelects();refreshOpponent();bind();render();
+if(state.lastResult){byId("homeScore").textContent=state.lastResult.hg;byId("awayScore").textContent=state.lastResult.ag;byId("scoreMinute").textContent="ÚLTIMO JOGO";}
 </script>
 </body>
 </html>
