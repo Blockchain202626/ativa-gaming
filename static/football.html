@@ -169,10 +169,16 @@ const marketPlayers = [
 const shapeMap={"433":{DEF:4,MEI:3,ATA:3},"442":{DEF:4,MEI:4,ATA:2},"352":{DEF:3,MEI:5,ATA:2},"541":{DEF:5,MEI:4,ATA:1}};
 const posOrder=["ATA","MEI","DEF"];
 const STATE_CLUBS={
- RJ:["Flamengo","Fluminense","Botafogo","Vasco da Gama"],
- SP:["Palmeiras","Corinthians","Santos","São Paulo","Mirassol","Red Bull Bragantino"],
- MG:["Atlético Mineiro","Cruzeiro"], RS:["Grêmio","Internacional"], PR:["Athletico Paranaense","Coritiba"],
- BA:["Bahia","Vitória"], SC:["Chapecoense"], PA:["Remo"], CE:["Fortaleza"], PE:["Sport Recife","Náutico","Santa Cruz"]
+ RJ:["Flamengo","Fluminense","Botafogo","Vasco da Gama","Volta Redonda","Bangu","Boavista-RJ","Portuguesa-RJ"],
+ SP:["Palmeiras","Corinthians","Santos","São Paulo","Mirassol","Red Bull Bragantino","Guarani","Ponte Preta"],
+ MG:["Atlético Mineiro","Cruzeiro","América Mineiro","Athletic Club","Tombense","Pouso Alegre","Democrata-GV","URT"],
+ RS:["Grêmio","Internacional","Juventude","Caxias","Brasil de Pelotas","Ypiranga-RS","São José-RS","Avenida"],
+ PR:["Athletico Paranaense","Coritiba","Operário-PR","Londrina","Maringá","FC Cascavel","Cianorte","Azuriz"],
+ BA:["Bahia","Vitória","Juazeirense","Jacuipense","Atlético de Alagoinhas","Barcelona de Ilhéus","Itabuna","Jacobina"],
+ SC:["Chapecoense","Avaí","Figueirense","Criciúma","Joinville","Brusque","Barra-SC","Concórdia"],
+ PA:["Remo","Paysandu","Tuna Luso","Castanhal","São Francisco-PA","Águia de Marabá","Cametá","Bragantino-PA"],
+ CE:["Fortaleza","Ceará","Ferroviário","Floresta","Maracanã","Iguatu","Horizonte","Barbalha"],
+ PE:["Sport Recife","Náutico","Santa Cruz","Retrô","Central","Maguary","Afogados","Petrolina"]
 };
 const STATE_COMP_NAMES={RJ:"Campeonato Carioca",SP:"Campeonato Paulista",MG:"Campeonato Mineiro",RS:"Campeonato Gaúcho",PR:"Campeonato Paranaense",BA:"Campeonato Baiano",SC:"Campeonato Catarinense",PA:"Campeonato Paraense",CE:"Campeonato Cearense",PE:"Campeonato Pernambucano"};
 const COMP_NAMES={estadual:"Campeonato Estadual",nordeste:"Copa do Nordeste",brasileirao:"Campeonato Brasileiro Série A",copa_brasil:"Copa do Brasil",libertadores:"Copa Libertadores",sulamericana:"Copa Sul-Americana",recopa:"Recopa Sul-Americana",mundial:"Mundial de Clubes"};
@@ -203,7 +209,7 @@ function ensureSquadDepth(roster){
      const n=count+1;
      const rating=pos==="GOL"?68:pos==="DEF"?70:pos==="MEI"?70:72;
      const id="depth_"+pos+"_"+n;
-       if(!result.some(p=>p.id===id))result.push({id,name:(pos==="GOL"?"Goleiro":pos==="DEF"?"Defensor":pos==="MEI"?"Meia":"Atacante")+" da base "+n,pos,rating,value:rating*rating*2200,salary:rating*330,origin:"base",matchesLeft:null});
+     if(!result.some(p=>p.id===id))result.push({id,name:(pos==="GOL"?"Goleiro":pos==="DEF"?"Defensor":pos==="MEI"?"Meia":"Atacante")+" da base "+n,pos,rating,value:rating*rating*2200,salary:rating*330,origin:"base",matchesLeft:null});
      count=result.filter(p=>p.pos===pos).length;
    }
  }
@@ -221,7 +227,8 @@ function normalizeState(s){
  if(!s||!clubs.includes(s.club))return freshState();
  const defaults=freshState(s.club);
  s={...defaults,...s};
- s.roster=ensureSquadDepth(Array.isArray(s.roster)?s.roster:defaults.roster);
+ const savedRoster=Array.isArray(s.roster)?s.roster.filter(p=>p&&typeof p==="object"&&p.id&&p.name&&["GOL","DEF","MEI","ATA"].includes(p.pos)):[];
+ s.roster=ensureSquadDepth(savedRoster.length?savedRoster:clone(defaults.roster));
  s.market=Array.isArray(s.market)?s.market:clone(marketPlayers);
  s.history=Array.isArray(s.history)?s.history.filter(h=>h&&h.home===s.club&&Number.isFinite(Number(h.hg))&&Number.isFinite(Number(h.ag))).map((h,i)=>({...h,round:Number.isFinite(Number(h.round))?Number(h.round):i+1,hg:Number(h.hg),ag:Number(h.ag)})):[];
  s.history.sort((a,b)=>a.round-b.round);
@@ -320,7 +327,112 @@ function renderSquad(){
 function renderMarket(){
  const filter=byId("positionFilter").value||"ALL";
  const list=state.market.filter(p=>filter==="ALL"||p.pos===filter);
-   byId("eventList").innerHTML='<div class="event good"><span class="minute">0′</span><span>Apito inicial! A bola está rolando na simulação.</span></div>';
+ byId("marketList").innerHTML=list.length?list.map(p=>`<div class="player-row"><div class="player-info"><strong>${esc(p.name)}</strong><small>${p.pos} • salário ${shortMoney(p.salary)}/jogo</small><div class="money">${shortMoney(p.value)}</div></div><span class="rating">${p.rating}</span><button class="btn small primary" data-buy="${esc(p.id)}" ${state.budget<p.value?"disabled":""}>Contratar</button></div>`).join(""):'<div class="empty">Não há jogadores nessa posição no mercado.</div>';
+}
+function renderTable(){
+ const rows=sortedTable();
+ byId("leagueTable").innerHTML=rows.map((t,i)=>`<tr class="${t.name===state.club?"you":""}"><td>${i+1}</td><td>${esc(t.name)}</td><td><b>${t.pts}</b></td><td>${t.gp}</td><td>${t.w}</td><td>${t.gf-t.ga>0?"+":""}${t.gf-t.ga}</td></tr>`).join("");
+}
+function renderHistory(){
+ byId("historyCount").textContent=`${state.history.length} jogos`;
+ byId("historyList").innerHTML=state.history.length?state.history.slice(0,12).map(h=>`<div class="history-row"><div><strong>${esc(h.home)} × ${esc(h.away)}</strong><small>Rodada ${h.round} • ${esc(h.outcome||"Partida simulada")}</small></div><div class="history-score">${h.hg} : ${h.ag}</div></div>`).join(""):'<div class="empty">Sua primeira partida aparecerá aqui.</div>';
+}
+function renderContracts(){
+ const list=state.roster.slice().sort((a,b)=>(a.origin==="market")-(b.origin==="market")||a.name.localeCompare(b.name));
+ byId("contractsList").innerHTML=list.length?list.map(p=>`<div class="player-row"><div class="player-info"><strong>${esc(p.name)}</strong><small>${p.pos} • ${shortMoney(p.salary)}/jogo</small></div><span class="tag">${p.origin==="market"?Math.max(0,Number(p.matchesLeft)||0)+" jogos":"Elenco base"}</span></div>`).join(""):'<div class="empty">Nenhum jogador cadastrado.</div>';
+}
+function render(){
+ renderStats();renderPitch();renderSquad();renderMarket();renderTable();renderHistory();renderContracts();renderCompetitionUI();
+ byId("formation").value=state.formation;byId("mentality").value=state.mentality;
+ byId("homeName").textContent=state.club;byId("homeCrest").textContent=state.club==="Flamengo"?"🔴⚫":"🛡️";
+ const opponent=byId("opponent").value||clubs.find(c=>c!==state.club);
+ byId("awayName").textContent=opponent;byId("awayCrest").textContent=opponent==="Palmeiras"?"🟢⚪":"⚽";
+}
+function buyPlayer(id){
+ const p=state.market.find(x=>x.id===id);if(!p)return;
+ if(state.budget<p.value){notify("Orçamento insuficiente para essa contratação.");return;}
+ if(state.roster.length>=32){notify("Elenco cheio. Limite de 32 jogadores.");return;}
+ state.budget-=p.value;state.spent+=p.value;
+ const signed={...p,id:"c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),origin:"market",matchesLeft:5};
+ state.roster.push(signed);state.market=state.market.filter(x=>x.id!==id);
+ save();render();notify(`${p.name} contratado por ${shortMoney(p.value)}.`);
+}
+function setLineupAuto(){state.lineup=makeAutoLineup(state.roster,state.formation);save();render();notify("Melhor escalação disponível montada.");}
+function lineupValid(){
+ const required=1+Object.values(shapeMap[state.formation]).reduce((a,b)=>a+b,0);
+ const list=activeLineup();
+ if(list.length!==required)return {ok:false,message:`Sua escalação tem ${list.length} titulares; a formação exige ${required}. Use “Montar melhor time”.`};
+ const counts={GOL:0,DEF:0,MEI:0,ATA:0};list.forEach(p=>counts[p.pos]++);
+ const need=shapeMap[state.formation];
+ if(counts.GOL!==1||counts.DEF!==need.DEF||counts.MEI!==need.MEI||counts.ATA!==need.ATA)return {ok:false,message:"A distribuição de posições não combina com a formação. Monte a escalação novamente."};
+ return {ok:true};
+}
+function seededRand(seed){let x=seed>>>0;return()=>{x=(x*1664525+1013904223)>>>0;return x/4294967296;};}
+function simulateScore(ours,theirs,rand){
+ const attack=state.mentality==="attack"?1.22:state.mentality==="defend"?.78:1;
+ const defense=state.mentality==="defend"?1.2:state.mentality==="attack"?.86:1;
+ const homeAdv=ours===state.club?1.07:1;
+ const xgO=Math.max(.25,Math.min(3.8,(1.05+(ours-theirs)*.075)*attack*homeAdv));
+ const xgT=Math.max(.25,Math.min(3.8,(1.05+(theirs-ours)*.075)/defense));
+ const goals=x=>{let n=0;const chance=Math.min(.78,x/3.2);for(let i=0;i<5;i++){if(rand()<chance*Math.max(.1,(x/2.2)))n++;}return Math.min(5,n);};
+ return [goals(xgO),goals(xgT)];
+}
+function chooseScorer(rand){
+ const forwards=activeLineup().filter(p=>p.pos==="ATA"), mids=activeLineup().filter(p=>p.pos==="MEI");
+ const pool=[...forwards,...forwards,...mids].sort((a,b)=>b.rating-a.rating);
+ return pool.length?pool[Math.floor(rand()*Math.min(pool.length,Math.max(1,Math.ceil(pool.length*.7))) )].name:"Ataque do time";
+}
+function makeEvents(home,away,hg,ag,rand){
+ const events=[],goals=[];
+ for(let i=0;i<hg;i++)goals.push({minute:Math.floor(4+rand()*87),side:"home"});
+ for(let i=0;i<ag;i++)goals.push({minute:Math.floor(4+rand()*87),side:"away"});
+ goals.sort((a,b)=>a.minute-b.minute);
+ const used=new Set();
+ for(const g of goals){while(used.has(g.minute)&&g.minute<90)g.minute++;used.add(g.minute);}
+ for(const g of goals){
+   const scorer=g.side==="home"?chooseScorer(rand):["Atacante visitante","Meia visitante","Centroavante rival"][Math.floor(rand()*3)];
+   events.push({minute:g.minute,text:`⚽ GOL! ${scorer} marca para ${g.side==="home"?home:away}!`,type:"goal",side:g.side});
+ }
+ const moments=[5,12,19,27,34,41,45,52,59,66,73,81,88];
+ const textsHome=["A equipe acelera pela direita e cruza na área.","Boa troca de passes no meio-campo; a defesa corta.","Finalização perigosa! O goleiro espalma para escanteio.","Pressão alta recupera a bola perto da área.","Chute de média distância passa perto da trave.","Bela defesa impede o gol da equipe mandante.","O time tenta construir jogada com paciência."];
+ const textsAway=["O adversário avança em velocidade pelo corredor.","A defesa se fecha e afasta o perigo.","Contra-ataque rápido termina em finalização defendida.","Disputa intensa no meio-campo pela posse.","Bola levantada na área; a zaga ganha pelo alto.","O goleiro sai bem e fica com a bola.","A equipe visitante tenta surpreender em bola parada."];
+ for(const minute of moments){
+   if(minute===45){events.push({minute,text:"Intervalo! As equipes recebem orientações para a etapa final.",type:"good"});continue;}
+   if(minute===88){events.push({minute:90,text:"A arbitragem indica 2 minutos de acréscimo.",type:"normal"});continue;}
+   if(used.has(minute))continue;
+   const homePoss=rand()<.5,list=homePoss?textsHome:textsAway;
+   events.push({minute,text:list[Math.floor(rand()*list.length)],type:rand()<.15?"bad":"normal"});
+ }
+ events.sort((a,b)=>a.minute-b.minute);
+ events.push({minute:92,text:"Fim de jogo! O árbitro encerra a partida.",type:"good"});
+ return events;
+}
+function showEvents(events,hg,ag,home,away){
+ const container=byId("eventList");
+ container.innerHTML=events.map(e=>`<div class="event ${e.type}"><span class="minute">${e.minute===92?"FT":e.minute+"′"}</span><span>${esc(e.text)}</span></div>`).join("");
+ byId("liveClock").textContent="FT 90+2′";
+ byId("livePossession") .textContent="Simulação concluída";
+ byId("homeScore").textContent=hg;byId("awayScore").textContent=ag;byId("scoreMinute").textContent="FIM DE JOGO";
+ byId("liveMatch").classList.add("show");
+}
+function playMatch(){
+ if(simulating)return;
+ const valid=lineupValid();if(!valid.ok){notify(valid.message);byId("lineupNote").textContent=valid.message;return;}
+ const scheduled=nextCompetitionMatch(activeComp());
+ const opponent=scheduled?(scheduled.match.home===state.club?scheduled.match.away:scheduled.match.home):byId("opponent").value;
+ if(!opponent||opponent===state.club){notify("Não há adversário pendente nesta competição.");return;}
+ byId("opponent").value=opponent;
+ if(state.budget<payroll()){notify("Orçamento insuficiente para pagar a folha simulada desta partida. Contrate menos ou reinicie a carreira.");return;}
+ simulating=true;byId("playMatch").disabled=true;byId("playMatch").textContent="⏳ Simulando partida…";
+ byId("resultBanner").classList.remove("show");
+ const seed=Date.now()^(state.round*982451653)^state.roster.length;
+ const rand=seededRand(seed);
+ const strength=currentStrength(), opponentStrength=teamStrength(opponent);
+ const [hg,ag]=simulateScore(strength,opponentStrength,rand);
+ const events=makeEvents(state.club,opponent,hg,ag,rand);
+ byId("homeScore").textContent="0";byId("awayScore").textContent="0";byId("scoreMinute").textContent="PRÉ-JOGO";
+ byId("liveMatch").classList.add("show");
+ byId("eventList").innerHTML='<div class="event good"><span class="minute">0′</span><span>Apito inicial! A bola está rolando na simulação.</span></div>';
  byId("matchStatus").textContent="Partida em andamento…";
  const reduced=byId("matchMode").value==="fast";
  let i=0;
@@ -398,9 +510,37 @@ function createCompetition(def,club,season){
  if(def.format==="continental"){
   const shuffled=shuffledTeams(teams,season+teams.length),groups=[];for(let i=0;i<shuffled.length;i+=4)groups.push(shuffled.slice(i,i+4));
   const groupMap={};groups.forEach((g,i)=>g.forEach(t=>groupMap[t]=String.fromCharCode(65+i)));
-  function recordCompetitionMatch(home,away,hg,ag,outcome){const comp=activeComp();if(!comp||comp.complete)return;const next=nextCompetitionMatch(comp);if(!next)return;const m=next.match;if(![m.home,m.away].includes(home)||![m.home,m.away].includes(away)||home===away)return;const rh=m.home,ra=m.away,rhg=rh===home?hg:ag,rag=ra===away?ag:hg;m.played=true;m.hg=rhg;m.ag=rag;m.winner=rhg===rag?null:(rhg>rag?rh:ra);const stage=next.roundLabel;comp.results.push({home:rh,away:ra,hg:rhg,ag:rag,outcome:rhg===rag?"Empate; decisão por pênaltis":(m.winner===state.club?"Vitória do clube":"Vitória do adversário"),stage,round:next.roundIndex+1,when:new Date().toLocaleDateString("pt-BR")});updateCompetitionTable(comp,rh,ra,rhg,rag);const round=comp.format==="league"?comp.rounds[next.roundIndex]:comp.rounds[next.roundIndex].matches;for(const other of round){if(other.played)continue;const rand=seededRand(state.season*7919+next.roundIndex*104729+comp.results.length*1543+other.home.length*97+other.away.length*31);let gh=Math.floor(rand()*4),ga=Math.floor(rand()*4);other.played=true;other.hg=gh;other.ag=ga;other.winner=gh===ga?(rand()<0.5?other.home:other.away):(gh>ga?other.home:other.away);comp.results.push({home:other.home,away:other.away,hg:gh,ag:ga,outcome:gh===ga?"Empate":(gh>ga?"Vitória do mandante":"Vitória do visitante"),stage,round:next.roundIndex+1,when:new Date().toLocaleDateString("pt-BR")});updateCompetitionTable(comp,other.home,other.away,gh,ga);}if(comp.format==="league"){
+  const groupRounds=Array.from({length:6},(_,i)=>({name:`Fase de grupos • Rodada ${i+1}`,matches:[]}));
+  groups.forEach((group,gi)=>{roundRobin(group,true).forEach((matches,ri)=>matches.forEach(m=>groupRounds[ri].matches.push({...m,group:String.fromCharCode(65+gi)})));});
+  return {id:def.id,name:def.name,format:def.format,teams,groups,groupMap,rounds:groupRounds,results:[],table,champion:null,complete:false,stage:"Fase de grupos"};
+ }
+ if(def.format==="final")return {id:def.id,name:def.name,format:def.format,teams,rounds:[{name:"Final • ida",matches:[{home:teams[0],away:teams[1],played:false,winner:null}]},{name:"Final • volta",matches:[{home:teams[1],away:teams[0],played:false,winner:null}]}],results:[],table,champion:null,complete:false,stage:"Final • ida"};
+ const pool=shuffledTeams(teams,season+teams.length),matches=[];for(let i=0;i<pool.length;i+=2)if(pool[i+1])matches.push({home:pool[i],away:pool[i+1],played:false,winner:null});
+ const initialStage=matches.length===1?"Final":matches.length===2?"Semifinais":matches.length===4?"Quartas de final":matches.length===8?"Oitavas de final":"Primeira fase";
+ return {id:def.id,name:def.name,format:def.format,teams,rounds:[{name:initialStage,matches}],results:[],table,champion:null,complete:false,stage:"Oitavas de final"};
+}
+function normalizeCompetitions(saved,club,season){const out={};for(const def of competitionCatalog(club)){if(saved&&saved[def.id]&&Array.isArray(saved[def.id].teams)&&saved[def.id].teams.includes(club)){const c=saved[def.id];c.table=Array.isArray(c.table)?c.table:[];c.results=Array.isArray(c.results)?c.results:[];c.rounds=Array.isArray(c.rounds)?c.rounds:[];out[def.id]=c;}else out[def.id]=createCompetition(def,club,season);}return out;}
+function initCompetitionSelect(){const sel=byId("competitionSelect");if(!sel)return;const defs=competitionCatalog(state.club);if(!state.competitions)state.competitions=normalizeCompetitions(null,state.club,state.season);const recDef=defs.find(c=>c.id==="recopa");if(recDef&&recDef.eligible&&JSON.stringify(state.competitions.recopa.teams)!==JSON.stringify(recDef.teams)){state.competitions.recopa=createCompetition(recDef,state.club,state.season);}sel.innerHTML=defs.map(c=>`<option value="${c.id}" ${c.eligible===false?"disabled":""}>${esc(c.name)}${c.eligible===false?" • não elegível":""}</option>`).join("");if(!state.competitions[state.activeCompetition]||defs.find(c=>c.id===state.activeCompetition)?.eligible===false)state.activeCompetition="brasileirao";sel.value=state.activeCompetition;}
+function activeComp(){return state.competitions&&state.competitions[state.activeCompetition];}
+function nextCompetitionMatch(comp){if(!comp||comp.complete)return null;if(comp.format==="league"){for(let r=0;r<comp.rounds.length;r++){const m=comp.rounds[r].find(x=>!x.played&&(x.home===state.club||x.away===state.club));if(m)return {match:m,roundIndex:r,roundLabel:`Rodada ${r+1}`};}return null;}for(let r=0;r<comp.rounds.length;r++){const m=comp.rounds[r].matches?.find(x=>!x.played&&(x.home===state.club||x.away===state.club));if(m)return {match:m,roundIndex:r,roundLabel:comp.rounds[r].name||`Fase ${r+1}`};}return null;}
+function syncCompetitionOpponent(){const comp=activeComp(),next=nextCompetitionMatch(comp),sel=byId("opponent");if(!sel)return;if(next){const opp=next.match.home===state.club?next.match.away:next.match.home;sel.innerHTML=`<option value="${esc(opp)}">${esc(opp)}</option>`;sel.value=opp;byId("awayName").textContent=opp;byId("matchCompetition").textContent=`${comp.name} • ${next.roundLabel}`;}else{sel.innerHTML='<option value="">Competição concluída</option>';byId("matchCompetition").textContent=comp?comp.name:"Sem competição";}}
+function renderCompetitionUI(){const comp=activeComp();if(!comp||!byId("competitionSummary"))return;if(byId("competitionSelect"))byId("competitionSelect").value=state.activeCompetition;const next=nextCompetitionMatch(comp);byId("competitionSummary").innerHTML=`<strong>${esc(comp.name)}${comp.champion?" — CAMPEÃO: "+esc(comp.champion):comp.complete?" — CONCLUÍDA":""}</strong><p>Temporada ${state.season} • ${comp.results.length} partida(s) registrada(s) • ${comp.format==="league"?"Pontos corridos":"Mata-mata simulado"}${comp.complete?" • Torneio encerrado":""}</p>`;byId("competitionStage").textContent=next?next.roundLabel.toUpperCase():"ENCERRADA";if(next){const opp=next.match.home===state.club?next.match.away:next.match.home;byId("competitionNext").innerHTML=`<div class="player-row"><div class="player-info"><strong>${esc(next.roundLabel)} • ${esc(state.club)} × ${esc(opp)}</strong><small>Partida registrada na competição selecionada.</small></div><span class="tag">PRÓXIMA</span></div>`;}else byId("competitionNext").innerHTML=`<div class="empty">${comp.champion?"Campeão: "+esc(comp.champion)+".":"Não há partidas pendentes nesta competição."}</div>`;const rows=[...(comp.table||[])].sort((a,b)=>b.pts-a.pts||((b.gf-b.ga)-(a.gf-a.ga))||b.gf-a.gf||a.name.localeCompare(b.name));byId("competitionTable").innerHTML=rows.map((t,i)=>`<tr class="${t.name===state.club?"you":""}"><td>${i+1}</td><td>${esc(t.name)}</td><td><b>${t.pts}</b></td><td>${t.gp}</td><td>${t.gf-t.ga>0?"+":""}${t.gf-t.ga}</td></tr>`).join("");byId("competitionResults").innerHTML=comp.results.length?comp.results.slice().reverse().slice(0,10).map(r=>`<div class="history-row"><div><strong>${esc(r.home)} × ${esc(r.away)}</strong><small>${esc(r.stage||"Competição")} • ${esc(r.outcome||"Finalizado")}</small></div><div class="history-score">${r.hg} : ${r.ag}</div></div>`).join(""):'<div class="empty">Nenhuma partida disputada nesta competição.</div>';}
+function activateCompetition(){const id=byId("competitionSelect").value,def=competitionCatalog(state.club).find(c=>c.id===id);if(!def||def.eligible===false){notify("Seu clube não está elegível para essa competição nesta temporada.");return;}state.activeCompetition=id;save();syncCompetitionOpponent();renderCompetitionUI();notify(`${def.name} selecionada.`);}
+function updateCompetitionTable(comp,home,away,hg,ag){const h=comp.table.find(t=>t.name===home),a=comp.table.find(t=>t.name===away);if(!h||!a)return;h.gp++;a.gp++;h.gf+=hg;h.ga+=ag;a.gf+=ag;a.ga+=hg;if(hg>ag){h.w++;h.pts+=3;a.l++;}else if(hg<ag){a.w++;a.pts+=3;h.l++;}else{h.d++;a.d++;h.pts++;a.pts++;}}
+function simulateRemainingTournament(comp,winners,startRound,label){
+ let advancing=winners.slice(),roundName=label,roundIndex=startRound;
+ while(advancing.length>1){
+  const matches=[];for(let i=0;i<advancing.length;i+=2)if(advancing[i+1])matches.push({home:advancing[i],away:advancing[i+1],played:false,winner:null});
+  if(!matches.length)break;
+  const currentLabel=matches.length===1?"Final":matches.length===2?"Semifinais":matches.length===4?"Quartas de final":roundName;
+  for(const m of matches){const rand=seededRand(state.season*3571+roundIndex*7919+m.home.length*113+m.away.length*47);m.hg=Math.floor(rand()*4);m.ag=Math.floor(rand()*4);m.played=true;m.winner=m.hg===m.ag?(rand()<0.5?m.home:m.away):(m.hg>m.ag?m.home:m.away);comp.results.push({home:m.home,away:m.away,hg:m.hg,ag:m.ag,outcome:m.hg===m.ag?"Empate; decisão por pênaltis":(m.winner===m.home?"Vitória do mandante":"Vitória do visitante"),stage:currentLabel,round:roundIndex+1,when:new Date().toLocaleDateString("pt-BR")});updateCompetitionTable(comp,m.home,m.away,m.hg,m.ag);}
+  comp.rounds.push({name:currentLabel,matches});advancing=matches.map(m=>m.winner);roundName=currentLabel;roundIndex++;
+ }
+ comp.champion=advancing[0]||null;comp.complete=true;comp.stage=comp.champion?`Campeão: ${comp.champion}`:"Torneio encerrado";
+}
+function recordCompetitionMatch(home,away,hg,ag,outcome){const comp=activeComp();if(!comp||comp.complete)return;const next=nextCompetitionMatch(comp);if(!next)return;const m=next.match;if(![m.home,m.away].includes(home)||![m.home,m.away].includes(away)||home===away)return;const rh=m.home,ra=m.away,rhg=rh===home?hg:ag,rag=ra===away?ag:hg;m.played=true;m.hg=rhg;m.ag=rag;m.winner=rhg===rag?null:(rhg>rag?rh:ra);const stage=next.roundLabel;comp.results.push({home:rh,away:ra,hg:rhg,ag:rag,outcome:rhg===rag?"Empate; decisão por pênaltis":(m.winner===state.club?"Vitória do clube":"Vitória do adversário"),stage,round:next.roundIndex+1,when:new Date().toLocaleDateString("pt-BR")});updateCompetitionTable(comp,rh,ra,rhg,rag);const round=comp.format==="league"?comp.rounds[next.roundIndex]:comp.rounds[next.roundIndex].matches;for(const other of round){if(other.played)continue;const rand=seededRand(state.season*7919+next.roundIndex*104729+comp.results.length*1543+other.home.length*97+other.away.length*31);let gh=Math.floor(rand()*4),ga=Math.floor(rand()*4);other.played=true;other.hg=gh;other.ag=ga;other.winner=gh===ga?(rand()<0.5?other.home:other.away):(gh>ga?other.home:other.away);comp.results.push({home:other.home,away:other.away,hg:gh,ag:ga,outcome:gh===ga?"Empate":(gh>ga?"Vitória do mandante":"Vitória do visitante"),stage,round:next.roundIndex+1,when:new Date().toLocaleDateString("pt-BR")});updateCompetitionTable(comp,other.home,other.away,gh,ga);}if(comp.format==="league"){
  const pending=comp.rounds.some(r=>r.some(x=>!x.played&&(x.home===state.club||x.away===state.club)));
- if(!pending){const leaders=[...comp.table].sort((a,b)=>b.pts-a.pts||((b.gf-b.ga)-(a.gf-a.ga))||b.gf-a.gf);comp.champion=leaders[0]?.name||null;comp.complete=true;}
+ if(!pending){const leaders=[...comp.table].sort((a,b)=>b.pts-a.pts||((b.gf-b.ga)-(a.gf-a.ga))||b.gf-a.gf);comp.champion=leaders[0]?.name||null;comp.complete=true;comp.stage=comp.champion?`Campeão: ${comp.champion}`:"Temporada concluída";}
 }else if(comp.format==="continental"){
  if(next.roundIndex<5){comp.stage="Fase de grupos";}
  else if(next.roundIndex===5){
