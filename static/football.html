@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -86,8 +87,7 @@ label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}select{widt
 <div class="stack">
   <section class="panel" id="matchPanel">
     <div class="section-title"><h3>🏆 Central da partida</h3><span class="tag">MATCH DAY</span></div>
-    <div class="fiel
-     ds" style="margin-bottom:12px">
+    <div class="fields" style="margin-bottom:12px">
       <div class="field"><label for="opponent">Adversário</label><select id="opponent"></select></div>
       <div class="field"><label for="matchMode">Ritmo da narração</label><select id="matchMode"><option value="normal">Completa</option><option value="fast">Rápida</option></select></div>
     </div>
@@ -95,6 +95,7 @@ label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}select{widt
       <div class="match-top"><strong id="matchCompetition">BR League • Rodada 1</strong><span id="matchWeather">Simulação local</span></div>
       <div class="scoreboard">
         <div class="team"><div class="crest" id="homeCrest">🔴⚫</div><strong id="homeName">Flamengo</strong><small>MANDANTE</small></div>
+        
         <div class="score"><span id="homeScore">—</span> : <span id="awayScore">—</span><small id="scoreMinute">PRÉ-JOGO</small></div>
         <div class="team"><div class="crest" id="awayCrest">⚽</div><strong id="awayName">Palmeiras</strong><small>VISITANTE</small></div>
       </div>
@@ -123,7 +124,7 @@ label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}select{widt
 
   <section class="panel">
     <div class="section-title"><h3>📑 Contratos</h3><span class="tag">ELENCO</span></div>
-    <p class="sub">Jogadores contratados do mercado ficam disponíveis por 5 partidas simuladas.</p>
+    <p class="sub">O elenco base pertence ao clube. Jogadores contratados no mercado têm vínculo temporário de 5 partidas simuladas.</p>
     <div id="contractsList" class="squad-list"><div class="empty">Nenhum contrato ativo.</div></div>
     <p class="notice">O elenco inicial e o mercado são dados de demonstração. Nomes, notas, preços e resultados não representam avaliações oficiais.</p>
   </section>
@@ -135,7 +136,7 @@ label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}select{widt
 
 <script>
 "use strict";
-const SAVE_KEY = "brleague_save_v2";
+const SAVE_KEY = "brleague_save_v3";
 const clubs = [
 "Athletico Paranaense","Atlético Mineiro","Bahia","Botafogo","Chapecoense","Corinthians","Coritiba","Cruzeiro","Flamengo","Fluminense","Grêmio","Internacional","Mirassol","Palmeiras","Red Bull Bragantino","Remo","Santos","São Paulo","Vasco da Gama","Vitória"
 ];
@@ -167,7 +168,23 @@ function freshState(club="Flamengo"){
 }
 function genericRoster(club){
  const base=clone(rosters[club]||[["Goleiro titular","GOL",80],["Reserva do gol","GOL",70],["Zagueiro central","DEF",79],["Lateral esquerdo","DEF",77],["Lateral direito","DEF",78],["Zagueiro reserva","DEF",75],["Volante marcador","MEI",80],["Meia criativo","MEI",81],["Meia de ligação","MEI",77],["Ponta veloz","ATA",80],["Centroavante","ATA",82],["Atacante reserva","ATA",76]]);
- return base.map((p,i)=>({id:"b"+i,name:p[0],pos:p[1],rating:p[2],value:p[2]*p[2]*2600,salary:p[2]*360,origin:"base",matchesLeft:null}));
+ const roster=base.map((p,i)=>({id:"b"+i,name:p[0],pos:p[1],rating:p[2],value:p[2]*p[2]*2600,salary:p[2]*360,origin:"base",matchesLeft:null}));
+ return ensureSquadDepth(roster);
+}
+function ensureSquadDepth(roster){
+ const result=Array.isArray(roster)?roster.slice():[];
+ const minimum={GOL:1,DEF:5,MEI:5,ATA:3};
+ for(const pos of Object.keys(minimum)){
+   let count=result.filter(p=>p.pos===pos).length;
+   while(count<minimum[pos]){
+     const n=count+1;
+     const rating=pos==="GOL"?68:pos==="DEF"?70:pos==="MEI"?70:72;
+     const id="depth_"+pos+"_"+n;
+     if(!result.some(p=>p.id===id))result.push({id,name:(pos==="GOL"?"Goleiro":pos==="DEF"?"Defensor":pos==="MEI"?"Meia":"Atacante")+" da base "+n,pos,rating,value:rating*rating*2200,salary:rating*330,origin:"base",matchesLeft:null});
+     count=result.filter(p=>p.pos===pos).length;
+   }
+ }
+ return result;
 }
 function makeAutoLineup(roster,formation){
  const counts=shapeMap[formation]||shapeMap["433"];
@@ -177,23 +194,38 @@ function makeAutoLineup(roster,formation){
  for(const pos of posOrder){const players=roster.filter(p=>p.pos===pos).sort((a,b)=>b.rating-a.rating);chosen.push(...players.slice(0,counts[pos]).map(p=>p.id));}
  return chosen;
 }
+
 function normalizeState(s){
  if(!s||!clubs.includes(s.club))return freshState();
  const defaults=freshState(s.club);
  s={...defaults,...s};
- s.roster=Array.isArray(s.roster)?s.roster:defaults.roster;
+ s.roster=ensureSquadDepth(Array.isArray(s.roster)?s.roster:defaults.roster);
  s.market=Array.isArray(s.market)?s.market:clone(marketPlayers);
- s.history=Array.isArray(s.history)?s.history:[];
- s.table=Array.isArray(s.table)&&s.table.length?s.table:defaults.table;
+ s.history=Array.isArray(s.history)?s.history.filter(h=>h&&h.home===s.club&&Number.isFinite(Number(h.hg))&&Number.isFinite(Number(h.ag))).map((h,i)=>({...h,round:Number.isFinite(Number(h.round))?Number(h.round):i+1,hg:Number(h.hg),ag:Number(h.ag)})):[];
+ s.history.sort((a,b)=>a.round-b.round);
+ s.table=clubs.map(name=>({name,pts:0,gp:0,w:0,d:0,l:0,gf:0,ga:0}));
+ for(const h of s.history){
+   const home=s.table.find(t=>t.name===h.home),away=s.table.find(t=>t.name===h.away);
+   if(!home||!away||home===away)continue;
+   home.gp++;away.gp++;home.gf+=h.hg;home.ga+=h.ag;away.gf+=h.ag;away.ga+=h.hg;
+   if(h.hg>h.ag){home.w++;home.pts+=3;away.l++;}else if(h.hg<h.ag){away.w++;away.pts+=3;home.l++;}else{home.d++;away.d++;home.pts++;away.pts++;}
+ }
  s.budget=Number.isFinite(Number(s.budget))?Number(s.budget):50000000;
  s.spent=Number(s.spent)||0;
  if(!shapeMap[s.formation])s.formation="433";
  if(!["attack","balanced","defend"].includes(s.mentality))s.mentality="balanced";
  const ids=new Set(s.roster.map(p=>p.id));
  s.lineup=Array.isArray(s.lineup)?s.lineup.filter(id=>ids.has(id)):[];
- if(!s.lineup.length)s.lineup=makeAutoLineup(s.roster,s.formation);
- s.round=Math.max(1,Number(s.round)||1);
+ const need=1+Object.values(shapeMap[s.formation]).reduce((a,b)=>a+b,0);
+ if(s.lineup.length!==need||!lineupIdsMatchFormation(s.lineup,s.roster,s.formation))s.lineup=makeAutoLineup(s.roster,s.formation);
+ s.round=Math.max(1,s.history.reduce((m,h)=>Math.max(m,h.round||0),0)+1);
+ s.lastResult=s.history.length?(()=>{const h=s.history[s.history.length-1];return {home:h.home,away:h.away,hg:h.hg,ag:h.ag,outcome:h.outcome||"Partida simulada"};})():null;
  return s;
+}
+function lineupIdsMatchFormation(ids,roster,formation){
+ const players=ids.map(id=>roster.find(p=>p.id===id)).filter(Boolean),need=shapeMap[formation];
+ const counts={GOL:0,DEF:0,MEI:0,ATA:0};players.forEach(p=>{if(counts[p.pos]!==undefined)counts[p.pos]++;});
+ return players.length===1+need.DEF+need.MEI+need.ATA&&counts.GOL===1&&counts.DEF===need.DEF&&counts.MEI===need.MEI&&counts.ATA===need.ATA;
 }
 function loadState(){try{const raw=localStorage.getItem(SAVE_KEY);return raw?normalizeState(JSON.parse(raw)):freshState();}catch(e){return freshState();}}
 let state=loadState(), currentEvents=[], simulating=false, toastTimer=null;
@@ -208,7 +240,7 @@ function teamStrength(club){if(club===state.club)return currentStrength();const 
 function payroll(){return state.roster.reduce((n,p)=>n+(Number(p.salary)||0),0);}
 function squadValue(){return state.roster.reduce((n,p)=>n+(Number(p.value)||0),0);}
 function leagueRow(name){return state.table.find(t=>t.name===name);}
-function sortedTable(){return [...state.table].sort((a,b)=>b.pts-a.pts||((b.gf-b.ga)-(a.gf-a.ga))||b.gf-a.gf||a.name.localeCompare(b.name));}
+function sortedTable(){return [...state.table].sort((a,b)=>b.pts-a.pts||((b.gf-b.ga)-(a.gf-a.ga))||b.gf-a.gf||(a.name===state.club?-1:b.name===state.club?1:a.name.localeCompare(b.name)));}
 function initSelects(){
  byId("clubSelect").innerHTML=clubs.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
  byId("opponent").innerHTML=clubs.filter(c=>c!==state.club).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
@@ -263,9 +295,10 @@ function renderHistory(){
  byId("historyCount").textContent=`${state.history.length} jogos`;
  byId("historyList").innerHTML=state.history.length?state.history.slice(0,12).map(h=>`<div class="history-row"><div><strong>${esc(h.home)} × ${esc(h.away)}</strong><small>Rodada ${h.round} • ${esc(h.outcome||"Partida simulada")}</small></div><div class="history-score">${h.hg} : ${h.ag}</div></div>`).join(""):'<div class="empty">Sua primeira partida aparecerá aqui.</div>';
 }
+
 function renderContracts(){
- const list=state.roster.filter(p=>p.origin==="market");
- byId("contractsList").innerHTML=list.length?list.map(p=>`<div class="player-row"><div class="player-info"><strong>${esc(p.name)}</strong><small>${p.pos} • ${shortMoney(p.salary)}/jogo</small></div><span class="tag">${p.matchesLeft} jogos</span></div>`).join(""):'<div class="empty">Nenhum contrato ativo.</div>';
+ const list=state.roster.slice().sort((a,b)=>(a.origin==="market")-(b.origin==="market")||a.name.localeCompare(b.name));
+ byId("contractsList").innerHTML=list.length?list.map(p=>`<div class="player-row"><div class="player-info"><strong>${esc(p.name)}</strong><small>${p.pos} • ${shortMoney(p.salary)}/jogo</small></div><span class="tag">${p.origin==="market"?Math.max(0,Number(p.matchesLeft)||0)+" jogos":"Elenco base"}</span></div>`).join(""):'<div class="empty">Nenhum jogador cadastrado.</div>';
 }
 function render(){
  renderStats();renderPitch();renderSquad();renderMarket();renderTable();renderHistory();renderContracts();
@@ -308,33 +341,27 @@ function chooseScorer(rand){
  const pool=[...forwards,...forwards,...mids].sort((a,b)=>b.rating-a.rating);
  return pool.length?pool[Math.floor(rand()*Math.min(pool.length,Math.max(1,Math.ceil(pool.length*.7))) )].name:"Ataque do time";
 }
-  
 function makeEvents(home,away,hg,ag,rand){
- const events=[];
- const goals=[];
- for(let i=0;i<hg;i++)goals.push({minute:Math.floor(4+rand()*88),side:"home"});
- for(let i=0;i<ag;i++)goals.push({minute:Math.floor(4+rand()*88),side:"away"});
+ const events=[],goals=[];
+ for(let i=0;i<hg;i++)goals.push({minute:Math.floor(4+rand()*87),side:"home"});
+ for(let i=0;i<ag;i++)goals.push({minute:Math.floor(4+rand()*87),side:"away"});
  goals.sort((a,b)=>a.minute-b.minute);
- const goalMap=new Map(goals.map(g=>[g.minute,g]));
+ const used=new Set();
+ for(const g of goals){while(used.has(g.minute)&&g.minute<90)g.minute++;used.add(g.minute);}
+ for(const g of goals){
+   const scorer=g.side==="home"?chooseScorer(rand):["Atacante visitante","Meia visitante","Centroavante rival"][Math.floor(rand()*3)];
+   events.push({minute:g.minute,text:`⚽ GOL! ${scorer} marca para ${g.side==="home"?home:away}!`,type:"goal",side:g.side});
+ }
  const moments=[5,12,19,27,34,41,45,52,59,66,73,81,88];
  const textsHome=["A equipe acelera pela direita e cruza na área.","Boa troca de passes no meio-campo; a defesa corta.","Finalização perigosa! O goleiro espalma para escanteio.","Pressão alta recupera a bola perto da área.","Chute de média distância passa perto da trave.","Bela defesa impede o gol da equipe mandante.","O time tenta construir jogada com paciência."];
  const textsAway=["O adversário avança em velocidade pelo corredor.","A defesa se fecha e afasta o perigo.","Contra-ataque rápido termina em finalização defendida.","Disputa intensa no meio-campo pela posse.","Bola levantada na área; a zaga ganha pelo alto.","O goleiro sai bem e fica com a bola.","A equipe visitante tenta surpreender em bola parada."];
- const goalMinutes=new Set();
- goals.forEach(g=>{let m=g.minute;while(goalMinutes.has(m))m=Math.min(90,m+1);g.minute=m;goalMinutes.add(m);});
  for(const minute of moments){
-   if(minute===45){events.push({minute:45,text:"Intervalo! As equipes recebem orientações para a etapa final.",type:"good"});continue;}
+   if(minute===45){events.push({minute,text:"Intervalo! As equipes recebem orientações para a etapa final.",type:"good"});continue;}
    if(minute===88){events.push({minute:90,text:"A arbitragem indica 2 minutos de acréscimo.",type:"normal"});continue;}
-   const goal=goals.find(g=>g.minute===minute);
-   if(goal){
-     const scorer=goal.side==="home"?chooseScorer(rand):["Atacante visitante","Meia visitante","Centroavante rival"][Math.floor(rand()*3)];
-     events.push({minute,text:`⚽ GOL! ${scorer} marca para ${goal.side==="home"?home:away}!`,type:"goal"});
-   }else{
-     const homePoss=rand()<.5;
-     const list=homePoss?textsHome:textsAway;
-     events.push({minute,text:list[Math.floor(rand()*list.length)],type:rand()<.15?"bad":"normal"});
-   }
+   if(used.has(minute))continue;
+   const homePoss=rand()<.5,list=homePoss?textsHome:textsAway;
+   events.push({minute,text:list[Math.floor(rand()*list.length)],type:rand()<.15?"bad":"normal"});
  }
- for(const g of goals){if(!events.some(e=>e.minute===g.minute&&e.type==="goal"))events.push({minute:g.minute,text:`⚽ GOL! ${g.side==="home"?home:away} balança a rede!`,type:"goal"});}
  events.sort((a,b)=>a.minute-b.minute);
  events.push({minute:92,text:"Fim de jogo! O árbitro encerra a partida.",type:"good"});
  return events;
@@ -343,10 +370,11 @@ function showEvents(events,hg,ag,home,away){
  const container=byId("eventList");
  container.innerHTML=events.map(e=>`<div class="event ${e.type}"><span class="minute">${e.minute===92?"FT":e.minute+"′"}</span><span>${esc(e.text)}</span></div>`).join("");
  byId("liveClock").textContent="FT 90+2′";
- byId("livePossession").textContent="Simulação concluída";
+ byId("livePossession") .textContent="Simulação concluída";
  byId("homeScore").textContent=hg;byId("awayScore").textContent=ag;byId("scoreMinute").textContent="FIM DE JOGO";
  byId("liveMatch").classList.add("show");
 }
+
 function playMatch(){
  if(simulating)return;
  const valid=lineupValid();if(!valid.ok){notify(valid.message);byId("lineupNote").textContent=valid.message;return;}
@@ -357,7 +385,7 @@ function playMatch(){
  byId("resultBanner").classList.remove("show");
  const seed=Date.now()^(state.round*982451653)^state.roster.length;
  const rand=seededRand(seed);
- const strength=currentStrength(),opponentStrength=teamStrength(opponent);
+ const strength=currentStrength(), opponentStrength=teamStrength(opponent);
  const [hg,ag]=simulateScore(strength,opponentStrength,rand);
  const events=makeEvents(state.club,opponent,hg,ag,rand);
  byId("homeScore").textContent="0";byId("awayScore").textContent="0";byId("scoreMinute").textContent="PRÉ-JOGO";
@@ -375,9 +403,10 @@ function playMatch(){
    }
    const e=events[i++];
    if(e.type==="goal"){
+     // Scoreboard reflects the running score based on events already narrated.
      const done=events.slice(0,i).filter(x=>x.type==="goal");
-     const homeGoals=done.filter(x=>x.text.includes(`para ${state.club}!`)||x.text.includes(`${state.club} balança`)).length;
-     const awayGoals=done.length-homeGoals;
+     const homeGoals=done.filter(x=>x.side==="home").length;
+     const awayGoals=done.filter(x=>x.side==="away").length;
      byId("homeScore").textContent=homeGoals;byId("awayScore").textContent=awayGoals;
    }
    byId("liveClock").textContent=e.minute===92?"90+2′":e.minute+"′";
@@ -399,6 +428,7 @@ function finishMatch(hg,ag,home,away){
  const expired=state.roster.filter(p=>p.origin==="market"&&p.matchesLeft<=0);
  expired.forEach(p=>{state.market.push({...p,id:"r"+p.id+state.round,origin:"market",matchesLeft:5});});
  state.roster=state.roster.filter(p=>!(p.origin==="market"&&p.matchesLeft<=0));
+ // Rebuild the market from the shared pool plus expired contract players without duplicate IDs.
  state.market=state.market.filter((p,i,a)=>a.findIndex(q=>q.id===p.id)===i);
  state.history.unshift({home,away,hg,ag,round:state.round,outcome,when:new Date().toLocaleDateString("pt-BR")});
  state.history=state.history.slice(0,50);state.round++;
@@ -439,8 +469,9 @@ function bind(){
  byId("goSquad").addEventListener("click",()=>byId("squadPanel").scrollIntoView({behavior:"smooth",block:"start"}));
  byId("opponent").addEventListener("change",()=>{byId("awayName").textContent=byId("opponent").value;byId("awayCrest").textContent=byId("opponent").value==="Palmeiras"?"🟢⚪":"⚽";});
 }
-initSelects();refreshOpponent();bind();render();
+initSelects();refreshOpponent();bind();render();save();
 if(state.lastResult){byId("homeScore").textContent=state.lastResult.hg;byId("awayScore").textContent=state.lastResult.ag;byId("scoreMinute").textContent="ÚLTIMO JOGO";}
 </script>
 </body>
 </html>
+
