@@ -123,7 +123,7 @@ label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}select{widt
 
   <section class="panel">
     <div class="section-title"><h3>📊 Classificação</h3><span class="tag" id="roundTag">RODADA 1</span></div>
-    <p class="sub">Tabela da sua carreira, atualizada após cada partida disputada.</p>
+    <p class="sub">Classificação geral da carreira: soma os jogos simulados, mesmo quando são de torneios diferentes. A tabela específica fica na Central de competições.</p>
     <div class="table-wrap"><table><thead><tr><th>#</th><th>Clube</th><th>PTS</th><th>J</th><th>V</th><th>SG</th></tr></thead><tbody id="leagueTable"></tbody></table></div>
   </section>
 
@@ -230,14 +230,20 @@ function normalizeState(s){
  const savedRoster=Array.isArray(s.roster)?s.roster.filter(p=>p&&typeof p==="object"&&p.id&&p.name&&["GOL","DEF","MEI","ATA"].includes(p.pos)):[];
  s.roster=ensureSquadDepth(savedRoster.length?savedRoster:clone(defaults.roster));
  s.market=Array.isArray(s.market)?s.market:clone(marketPlayers);
- s.history=Array.isArray(s.history)?s.history.filter(h=>h&&h.home===s.club&&Number.isFinite(Number(h.hg))&&Number.isFinite(Number(h.ag))).map((h,i)=>({...h,round:Number.isFinite(Number(h.round))?Number(h.round):i+1,hg:Number(h.hg),ag:Number(h.ag)})):[];
- s.history.sort((a,b)=>a.round-b.round);
+ s.history=Array.isArray(s.history)?s.history.filter(h=>h&&(h.home===s.club||h.away===s.club)&&Number.isFinite(Number(h.hg))&&Number.isFinite(Number(h.ag))).map((h,i)=>({...h,round:Number.isFinite(Number(h.round))?Number(h.round):i+1,hg:Number(h.hg),ag:Number(h.ag)})):[];
+ s.history.sort((a,b)=>b.round-a.round);
  s.table=clubs.map(name=>({name,pts:0,gp:0,w:0,d:0,l:0,gf:0,ga:0}));
  for(const h of s.history){
    const home=s.table.find(t=>t.name===h.home),away=s.table.find(t=>t.name===h.away);
-   if(!home||!away||home===away)continue;
-   home.gp++;away.gp++;home.gf+=h.hg;home.ga+=h.ag;away.gf+=h.ag;away.ga+=h.hg;
-   if(h.hg>h.ag){home.w++;home.pts+=3;away.l++;}else if(h.hg<h.ag){away.w++;away.pts+=3;home.l++;}else{home.d++;away.d++;home.pts++;away.pts++;}
+   if(home===away)continue;
+   if(home){
+     home.gp++;home.gf+=h.hg;home.ga+=h.ag;
+     if(h.hg>h.ag){home.w++;home.pts+=3;}else if(h.hg<h.ag){home.l++;}else{home.d++;home.pts++;}
+   }
+   if(away){
+     away.gp++;away.gf+=h.ag;away.ga+=h.hg;
+     if(h.ag>h.hg){away.w++;away.pts+=3;}else if(h.ag<h.hg){away.l++;}else{away.d++;away.pts++;}
+   }
  }
  s.budget=Number.isFinite(Number(s.budget))?Number(s.budget):50000000;
  s.spent=Number(s.spent)||0;
@@ -248,7 +254,7 @@ function normalizeState(s){
  const need=1+Object.values(shapeMap[s.formation]).reduce((a,b)=>a+b,0);
  if(s.lineup.length!==need||!lineupIdsMatchFormation(s.lineup,s.roster,s.formation))s.lineup=makeAutoLineup(s.roster,s.formation);
  s.round=Math.max(1,s.history.reduce((m,h)=>Math.max(m,h.round||0),0)+1);
- s.lastResult=s.history.length?(()=>{const h=s.history[s.history.length-1];return {home:h.home,away:h.away,hg:h.hg,ag:h.ag,outcome:h.outcome||"Partida simulada"};})():null;
+ s.lastResult=s.history.length?(()=>{const h=s.history[0];return {home:h.home,away:h.away,hg:h.hg,ag:h.ag,outcome:h.outcome||"Partida simulada"};})():null;
  s.season=Number.isFinite(Number(s.season))?Number(s.season):2026;
  s.activeCompetition=typeof s.activeCompetition==="string"?s.activeCompetition:"brasileirao";
  s.competitions=normalizeCompetitions(s.competitions,s.club,s.season);
@@ -303,7 +309,7 @@ function renderStats(){
  byId("statPayroll").textContent=`Folha por jogo: ${shortMoney(payroll())}`;
  byId("clubNote").textContent=`Clube atual: ${state.club}.`;
  byId("squadCount").textContent=`${state.roster.length} jogadores`;
- byId("roundTag").textContent=`RODADA ${state.round}`;
+ byId("roundTag").textContent=`JOGO ${state.round}`;
  byId("matchCompetition").textContent=`BR League • Rodada ${state.round}`;
 }
 function renderPitch(){
@@ -328,108 +334,137 @@ function renderMarket(){
  const filter=byId("positionFilter").value||"ALL";
  const list=state.market.filter(p=>filter==="ALL"||p.pos===filter);
  byId("marketList").innerHTML=list.length?list.map(p=>`<div class="player-row"><div class="player-info"><strong>${esc(p.name)}</strong><small>${p.pos} • salário ${shortMoney(p.salary)}/jogo</small><div class="money">${shortMoney(p.value)}</div></div><span class="rating">${p.rating}</span><button class="btn small primary" data-buy="${esc(p.id)}" ${state.budget<p.value?"disabled":""}>Contratar</button></div>`).join(""):'<div class="empty">Não há jogadores nessa posição no mercado.</div>';
+     const id="depth_"+pos+"_"+n;
+     if(!result.some(p=>p.id===id))result.push({id,name:(pos==="GOL"?"Goleiro":pos==="DEF"?"Defensor":pos==="MEI"?"Meia":"Atacante")+" da base "+n,pos,rating,value:rating*rating*2200,salary:rating*330,origin:"base",matchesLeft:null});
+     count=result.filter(p=>p.pos===pos).length;
+   }
+ }
+ return result;
 }
-function renderTable(){
- const rows=sortedTable();
- byId("leagueTable").innerHTML=rows.map((t,i)=>`<tr class="${t.name===state.club?"you":""}"><td>${i+1}</td><td>${esc(t.name)}</td><td><b>${t.pts}</b></td><td>${t.gp}</td><td>${t.w}</td><td>${t.gf-t.ga>0?"+":""}${t.gf-t.ga}</td></tr>`).join("");
+function makeAutoLineup(roster,formation){
+ const counts=shapeMap[formation]||shapeMap["433"];
+ const chosen=[];
+ const keeper=roster.filter(p=>p.pos==="GOL").sort((a,b)=>b.rating-a.rating)[0];
+ if(keeper)chosen.push(keeper.id);
+ for(const pos of posOrder){const players=roster.filter(p=>p.pos===pos).sort((a,b)=>b.rating-a.rating);chosen.push(...players.slice(0,counts[pos]).map(p=>p.id));}
+ return chosen;
 }
-function renderHistory(){
- byId("historyCount").textContent=`${state.history.length} jogos`;
- byId("historyList").innerHTML=state.history.length?state.history.slice(0,12).map(h=>`<div class="history-row"><div><strong>${esc(h.home)} × ${esc(h.away)}</strong><small>Rodada ${h.round} • ${esc(h.outcome||"Partida simulada")}</small></div><div class="history-score">${h.hg} : ${h.ag}</div></div>`).join(""):'<div class="empty">Sua primeira partida aparecerá aqui.</div>';
+function normalizeState(s){
+ if(!s||!clubs.includes(s.club))return freshState();
+ const defaults=freshState(s.club);
+ s={...defaults,...s};
+ const savedRoster=Array.isArray(s.roster)?s.roster.filter(p=>p&&typeof p==="object"&&p.id&&p.name&&["GOL","DEF","MEI","ATA"].includes(p.pos)):[];
+ s.roster=ensureSquadDepth(savedRoster.length?savedRoster:clone(defaults.roster));
+ s.market=Array.isArray(s.market)?s.market:clone(marketPlayers);
+ s.history=Array.isArray(s.history)?s.history.filter(h=>h&&(h.home===s.club||h.away===s.club)&&Number.isFinite(Number(h.hg))&&Number.isFinite(Number(h.ag))).map((h,i)=>({...h,round:Number.isFinite(Number(h.round))?Number(h.round):i+1,hg:Number(h.hg),ag:Number(h.ag)})):[];
+ s.history.sort((a,b)=>b.round-a.round);
+ s.table=clubs.map(name=>({name,pts:0,gp:0,w:0,d:0,l:0,gf:0,ga:0}));
+ for(const h of s.history){
+   const home=s.table.find(t=>t.name===h.home),away=s.table.find(t=>t.name===h.away);
+   if(home===away)continue;
+   if(home){
+     home.gp++;home.gf+=h.hg;home.ga+=h.ag;
+     if(h.hg>h.ag){home.w++;home.pts+=3;}else if(h.hg<h.ag){home.l++;}else{home.d++;home.pts++;}
+   }
+   if(away){
+     away.gp++;away.gf+=h.ag;away.ga+=h.hg;
+     if(h.ag>h.hg){away.w++;away.pts+=3;}else if(h.ag<h.hg){away.l++;}else{away.d++;away.pts++;}
+   }
+ }
+ s.budget=Number.isFinite(Number(s.budget))?Number(s.budget):50000000;
+ s.spent=Number(s.spent)||0;
+ if(!shapeMap[s.formation])s.formation="433";
+ if(!["attack","balanced","defend"].includes(s.mentality))s.mentality="balanced";
+ const ids=new Set(s.roster.map(p=>p.id));
+ s.lineup=Array.isArray(s.lineup)?s.lineup.filter(id=>ids.has(id)):[];
+ const need=1+Object.values(shapeMap[s.formation]).reduce((a,b)=>a+b,0);
+ if(s.lineup.length!==need||!lineupIdsMatchFormation(s.lineup,s.roster,s.formation))s.lineup=makeAutoLineup(s.roster,s.formation);
+ s.round=Math.max(1,s.history.reduce((m,h)=>Math.max(m,h.round||0),0)+1);
+ s.lastResult=s.history.length?(()=>{const h=s.history[0];return {home:h.home,away:h.away,hg:h.hg,ag:h.ag,outcome:h.outcome||"Partida simulada"};})():null;
+ s.season=Number.isFinite(Number(s.season))?Number(s.season):2026;
+ s.activeCompetition=typeof s.activeCompetition==="string"?s.activeCompetition:"brasileirao";
+ s.competitions=normalizeCompetitions(s.competitions,s.club,s.season);
+ if(!s.competitions[s.activeCompetition])s.activeCompetition="brasileirao";
+ return s;
 }
-function renderContracts(){
- const list=state.roster.slice().sort((a,b)=>(a.origin==="market")-(b.origin==="market")||a.name.localeCompare(b.name));
- byId("contractsList").innerHTML=list.length?list.map(p=>`<div class="player-row"><div class="player-info"><strong>${esc(p.name)}</strong><small>${p.pos} • ${shortMoney(p.salary)}/jogo</small></div><span class="tag">${p.origin==="market"?Math.max(0,Number(p.matchesLeft)||0)+" jogos":"Elenco base"}</span></div>`).join(""):'<div class="empty">Nenhum jogador cadastrado.</div>';
+function lineupIdsMatchFormation(ids,roster,formation){
+ const players=ids.map(id=>roster.find(p=>p.id===id)).filter(Boolean),need=shapeMap[formation];
+ const counts={GOL:0,DEF:0,MEI:0,ATA:0};players.forEach(p=>{if(counts[p.pos]!==undefined)counts[p.pos]++;});
+ return players.length===1+need.DEF+need.MEI+need.ATA&&counts.GOL===1&&counts.DEF===need.DEF&&counts.MEI===need.MEI&&counts.ATA===need.ATA;
 }
-function render(){
- renderStats();renderPitch();renderSquad();renderMarket();renderTable();renderHistory();renderContracts();renderCompetitionUI();
+function loadState(){
+ try{
+  const candidates=[];
+  for(const key of [SAVE_KEY,...LEGACY_SAVE_KEYS]){const raw=localStorage.getItem(key);if(!raw)continue;try{const parsed=JSON.parse(raw);const normalized=normalizeState(parsed);candidates.push({key,state:normalized,history:Array.isArray(normalized.history)?normalized.history.length:0});}catch(e){}}
+  if(!candidates.length)return freshState();
+  candidates.sort((a,b)=>b.history-a.history||(a.key===SAVE_KEY?-1:1));
+  const chosen=candidates[0];try{localStorage.setItem(SAVE_KEY,JSON.stringify(chosen.state));}catch(e){}
+  return chosen.state;
+ }catch(e){return freshState();}
+}
+let state=loadState(), currentEvents=[], simulating=false, toastTimer=null;
+function save(){try{localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(e){notify("Não foi possível salvar neste navegador.");}}
+function notify(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove("show"),2400);}
+function byId(id){return document.getElementById(id);}
+function getPlayer(id){return state.roster.find(p=>p.id===id);}
+function activeLineup(){return state.lineup.map(getPlayer).filter(Boolean);}
+function avg(arr){return arr.length?arr.reduce((n,p)=>n+p.rating,0)/arr.length:0;}
+function currentStrength(){const list=activeLineup();return list.length?avg(list)+({attack:2.5,balanced:0,defend:-1}[state.mentality]||0):0;}
+function teamStrength(club){if(club===state.club)return currentStrength();const t=clubs.indexOf(club);return 73+(Math.abs(t*7+club.length*3)%12);}
+function payroll(){return state.roster.reduce((n,p)=>n+(Number(p.salary)||0),0);}
+function squadValue(){return state.roster.reduce((n,p)=>n+(Number(p.value)||0),0);}
+function leagueRow(name){return state.table.find(t=>t.name===name);}
+function sortedTable(){return [...state.table].sort((a,b)=>b.pts-a.pts||((b.gf-b.ga)-(a.gf-a.ga))||b.gf-a.gf||(a.name===state.club?-1:b.name===state.club?1:a.name.localeCompare(b.name)));}
+function initSelects(){
+ byId("clubSelect").innerHTML=clubs.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+ byId("opponent").innerHTML=clubs.filter(c=>c!==state.club).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+ byId("clubSelect").value=state.club;
  byId("formation").value=state.formation;byId("mentality").value=state.mentality;
- byId("homeName").textContent=state.club;byId("homeCrest").textContent=state.club==="Flamengo"?"🔴⚫":"🛡️";
- const opponent=byId("opponent").value||clubs.find(c=>c!==state.club);
- byId("awayName").textContent=opponent;byId("awayCrest").textContent=opponent==="Palmeiras"?"🟢⚪":"⚽";
 }
-function buyPlayer(id){
- const p=state.market.find(x=>x.id===id);if(!p)return;
- if(state.budget<p.value){notify("Orçamento insuficiente para essa contratação.");return;}
- if(state.roster.length>=32){notify("Elenco cheio. Limite de 32 jogadores.");return;}
- state.budget-=p.value;state.spent+=p.value;
- const signed={...p,id:"c"+Date.now().toString(36)+Math.random().toString(36).slice(2,6),origin:"market",matchesLeft:5};
- state.roster.push(signed);state.market=state.market.filter(x=>x.id!==id);
- save();render();notify(`${p.name} contratado por ${shortMoney(p.value)}.`);
+function refreshOpponent(){
+ const old=byId("opponent").value;
+ byId("opponent").innerHTML=clubs.filter(c=>c!==state.club).map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("");
+ byId("opponent").value=clubs.includes(old)&&old!==state.club?old:(state.club==="Flamengo"?"Palmeiras":clubs.find(c=>c!==state.club));
 }
-function setLineupAuto(){state.lineup=makeAutoLineup(state.roster,state.formation);save();render();notify("Melhor escalação disponível montada.");}
-function lineupValid(){
- const required=1+Object.values(shapeMap[state.formation]).reduce((a,b)=>a+b,0);
- const list=activeLineup();
- if(list.length!==required)return {ok:false,message:`Sua escalação tem ${list.length} titulares; a formação exige ${required}. Use “Montar melhor time”.`};
- const counts={GOL:0,DEF:0,MEI:0,ATA:0};list.forEach(p=>counts[p.pos]++);
- const need=shapeMap[state.formation];
- if(counts.GOL!==1||counts.DEF!==need.DEF||counts.MEI!==need.MEI||counts.ATA!==need.ATA)return {ok:false,message:"A distribuição de posições não combina com a formação. Monte a escalação novamente."};
- return {ok:true};
+function renderStats(){
+ const me=leagueRow(state.club)||{pts:0,gp:0,w:0,d:0,l:0};
+ byId("statPoints").textContent=me.pts;byId("statGames").textContent=me.gp;byId("statWins").textContent=me.w;
+ byId("statRecord").textContent=`${me.w}V • ${me.d}E • ${me.l}D`;
+ const rank=sortedTable().findIndex(t=>t.name===state.club)+1;byId("statRank").textContent=`${rank}º na classificação`;
+ byId("statValue").textContent=shortMoney(squadValue());byId("statBudget").textContent=shortMoney(state.budget);
+ byId("statPayroll").textContent=`Folha por jogo: ${shortMoney(payroll())}`;
+ byId("clubNote").textContent=`Clube atual: ${state.club}.`;
+ byId("squadCount").textContent=`${state.roster.length} jogadores`;
+ byId("roundTag").textContent=`JOGO ${state.round}`;
+ byId("matchCompetition").textContent=`BR League • Rodada ${state.round}`;
 }
-function seededRand(seed){let x=seed>>>0;return()=>{x=(x*1664525+1013904223)>>>0;return x/4294967296;};}
-function simulateScore(ours,theirs,rand){
- const attack=state.mentality==="attack"?1.22:state.mentality==="defend"?.78:1;
- const defense=state.mentality==="defend"?1.2:state.mentality==="attack"?.86:1;
- const homeAdv=ours===state.club?1.07:1;
- const xgO=Math.max(.25,Math.min(3.8,(1.05+(ours-theirs)*.075)*attack*homeAdv));
- const xgT=Math.max(.25,Math.min(3.8,(1.05+(theirs-ours)*.075)/defense));
- const goals=x=>{let n=0;const chance=Math.min(.78,x/3.2);for(let i=0;i<5;i++){if(rand()<chance*Math.max(.1,(x/2.2)))n++;}return Math.min(5,n);};
- return [goals(xgO),goals(xgT)];
-}
-function chooseScorer(rand){
- const forwards=activeLineup().filter(p=>p.pos==="ATA"), mids=activeLineup().filter(p=>p.pos==="MEI");
- const pool=[...forwards,...forwards,...mids].sort((a,b)=>b.rating-a.rating);
- return pool.length?pool[Math.floor(rand()*Math.min(pool.length,Math.max(1,Math.ceil(pool.length*.7))) )].name:"Ataque do time";
-}
-function makeEvents(home,away,hg,ag,rand){
- const events=[],goals=[];
- for(let i=0;i<hg;i++)goals.push({minute:Math.floor(4+rand()*87),side:"home"});
- for(let i=0;i<ag;i++)goals.push({minute:Math.floor(4+rand()*87),side:"away"});
- goals.sort((a,b)=>a.minute-b.minute);
- const used=new Set();
- for(const g of goals){while(used.has(g.minute)&&g.minute<90)g.minute++;used.add(g.minute);}
- for(const g of goals){
-   const scorer=g.side==="home"?chooseScorer(rand):["Atacante visitante","Meia visitante","Centroavante rival"][Math.floor(rand()*3)];
-   events.push({minute:g.minute,text:`⚽ GOL! ${scorer} marca para ${g.side==="home"?home:away}!`,type:"goal",side:g.side});
+function renderPitch(){
+ const counts=shapeMap[state.formation], roster=activeLineup();
+ const keeper=roster.find(p=>p.pos==="GOL");
+ let html="";
+ if(keeper)html+=`<div class="line-row">${chip(keeper)}</div>`;
+ for(const pos of posOrder){
+   const players=roster.filter(p=>p.pos===pos);
+   if(players.length)html+=`<div class="line-row">${players.map(chip).join("")}</div>`;
  }
- const moments=[5,12,19,27,34,41,45,52,59,66,73,81,88];
- const textsHome=["A equipe acelera pela direita e cruza na área.","Boa troca de passes no meio-campo; a defesa corta.","Finalização perigosa! O goleiro espalma para escanteio.","Pressão alta recupera a bola perto da área.","Chute de média distância passa perto da trave.","Bela defesa impede o gol da equipe mandante.","O time tenta construir jogada com paciência."];
- const textsAway=["O adversário avança em velocidade pelo corredor.","A defesa se fecha e afasta o perigo.","Contra-ataque rápido termina em finalização defendida.","Disputa intensa no meio-campo pela posse.","Bola levantada na área; a zaga ganha pelo alto.","O goleiro sai bem e fica com a bola.","A equipe visitante tenta surpreender em bola parada."];
- for(const minute of moments){
-   if(minute===45){events.push({minute,text:"Intervalo! As equipes recebem orientações para a etapa final.",type:"good"});continue;}
-   if(minute===88){events.push({minute:90,text:"A arbitragem indica 2 minutos de acréscimo.",type:"normal"});continue;}
-   if(used.has(minute))continue;
-   const homePoss=rand()<.5,list=homePoss?textsHome:textsAway;
-   events.push({minute,text:list[Math.floor(rand()*list.length)],type:rand()<.15?"bad":"normal"});
- }
- events.sort((a,b)=>a.minute-b.minute);
- events.push({minute:92,text:"Fim de jogo! O árbitro encerra a partida.",type:"good"});
- return events;
+ byId("pitchRows").innerHTML=html||'<div class="empty">Monte sua escalação.</div>';
+ const need=1+counts.DEF+counts.MEI+counts.ATA;
+ const missing=need-roster.length;
+ byId("lineupNote").textContent=missing>0?`Faltam ${missing} jogador(es) para completar a formação ${state.formation}.`:`${roster.length} titulares • Força média ${currentStrength().toFixed(1)} • Mentalidade ${state.mentality==="attack"?"ofensiva":state.mentality==="defend"?"defensiva":"equilibrada"}.`;
 }
-function showEvents(events,hg,ag,home,away){
- const container=byId("eventList");
- container.innerHTML=events.map(e=>`<div class="event ${e.type}"><span class="minute">${e.minute===92?"FT":e.minute+"′"}</span><span>${esc(e.text)}</span></div>`).join("");
- byId("liveClock").textContent="FT 90+2′";
- byId("livePossession") .textContent="Simulação concluída";
- byId("homeScore").textContent=hg;byId("awayScore").textContent=ag;byId("scoreMinute").textContent="FIM DE JOGO";
- byId("liveMatch").classList.add("show");
+function chip(p){return `<div class="player-chip" title="${esc(p.name)}"><strong>${p.rating}</strong><span>${esc(p.name)}</span><em>${p.pos}</em></div>`;}
+function renderSquad(){
+ byId("squadList").innerHTML=state.roster.slice().sort((a,b)=>posOrder.indexOf(a.pos)-posOrder.indexOf(b.pos)||b.rating-a.rating).map(p=>`<div class="player-row"><div class="player-info"><strong>${esc(p.name)}</strong><small>${p.pos} • ${shortMoney(p.salary)}/jogo${p.matchesLeft?` • ${p.matchesLeft} jogos de contrato`:""}</small></div><span class="rating">${p.rating}</span></div>`).join("");
 }
-function playMatch(){
- if(simulating)return;
- const valid=lineupValid();if(!valid.ok){notify(valid.message);byId("lineupNote").textContent=valid.message;return;}
- const scheduled=nextCompetitionMatch(activeComp());
- const opponent=scheduled?(scheduled.match.home===state.club?scheduled.match.away:scheduled.match.home):byId("opponent").value;
- if(!opponent||opponent===state.club){notify("Não há adversário pendente nesta competição.");return;}
- byId("opponent").value=opponent;
- if(state.budget<payroll()){notify("Orçamento insuficiente para pagar a folha simulada desta partida. Contrate menos ou reinicie a carreira.");return;}
- simulating=true;byId("playMatch").disabled=true;byId("playMatch").textContent="⏳ Simulando partida…";
- byId("resultBanner").classList.remove("show");
- const seed=Date.now()^(state.round*982451653)^state.roster.length;
- const rand=seededRand(seed);
- const strength=currentStrength(), opponentStrength=teamStrength(opponent);
- const [hg,ag]=simulateScore(strength,opponentStrength,rand);
- const events=makeEvents(state.club,opponent,hg,ag,rand);
+function renderMarket(){
+ const filter=byId("positionFilter").value||"ALL";
+ const list=state.market.filter(p=>filter==="ALL"||p.pos===filter);
+ byId("marketList").innerHTML=list.length?list.map(p=>`<div class="player-row"><div class="player-info"><strong>${esc(p.name)}</strong><small>${p.pos} • salário ${shortMoney(p.salary)}/jogo</small><div class="money">${shortMoney(p.value)}</div></div><span class="rating">${p.rating}</span><button class="btn small primary" data-buy="${esc(p.id)}" ${state.budget<p.value?"disabled":""}>Contratar</button></div>`).join(""):'<div class="empty">Não há jogadores nessa posição no mercado.</div>';
+ const competitionInfo=scheduled&&activeCompetition?{id:activeCompetition.id,name:activeCompetition.name,stage:scheduled.roundLabel}:null;
+ byId("homeName").textContent=fixtureHome;byId("awayName").textContent=fixtureAway;
+ byId("homeCrest").textContent=fixtureHome==="Flamengo"?"🔴⚫":fixtureHome==="Palmeiras"?"🟢⚪":"🛡️";
+ byId("awayCrest").textContent=fixtureAway==="Flamengo"?"🔴⚫":fixtureAway==="Palmeiras"?"🟢⚪":"⚽";
+ if(competitionInfo)byId("matchCompetition").textContent=`${competitionInfo.name} • ${competitionInfo.stage}`;
  byId("homeScore").textContent="0";byId("awayScore").textContent="0";byId("scoreMinute").textContent="PRÉ-JOGO";
  byId("liveMatch").classList.add("show");
  byId("eventList").innerHTML='<div class="event good"><span class="minute">0′</span><span>Apito inicial! A bola está rolando na simulação.</span></div>';
@@ -439,7 +474,7 @@ function playMatch(){
  const tick=()=>{
    if(i>=events.length){
      showEvents(events,hg,ag,state.club,opponent);
-     finishMatch(hg,ag,state.club,opponent);
+     finishMatch(hg,ag,fixtureHome,fixtureAway,competitionInfo);
      simulating=false;byId("playMatch").disabled=false;byId("playMatch").textContent="▶ Simular próxima partida";
      return;
    }
@@ -460,13 +495,19 @@ function playMatch(){
  };
  tick();
 }
-function finishMatch(hg,ag,home,away){
- const me=leagueRow(home),opp=leagueRow(away);
+function finishMatch(hg,ag,home,away,competitionInfo=null){
+ const homeRow=leagueRow(home),awayRow=leagueRow(away);
+ const clubGoals=home===state.club?hg:ag,opponentGoals=home===state.club?ag:hg;
  let outcome="";
- if(me&&opp){
-  me.gp++;opp.gp++;me.gf+=hg;me.ga+=ag;opp.gf+=ag;opp.ga+=hg;
-  if(hg>ag){me.w++;me.pts+=3;opp.l++;outcome="Vitória";}else if(hg<ag){opp.w++;opp.pts+=3;me.l++;outcome="Derrota";}else{me.d++;opp.d++;me.pts++;opp.pts++;outcome="Empate";}
- }else outcome=hg>ag?"Vitória":hg<ag?"Derrota":"Empate";
+ if(homeRow){
+  homeRow.gp++;homeRow.gf+=hg;homeRow.ga+=ag;
+  if(hg>ag){homeRow.w++;homeRow.pts+=3;}else if(hg<ag){homeRow.l++;}else{homeRow.d++;homeRow.pts++;}
+ }
+ if(awayRow){
+  awayRow.gp++;awayRow.gf+=ag;awayRow.ga+=hg;
+  if(ag>hg){awayRow.w++;awayRow.pts+=3;}else if(ag<hg){awayRow.l++;}else{awayRow.d++;awayRow.pts++;}
+ }
+ outcome=clubGoals>opponentGoals?"Vitória":clubGoals<opponentGoals?"Derrota":"Empate";
  state.budget=Math.max(0,state.budget-payroll());
  state.roster=state.roster.map(p=>p.origin==="market"?{...p,matchesLeft:(p.matchesLeft||1)-1}:p);
  const expired=state.roster.filter(p=>p.origin==="market"&&p.matchesLeft<=0);
@@ -475,15 +516,20 @@ function finishMatch(hg,ag,home,away){
  // Rebuild the market from the shared pool plus expired contract players without duplicate IDs.
  state.market=state.market.filter((p,i,a)=>a.findIndex(q=>q.id===p.id)===i);
  recordCompetitionMatch(home,away,hg,ag,outcome);
- state.history.unshift({home,away,hg,ag,round:state.round,outcome,when:new Date().toLocaleDateString("pt-BR")});
+ state.history.unshift({home,away,hg,ag,round:state.round,outcome,when:new Date().toLocaleDateString("pt-BR"),competitionId:competitionInfo?.id||null,competitionName:competitionInfo?.name||null,stage:competitionInfo?.stage||null});
  state.history=state.history.slice(0,50);state.round++;
  state.lastResult={home,away,hg,ag,outcome};
  save();initCompetitionSelect();render();syncCompetitionOpponent();
- byId("resultTitle").textContent=hg>ag?"🏆 Vitória!":hg<ag?"⚠️ Derrota":"🤝 Empate";
- byId("resultText").textContent=`${home} ${hg} × ${ag} ${away}. ${outcome}: ${hg>ag?"3 pontos":hg===ag?"1 ponto":"0 ponto"}. Folha simulada descontada: ${shortMoney(payroll())}.`;
+ // Mantém o placar ligado às equipes da partida que acabou; o próximo compromisso fica na central do torneio.
+ byId("homeName").textContent=home;byId("awayName").textContent=away;
+ byId("homeCrest").textContent=home==="Flamengo"?"🔴⚫":home==="Palmeiras"?"🟢⚪":"🛡️";
+ byId("awayCrest").textContent=away==="Flamengo"?"🔴⚫":away==="Palmeiras"?"🟢⚪":"⚽";
+ byId("matchCompetition").textContent=competitionInfo?`${competitionInfo.name} • ${competitionInfo.stage}`:`Jogo ${state.round-1} da carreira`;
+ byId("resultTitle").textContent=clubGoals>opponentGoals?"🏆 Vitória!":clubGoals<opponentGoals?"⚠️ Derrota":"🤝 Empate";
+ byId("resultText").textContent=`${home} ${hg} × ${ag} ${away}. ${outcome}: ${clubGoals>opponentGoals?"3 pontos":clubGoals===opponentGoals?"1 ponto":"0 ponto"}. Folha simulada descontada: ${shortMoney(payroll())}.`;
  byId("resultBanner").classList.add("show");
  byId("matchStatus").textContent=`Partida encerrada: ${outcome.toLowerCase()}.`;
- notify(`${outcome}! Resultado ${hg} × ${ag}.`);
+ notify(`${outcome} do ${state.club}! ${home} ${hg} × ${ag} ${away}.`);
 }
 function resetCareer(){
  if(!confirm("Tem certeza que deseja apagar esta carreira e começar novamente? Esta ação não pode ser desfeita."))return;
@@ -523,7 +569,7 @@ function normalizeCompetitions(saved,club,season){const out={};for(const def of 
 function initCompetitionSelect(){const sel=byId("competitionSelect");if(!sel)return;const defs=competitionCatalog(state.club);if(!state.competitions)state.competitions=normalizeCompetitions(null,state.club,state.season);const recDef=defs.find(c=>c.id==="recopa");if(recDef&&recDef.eligible&&JSON.stringify(state.competitions.recopa.teams)!==JSON.stringify(recDef.teams)){state.competitions.recopa=createCompetition(recDef,state.club,state.season);}sel.innerHTML=defs.map(c=>`<option value="${c.id}" ${c.eligible===false?"disabled":""}>${esc(c.name)}${c.eligible===false?" • não elegível":""}</option>`).join("");if(!state.competitions[state.activeCompetition]||defs.find(c=>c.id===state.activeCompetition)?.eligible===false)state.activeCompetition="brasileirao";sel.value=state.activeCompetition;}
 function activeComp(){return state.competitions&&state.competitions[state.activeCompetition];}
 function nextCompetitionMatch(comp){if(!comp||comp.complete)return null;if(comp.format==="league"){for(let r=0;r<comp.rounds.length;r++){const m=comp.rounds[r].find(x=>!x.played&&(x.home===state.club||x.away===state.club));if(m)return {match:m,roundIndex:r,roundLabel:`Rodada ${r+1}`};}return null;}for(let r=0;r<comp.rounds.length;r++){const m=comp.rounds[r].matches?.find(x=>!x.played&&(x.home===state.club||x.away===state.club));if(m)return {match:m,roundIndex:r,roundLabel:comp.rounds[r].name||`Fase ${r+1}`};}return null;}
-function syncCompetitionOpponent(){const comp=activeComp(),next=nextCompetitionMatch(comp),sel=byId("opponent");if(!sel)return;if(next){const opp=next.match.home===state.club?next.match.away:next.match.home;sel.innerHTML=`<option value="${esc(opp)}">${esc(opp)}</option>`;sel.value=opp;byId("awayName").textContent=opp;byId("matchCompetition").textContent=`${comp.name} • ${next.roundLabel}`;}else{sel.innerHTML='<option value="">Competição concluída</option>';byId("matchCompetition").textContent=comp?comp.name:"Sem competição";}}
+function syncCompetitionOpponent(){const comp=activeComp(),next=nextCompetitionMatch(comp),sel=byId("opponent");if(!sel)return;if(next){const opp=next.match.home===state.club?next.match.away:next.match.home;sel.innerHTML=`<option value="${esc(opp)}">${esc(opp)}</option>`;sel.value=opp;byId("homeName").textContent=next.match.home;byId("awayName").textContent=next.match.away;byId("homeCrest").textContent=next.match.home==="Flamengo"?"🔴⚫":next.match.home==="Palmeiras"?"🟢⚪":"🛡️";byId("awayCrest").textContent=next.match.away==="Flamengo"?"🔴⚫":next.match.away==="Palmeiras"?"🟢⚪":"⚽";byId("matchCompetition").textContent=`${comp.name} • ${next.roundLabel}`;}else{sel.innerHTML='<option value="">Competição concluída</option>';byId("homeName").textContent=state.club;byId("awayName").textContent=comp?.complete?"Competição concluída":"Sem adversário";byId("matchCompetition").textContent=comp?comp.name:"Sem competição";}}
 function renderCompetitionUI(){const comp=activeComp();if(!comp||!byId("competitionSummary"))return;if(byId("competitionSelect"))byId("competitionSelect").value=state.activeCompetition;const next=nextCompetitionMatch(comp);byId("competitionSummary").innerHTML=`<strong>${esc(comp.name)}${comp.champion?" — CAMPEÃO: "+esc(comp.champion):comp.complete?" — CONCLUÍDA":""}</strong><p>Temporada ${state.season} • ${comp.results.length} partida(s) registrada(s) • ${comp.format==="league"?"Pontos corridos":"Mata-mata simulado"}${comp.complete?" • Torneio encerrado":""}</p>`;byId("competitionStage").textContent=next?next.roundLabel.toUpperCase():"ENCERRADA";if(next){const opp=next.match.home===state.club?next.match.away:next.match.home;byId("competitionNext").innerHTML=`<div class="player-row"><div class="player-info"><strong>${esc(next.roundLabel)} • ${esc(state.club)} × ${esc(opp)}</strong><small>Partida registrada na competição selecionada.</small></div><span class="tag">PRÓXIMA</span></div>`;}else byId("competitionNext").innerHTML=`<div class="empty">${comp.champion?"Campeão: "+esc(comp.champion)+".":"Não há partidas pendentes nesta competição."}</div>`;const rows=[...(comp.table||[])].sort((a,b)=>b.pts-a.pts||((b.gf-b.ga)-(a.gf-a.ga))||b.gf-a.gf||a.name.localeCompare(b.name));byId("competitionTable").innerHTML=rows.map((t,i)=>`<tr class="${t.name===state.club?"you":""}"><td>${i+1}</td><td>${esc(t.name)}</td><td><b>${t.pts}</b></td><td>${t.gp}</td><td>${t.gf-t.ga>0?"+":""}${t.gf-t.ga}</td></tr>`).join("");byId("competitionResults").innerHTML=comp.results.length?comp.results.slice().reverse().slice(0,10).map(r=>`<div class="history-row"><div><strong>${esc(r.home)} × ${esc(r.away)}</strong><small>${esc(r.stage||"Competição")} • ${esc(r.outcome||"Finalizado")}</small></div><div class="history-score">${r.hg} : ${r.ag}</div></div>`).join(""):'<div class="empty">Nenhuma partida disputada nesta competição.</div>';}
 function activateCompetition(){const id=byId("competitionSelect").value,def=competitionCatalog(state.club).find(c=>c.id===id);if(!def||def.eligible===false){notify("Seu clube não está elegível para essa competição nesta temporada.");return;}state.activeCompetition=id;save();syncCompetitionOpponent();renderCompetitionUI();notify(`${def.name} selecionada.`);}
 function updateCompetitionTable(comp,home,away,hg,ag){const h=comp.table.find(t=>t.name===home),a=comp.table.find(t=>t.name===away);if(!h||!a)return;h.gp++;a.gp++;h.gf+=hg;h.ga+=ag;a.gf+=ag;a.ga+=hg;if(hg>ag){h.w++;h.pts+=3;a.l++;}else if(hg<ag){a.w++;a.pts+=3;h.l++;}else{h.d++;a.d++;h.pts++;a.pts++;}}
@@ -538,7 +584,7 @@ function simulateRemainingTournament(comp,winners,startRound,label){
  }
  comp.champion=advancing[0]||null;comp.complete=true;comp.stage=comp.champion?`Campeão: ${comp.champion}`:"Torneio encerrado";
 }
-function recordCompetitionMatch(home,away,hg,ag,outcome){const comp=activeComp();if(!comp||comp.complete)return;const next=nextCompetitionMatch(comp);if(!next)return;const m=next.match;if(![m.home,m.away].includes(home)||![m.home,m.away].includes(away)||home===away)return;const rh=m.home,ra=m.away,rhg=rh===home?hg:ag,rag=ra===away?ag:hg;m.played=true;m.hg=rhg;m.ag=rag;m.winner=rhg===rag?null:(rhg>rag?rh:ra);const stage=next.roundLabel;comp.results.push({home:rh,away:ra,hg:rhg,ag:rag,outcome:rhg===rag?"Empate; decisão por pênaltis":(m.winner===state.club?"Vitória do clube":"Vitória do adversário"),stage,round:next.roundIndex+1,when:new Date().toLocaleDateString("pt-BR")});updateCompetitionTable(comp,rh,ra,rhg,rag);const round=comp.format==="league"?comp.rounds[next.roundIndex]:comp.rounds[next.roundIndex].matches;for(const other of round){if(other.played)continue;const rand=seededRand(state.season*7919+next.roundIndex*104729+comp.results.length*1543+other.home.length*97+other.away.length*31);let gh=Math.floor(rand()*4),ga=Math.floor(rand()*4);other.played=true;other.hg=gh;other.ag=ga;other.winner=gh===ga?(rand()<0.5?other.home:other.away):(gh>ga?other.home:other.away);comp.results.push({home:other.home,away:other.away,hg:gh,ag:ga,outcome:gh===ga?"Empate":(gh>ga?"Vitória do mandante":"Vitória do visitante"),stage,round:next.roundIndex+1,when:new Date().toLocaleDateString("pt-BR")});updateCompetitionTable(comp,other.home,other.away,gh,ga);}if(comp.format==="league"){
+function recordCompetitionMatch(home,away,hg,ag,outcome){const comp=activeComp();if(!comp||comp.complete)return;const next=nextCompetitionMatch(comp);if(!next)return;const m=next.match;if(![m.home,m.away].includes(home)||![m.home,m.away].includes(away)||home===away)return;const rh=m.home,ra=m.away,rhg=rh===home?hg:ag,rag=ra===away?ag:hg;m.played=true;m.hg=rhg;m.ag=rag;m.winner=rhg===rag?null:(rhg>rag?rh:ra);const stage=next.roundLabel;const drawNeedsPens=comp.format==="cup"||(comp.format==="continental"&&next.roundIndex>=6);comp.results.push({home:rh,away:ra,hg:rhg,ag:rag,outcome:rhg===rag?(drawNeedsPens?"Empate; decisão por pênaltis":"Empate"):(m.winner===state.club?"Vitória do clube":"Vitória do adversário"),stage,round:next.roundIndex+1,when:new Date().toLocaleDateString("pt-BR")});updateCompetitionTable(comp,rh,ra,rhg,rag);const round=comp.format==="league"?comp.rounds[next.roundIndex]:comp.rounds[next.roundIndex].matches;for(const other of round){if(other.played)continue;const rand=seededRand(state.season*7919+next.roundIndex*104729+comp.results.length*1543+other.home.length*97+other.away.length*31);let gh=Math.floor(rand()*4),ga=Math.floor(rand()*4);other.played=true;other.hg=gh;other.ag=ga;other.winner=gh===ga?(rand()<0.5?other.home:other.away):(gh>ga?other.home:other.away);comp.results.push({home:other.home,away:other.away,hg:gh,ag:ga,outcome:gh===ga?"Empate":(gh>ga?"Vitória do mandante":"Vitória do visitante"),stage,round:next.roundIndex+1,when:new Date().toLocaleDateString("pt-BR")});updateCompetitionTable(comp,other.home,other.away,gh,ga);}if(comp.format==="league"){
  const pending=comp.rounds.some(r=>r.some(x=>!x.played&&(x.home===state.club||x.away===state.club)));
  if(!pending){const leaders=[...comp.table].sort((a,b)=>b.pts-a.pts||((b.gf-b.ga)-(a.gf-a.ga))||b.gf-a.gf);comp.champion=leaders[0]?.name||null;comp.complete=true;comp.stage=comp.champion?`Campeão: ${comp.champion}`:"Temporada concluída";}
 }else if(comp.format==="continental"){
@@ -555,7 +601,7 @@ function recordCompetitionMatch(home,away,hg,ag,outcome){const comp=activeComp()
   else{const matches=[];for(let i=0;i<winners.length;i+=2)if(winners[i+1])matches.push({home:winners[i],away:winners[i+1],played:false,winner:null});if(matches.length){const label=matches.length===1?"Final":matches.length===2?"Semifinais":matches.length===4?"Quartas de final":matches.length===8?"Oitavas de final":"Fase eliminatória";comp.rounds.push({name:label,matches});comp.stage=label;}}
  }
 }else if(comp.format==="final"){
- if(next.roundIndex===1){const first=comp.results.find(r=>r.stage==="Final • ida");const second=comp.results.find(r=>r.stage==="Final • volta");if(first&&second){const a=comp.teams[0],b=comp.teams[1];const ga=(first.home===a?first.hg:first.ag)+(second.home===a?second.hg:second.ag);const gb=(first.home===b?first.hg:first.ag)+(second.home===b?second.hg:second.ag);comp.champion=ga===gb?(seededRand(state.season+ga+gb)<0.5?a:b):(ga>gb?a:b);comp.complete=true;comp.stage="Recopa decidida";}}
+ if(next.roundIndex===1){const first=comp.results.find(r=>r.stage==="Final • ida");const second=comp.results.find(r=>r.stage==="Final • volta");if(first&&second){const a=comp.teams[0],b=comp.teams[1];const ga=(first.home===a?first.hg:first.ag)+(second.home===a?second.hg:second.ag);const gb=(first.home===b?first.hg:first.ag)+(second.home===b?second.hg:second.ag);if(ga===gb&&comp.results.length){comp.results[comp.results.length-1].outcome="Agregado empatado; decisão por pênaltis";}comp.champion=ga===gb?(seededRand(state.season+ga+gb)<0.5?a:b):(ga>gb?a:b);comp.complete=true;comp.stage="Recopa decidida";}}
 }else{
  const winners=comp.rounds[next.roundIndex].matches.map(x=>x.winner||(x.hg===x.ag?(seededRand(state.season+x.home.length+x.away.length)()<0.5?x.home:x.away):(x.hg>x.ag?x.home:x.away))).filter(Boolean);
  if(!winners.includes(state.club)){simulateRemainingTournament(comp,winners,next.roundIndex+1,comp.rounds[next.roundIndex].name||"Fase seguinte");comp.stage="Eliminado • campeão: "+(comp.champion||"não definido");}
@@ -581,7 +627,9 @@ function bind(){
  byId("opponent").addEventListener("change",()=>{byId("awayName").textContent=byId("opponent").value;byId("awayCrest").textContent=byId("opponent").value==="Palmeiras"?"🟢⚪":"⚽";});
 }
 initSelects();refreshOpponent();initCompetitionSelect();bind();render();syncCompetitionOpponent();save();
-if(state.lastResult){byId("homeScore").textContent=state.lastResult.hg;byId("awayScore").textContent=state.lastResult.ag;byId("scoreMinute").textContent="ÚLTIMO JOGO";}
+// Ao abrir a página, o placar fica no pré-jogo. O último resultado permanece no histórico,
+ // evitando que um placar antigo apareça ao lado do adversário da próxima partida.
+ byId("homeScore").textContent="—";byId("awayScore").textContent="—";byId("scoreMinute").textContent="PRÉ-JOGO";byId("liveMatch").classList.remove("show");byId("resultBanner").classList.remove("show");
 </script>
 </body>
 </html>
